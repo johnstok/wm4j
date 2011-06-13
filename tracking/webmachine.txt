@@ -1,0 +1,12 @@
+Cacheable
+Rangeable
+exists
+Secure
+
+Fully implements state machine.
+
+Easy to test each method on a resource e.g. isWellFormed()
+
+'Higher level abstraction over HTTP'
+
+Idea: HTML5 canvas version of HTTP flow chart.
