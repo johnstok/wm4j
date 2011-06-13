@@ -14,12 +14,4 @@
 	<artifactId>wm4j</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	
-	<dependencies>
-		<dependency>
-			<groupId>org.simpleframework</groupId>
-			<artifactId>simple</artifactId>
-			<version>4.1.21</version>
-		</dependency>
-	</dependencies>
-	
 </project>

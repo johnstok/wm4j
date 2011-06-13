@@ -12,9 +12,9 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import org.simpleframework.http.Status;
 import wm.BodyWriter;
 import wm.Response;
+import wm.Status;
 
 
 /**
@@ -49,7 +49,7 @@ public class TestResponse
     /** {@inheritDoc} */
     @Override
     public void setHeader(final String name, final String value) {
-        ArrayList<String> values = new ArrayList<String>();
+        final ArrayList<String> values = new ArrayList<String>();
         values.add(value);
         _headers.put(name, values);
     }
@@ -57,7 +57,7 @@ public class TestResponse
 
     @Override
     public String getHeader(final String name) {
-        List<String> values = _headers.get(name);
+        final List<String> values = _headers.get(name);
         return (null==values || 0==values.size()) ? null : values.get(0);
     }
 
@@ -72,7 +72,7 @@ public class TestResponse
     /** {@inheritDoc} */
     @Override
     public void write(final BodyWriter value) throws IOException {
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         value.write(outputStream);
         _body = outputStream.toByteArray();
     }

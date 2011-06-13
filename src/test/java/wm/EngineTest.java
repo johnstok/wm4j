@@ -21,7 +21,6 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.simpleframework.http.Status;
 import wm.test.TestRequest;
 import wm.test.TestResource;
 import wm.test.TestResponse;
