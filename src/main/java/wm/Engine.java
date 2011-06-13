@@ -93,7 +93,7 @@ public class Engine {
     private void handlePost(final Resource resource, final Response response)
         throws HttpException {
         final boolean postIsCreate = resource.post_is_create();
-        if (postIsCreate) {
+        if (postIsCreate) {                                           // M7, N5
             final URI createUri = resource.create_path();
             // Handle as a PUT
             // Return 303 if createUri is not NULL, 201 otherwise
@@ -108,39 +108,43 @@ public class Engine {
     protected final void process(final Resource resource,
                                  final Response response) {
         try {
-            if (!resource.service_available()) {
+
+            /*
+             * Basics.
+             */
+            if (!resource.service_available()) {                         // B12
                 response.setStatus(Status.SERVICE_UNAVAILABLE);
                 return;
             }
-            if (resource.uri_too_long()) {
+            if (resource.uri_too_long()) {                               // B11
                 response.setStatus(Status.REQUEST_URI_TOO_LONG);
                 return;
             }
-            if (resource.malformed_request()) {
+            if (resource.malformed_request()) {                          // B10
                 response.setStatus(Status.BAD_REQUEST);
                 return;
             }
-            if (!resource.is_authorized()) {
+            if (!resource.is_authorized()) {                              // B9
                 response.setStatus(Status.UNAUTHORIZED);
                 return;
             }
-            if (resource.forbidden()) {
+            if (resource.forbidden()) {                                   // B8
                 response.setStatus(Status.FORBIDDEN);
                 return;
             }
-            if (!resource.valid_content_headers()) {
+            if (!resource.valid_content_headers()) {                      // B7
                 response.setStatus(Status.NOT_IMPLEMENTED);
                 return;
             }
-            if (!resource.known_content_type()) {
+            if (!resource.known_content_type()) {                         // B6
                 response.setStatus(Status.UNSUPPORTED_MEDIA_TYPE);
                 return;
             }
-            if (!resource.valid_entity_length()) {
+            if (!resource.valid_entity_length()) {                        // B5
                 response.setStatus(Status.REQUEST_ENTITY_TOO_LARGE);
                 return;
             }
-            if (Method.OPTIONS==resource._request.get_req_method()) {
+            if (Method.OPTIONS==resource._request.get_req_method()) {     // B4
                 response.setStatus(Status.OK);
                 response.setHeader(Header.CONTENT_LENGTH, "0");    //$NON-NLS-1$
                 response.setHeader(
@@ -148,53 +152,60 @@ public class Engine {
                     Utils.join(resource.allowed_methods(), ',').toString());
                 return;
             }
-            if (!Method.all().contains(resource._request.get_req_method())) {
+            if (!Method.all().contains(resource._request.get_req_method())) { // B1
                 response.setStatus(Status.NOT_IMPLEMENTED);
                 return;
             }
-            if (!resource.allowed_methods().contains(resource._request.get_req_method())) {
+            if (!resource.allowed_methods().contains(resource._request.get_req_method())) { // C2
                 response.setStatus(Status.METHOD_NOT_ALLOWED);
                 return;
             }
-            if (exists(Header.ACCEPT, resource._request)) {
+
+            /*
+             * Conneg.
+             */
+            if (exists(Header.ACCEPT, resource._request)) {               // C3
                 final MediaType mediaType =
                     accept(
                         resource._request, resource.content_types_provided());
-                if (null==mediaType) {
+                if (null==mediaType) {                                    // C4
                     response.setStatus(Status.NOT_ACCEPTABLE);
                     return;
                 }
             }
-            if (exists(Header.ACCEPT_LANGUAGE, resource._request)) {
+            if (exists(Header.ACCEPT_LANGUAGE, resource._request)) {      // D4
                 final Locale language =
                     acceptLanguage(resource._request, resource.languages_provided());
-                if (null==language) {
+                if (null==language) {                                     // D5
                     response.setStatus(Status.NOT_ACCEPTABLE);
                     return;
                 }
             }
-            if (exists(Header.ACCEPT_CHARSET, resource._request)) {
+            if (exists(Header.ACCEPT_CHARSET, resource._request)) {       // E5
                 final Charset charset =
                     acceptCharset(resource._request, resource.charsets_provided());
-                if (null==charset) {
+                if (null==charset) {                                      // E6
                     response.setStatus(Status.NOT_ACCEPTABLE);
                     return;
                 }
             }
-            if (exists(Header.ACCEPT_ENCODING, resource._request)) {
+            if (exists(Header.ACCEPT_ENCODING, resource._request)) {      // F6
                 final ContentEncoding encoding =
                     acceptEncoding(resource._request, resource.encodings_provided());
-                if (null==encoding) {
+                if (null==encoding) {                                     // F7
                     response.setStatus(Status.NOT_ACCEPTABLE);
                     return;
                 }
             }
-            if (resource.resource_exists()) {
-                if (Method.DELETE==resource._request.get_req_method()) {
+
+
+            if (resource.resource_exists()) {                             // G7
+                if (Method.DELETE==resource._request.get_req_method()) {  // M16
+                    // FIXME: Something fishy here - no O20 decision.
                     final boolean accepted = resource.delete_resource();
                     if (accepted) {
                         final boolean enacted = resource.delete_completed();
-                        if (!enacted) {
+                        if (!enacted) {                                   // M20
                             response.setStatus(Status.ACCEPTED);
                             return;
                         }
@@ -202,44 +213,45 @@ public class Engine {
                         return;
                     }
                 }
-                if (Method.POST==resource._request.get_req_method()) {
-                    handlePost(resource, response);
+                if (Method.POST==resource._request.get_req_method()) {    // N16
+                    handlePost(resource, response); // FIXME: shouldn't check if POST is create in handlePost() for this case.
                     return;
                 }
-                if (Method.GET==resource._request.get_req_method()) {
+                if (Method.GET==resource._request.get_req_method()) {     // O16 - FIXME: should test for PUT here.
                     response.setStatus(Status.OK);
                     response.write(resource.content_types_provided().entrySet().iterator().next().getValue());
                     return;
                 }
             } else {
-                if (Method.PUT==resource._request.get_req_method()) {
+                if (Method.PUT==resource._request.get_req_method()) {     // I7
                     final URI putUri = resource.moved_permanently();
-                    if (null!=putUri) {
+                    if (null!=putUri) {                                   // I4
                         response.setStatus(Status.MOVED_PERMANENTLY);
                         response.setHeader(Header.LOCATION, putUri.toString()); // TODO: Confirm serialisation of URIs
                         return;
                     }
-                    if (resource.is_conflict()) {
+                    if (resource.is_conflict()) {                         // P3
                         response.setStatus(Status.CONFLICT);
                         return;
                     }
+                    // TODO: P11!
                     response.setStatus(Status.CREATED);
                     return;
                 }
 
-                if (resource.previously_existed()) {
-                    if (Method.POST==resource._request.get_req_method() && resource.allow_missing_post()) {
+                if (resource.previously_existed()) {                      // K7
+                    if (Method.POST==resource._request.get_req_method() && resource.allow_missing_post()) { // M5
                         handlePost(resource, response);
                         return;
                     }
                     final URI permUri = resource.moved_permanently();
                     final URI tempUri = resource.moved_temporarily();
-                    if (null!=permUri) {
+                    if (null!=permUri) {                                  // K5
                         response.setStatus(Status.MOVED_PERMANENTLY);
                         response.setHeader(Header.LOCATION, permUri.toString()); // TODO: Confirm serialisation of URIs
                         return;
                     }
-                    if (null!=tempUri) {
+                    if (null!=tempUri) {                                  // L5
                         response.setStatus(Status.TEMPORARY_REDIRECT);
                         response.setHeader(Header.LOCATION, tempUri.toString()); // TODO: Confirm serialisation of URIs
                         return;
@@ -247,7 +259,7 @@ public class Engine {
                     response.setStatus(Status.GONE);
                     return;
                 }
-                if (Method.POST==resource._request.get_req_method() && resource.allow_missing_post()) {
+                if (Method.POST==resource._request.get_req_method() && resource.allow_missing_post()) { // L7
                     handlePost(resource, response);
                     return;
                 }

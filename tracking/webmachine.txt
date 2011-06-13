@@ -3,7 +3,18 @@ Rangeable
 exists
 Secure
 
-Fully implements state machine.
+Fully implements state machine:
+* Caching paths G7:M16
+* Decision B2
+* Resource exists with "If-Match: *" header H7
+* PUT on existing resource -> P11
+* Positive path for M7 & N5 -> N11, etc.
+* Fix delete path around M20
+* Conflict handling O14
+* Multiple representations O18
+* Responses with no entity O20
+* Redirect N11
+* New resource P11
 
 Easy to test each method on a resource e.g. isWellFormed()
 
