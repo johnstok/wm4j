@@ -361,6 +361,7 @@ public class EngineTest {
 
         // ARRANGE
         _request.setMethod(Method.POST);
+        _response.setBody(new byte[] {0});
         final Resource resource = new TestResource(
             new Properties(),
             _request,
@@ -376,6 +377,17 @@ public class EngineTest {
 
                 @Override public void process_post() {
                     // No Op.
+                }
+
+                /** {@inheritDoc} */
+                @Override
+                public Map<MediaType, BodyWriter> content_types_provided() {
+                    return Collections.<MediaType, BodyWriter>singletonMap(MediaType.ANY, new BodyWriter() {
+                        @Override
+                        public void write(final OutputStream outputStream) {
+                            // NO OP.
+                        }
+                    });
                 }
         };
 
@@ -456,10 +468,11 @@ public class EngineTest {
 
 
     @Test
-    public void putForMissingResourceCreatesResource() {
+    public void putForMissingResourceCreatesResource() throws Exception {
 
         // ARRANGE
         _request.setMethod(Method.PUT);
+        _response.setHeader(Header.LOCATION, "http://iamjohnstok.com/"); // FIXME: How does this get set by the resource?
         final Resource resource = new TestResource(
             new Properties(),
             _request,

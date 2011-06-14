@@ -65,4 +65,12 @@ public interface Response {
      * @param value
      */
     void write(BodyWriter value) throws IOException;
+
+
+    /**
+     * TODO: Add a description for this method.
+     *
+     * @return
+     */
+    boolean hasBody();
 }

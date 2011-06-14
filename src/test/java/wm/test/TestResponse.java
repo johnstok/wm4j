@@ -76,4 +76,16 @@ public class TestResponse
         value.write(outputStream);
         _body = outputStream.toByteArray();
     }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean hasBody() {
+        return null!=_body;
+    }
+
+
+    public void setBody(final byte[] body) {
+        _body=body;
+    }
 }

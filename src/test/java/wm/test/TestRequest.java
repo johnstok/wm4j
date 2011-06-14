@@ -151,7 +151,7 @@ public class TestRequest
     /** {@inheritDoc} */
     @Override
     public boolean get_resp_redirect() {
-        throw new UnsupportedOperationException("Method not implemented.");
+        return false;
     }
 
 
