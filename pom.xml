@@ -6,8 +6,15 @@
 	<parent>
 		<artifactId>defaults</artifactId>
 		<groupId>com.johnstok</groupId>
-		<version>1.0.0-SNAPSHOT</version>
+		<version>1.0.0</version>
 	</parent>
+	
+	<repositories>
+        <repository>
+            <id>johnstok</id>
+            <url>http://www.iamjohnstok.com/maven2</url>
+        </repository>
+    </repositories>
 
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.johnstok</groupId>
