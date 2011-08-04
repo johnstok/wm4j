@@ -1,0 +1,38 @@
+# REST Notes
+
+## HTTP Features
+* caching
+* conneg
+* conditional execution
+
+## Q's
+* Def'n 'safe' & 'idemptotent'
+* PUT - why the entire resource
+
+## Client Lib
+* URI template support
+* Caching
+* Range support
+* Conditional requests
+* Authentication
+* Follow links
+* Understand common hypermedia types
+
+## Formats and Spec's
+* XSD
+* XForms
+* Atom
+* URI Templates
+* HTML
+* HTTP
+* Standard 'rel' values
+* Link Header
+* RFC 5005
+* XLink
+
+## APIs
+* DAP: domain application protocol
+* Hypermedia types
+* Link relations
+* HTTP idioms (RIP p103)
+* Link element: rel;href;type (RIP p195)
