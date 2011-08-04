@@ -1,5 +1,10 @@
 package wm;
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
+
 
 public class UnaryDispatchary
     implements
@@ -17,7 +22,7 @@ public class UnaryDispatchary
      *
      * @param clazz The resource class that will handle requests.
      */
-    private UnaryDispatchary(final Class<? extends Resource> clazz) {
+    public UnaryDispatchary(final Class<? extends Resource> clazz) {
         _clazz = clazz; // FIXME: Check for NULL. Other checks too?
     }
 
@@ -26,10 +31,16 @@ public class UnaryDispatchary
     @Override
     public Resource dispatch(final Request request) throws HttpException {
         try {
-            return _clazz.newInstance();
+            Properties p = new Properties();
+            Map<String, Object> context = new HashMap<String, Object>();
+            return _clazz.getConstructor(Properties.class, Request.class, Map.class).newInstance(p, request, context);
         } catch (InstantiationException e) {
             throw new HttpException(FAILED_TO_CREATE_RESOURCE, e);
         } catch (IllegalAccessException e) {
+            throw new HttpException(FAILED_TO_CREATE_RESOURCE, e);
+        } catch (InvocationTargetException e) {
+            throw new HttpException(FAILED_TO_CREATE_RESOURCE, e);
+        } catch (NoSuchMethodException e) {
             throw new HttpException(FAILED_TO_CREATE_RESOURCE, e);
         } catch (RuntimeException e) {
             throw new HttpException(FAILED_TO_CREATE_RESOURCE, e);

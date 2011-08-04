@@ -15,4 +15,5 @@ package wm;
 public class MediaType {
 
     public static final MediaType ANY = new MediaType();
+    public static final MediaType HTML = new MediaType();
 }

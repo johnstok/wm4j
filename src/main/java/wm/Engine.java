@@ -122,7 +122,7 @@ public class Engine {
     }
 
 
-    protected final void process(final Resource resource,
+    public final void process(final Resource resource,
                                  final Response response) {
         try {
             B12(resource, response);
