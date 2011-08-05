@@ -66,14 +66,14 @@ public class SimpleResponse
     /** {@inheritDoc} */
     @Override
     public void setHeader(final String name, final String value) {
-        throw new UnsupportedOperationException("Method not implemented.");
+        _response.set(name, value);
     }
 
 
     /** {@inheritDoc} */
     @Override
     public String getHeader(final String name) {
-        throw new UnsupportedOperationException("Method not implemented.");
+        return _response.getValue(name);
     }
 
 

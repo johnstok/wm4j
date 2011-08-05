@@ -24,9 +24,10 @@ import java.util.Set;
  */
 public abstract class Resource {
 
-    final Properties          _configuration;
-    final Request             _request;
-    final Map<String, Object> _contex;
+    // TODO: Make fields prove with accessors?
+    protected final Properties          _configuration;
+    protected final Request             _request;
+    protected final Map<String, Object> _contex;
 
 
     /**

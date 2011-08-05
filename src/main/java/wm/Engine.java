@@ -6,13 +6,18 @@
  *---------------------------------------------------------------------------*/
 package wm;
 
+import static wm.Header.*;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.charset.Charset;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.TimeZone;
 
 
 /**
@@ -112,6 +117,28 @@ public class Engine {
         } else {
             try {
                 response.setStatus(Status.OK);
+
+                // ETag 14.19
+                final String eTag = resource.generate_etag().getValue();
+                if (null!=eTag) { response.setHeader(E_TAG, eTag); }
+
+                // Last-Modified 14.29
+                // FIXME: Invalid strings not handled well; is max-long an appropriate default?
+                try {
+                    SimpleDateFormat dateFormatter = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz");
+                    dateFormatter.setTimeZone(TimeZone.getTimeZone("GMT"));
+                    final String requestDateString = response.getHeader(Header.DATE);
+                    final long messageDate =
+                        (null==requestDateString) ? Long.MAX_VALUE : dateFormatter.parse(requestDateString).getTime();
+                    final long lastModified = resource.last_modified().getTime();
+                    response.setHeader(
+                        Header.LAST_MODIFIED,
+                        dateFormatter.format((lastModified<messageDate) ? new Date(lastModified) : new Date(messageDate)));
+                } catch (ParseException e) {
+                    // TODO Auto-generated catch block.
+                    throw new HttpException(e);
+                }
+
                 response.write(resource.content_types_provided().entrySet().iterator().next().getValue()); // FIXME: Awful.
             } catch (final IOException e) {
                 // TODO handle committed responses.
@@ -403,6 +430,9 @@ public class Engine {
                      final Response response) throws HttpException {
         if (!resource.allowed_methods().contains(resource._request.get_req_method())) {
             response.setStatus(Status.METHOD_NOT_ALLOWED);
+            response.setHeader(
+                Header.ALLOW,
+                Utils.join(resource.allowed_methods(), ',').toString());
         } else {
             C03(resource, response);
         }
