@@ -125,7 +125,7 @@ public class Engine {
                 // Last-Modified 14.29
                 // FIXME: Invalid strings not handled well; is max-long an appropriate default?
                 try {
-                    SimpleDateFormat dateFormatter = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz");
+                    final SimpleDateFormat dateFormatter = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz");
                     dateFormatter.setTimeZone(TimeZone.getTimeZone("GMT"));
                     final String requestDateString = response.getHeader(Header.DATE);
                     final long messageDate =
@@ -134,7 +134,7 @@ public class Engine {
                     response.setHeader(
                         Header.LAST_MODIFIED,
                         dateFormatter.format((lastModified<messageDate) ? new Date(lastModified) : new Date(messageDate)));
-                } catch (ParseException e) {
+                } catch (final ParseException e) {
                     // TODO Auto-generated catch block.
                     throw new HttpException(e);
                 }
@@ -156,6 +156,10 @@ public class Engine {
         } catch (final HttpException e) {
             // TODO handle committed responses.
             response.setStatus(Status.INTERNAL_SERVER_ERROR);
+        } catch (final RuntimeException e) {
+            // TODO handle committed responses.
+            response.setStatus(Status.INTERNAL_SERVER_ERROR);
+            e.printStackTrace();
         }
     }
 
@@ -163,9 +167,21 @@ public class Engine {
     private void G07(final Resource resource,
                         final Response response) throws HttpException {
         if (resource.resource_exists()) {
-            M16(resource, response);
+            G07a(resource, response);
         } else {
             I07(resource, response);
+        }
+    }
+
+
+    private void G07a(final Resource resource,
+                     final Response response) throws HttpException { // Added to support redirect for existing resources - confirm logic.
+        final URI tempUri = resource.moved_temporarily();
+        if (null!=tempUri) {
+            response.setStatus(Status.TEMPORARY_REDIRECT);
+            response.setHeader(Header.LOCATION, tempUri.toString()); // TODO: Confirm serialisation of URIs
+        } else {
+            M16(resource, response);
         }
     }
 
