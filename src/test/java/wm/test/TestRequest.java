@@ -9,11 +9,14 @@ package wm.test;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetAddress;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 import wm.Method;
 import wm.Request;
 import wm.Version;
@@ -28,9 +31,19 @@ public class TestRequest
     implements
         Request {
 
-    private String _method = Method.GET;
+    private String                              _method = Method.GET;
     private final HashMap<String, List<String>> _headers =
         new HashMap<String, List<String>>();
+    private final SimpleDateFormat              _dateFormatter;
+
+
+    /**
+     * Constructor.
+     */
+    public TestRequest() {
+        _dateFormatter = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz");
+        _dateFormatter.setTimeZone(TimeZone.getTimeZone("GMT"));
+    }
 
 
     /** {@inheritDoc} */
@@ -287,6 +300,33 @@ public class TestRequest
     /** {@inheritDoc} */
     @Override
     public Date get_req_header_date(final String headerName) {
-        throw new UnsupportedOperationException("Method not implemented.");
+        try {
+            return _dateFormatter.parse(get_req_header(headerName));
+        } catch (final ParseException e) {
+            return null;
+        }
+    }
+
+
+    /**
+     * Mutator.
+     *
+     * @param headerName
+     * @param value
+     */
+    public void setHeader(final String headerName, final Date value) {
+        setHeader(headerName, _dateFormatter.format(value));
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean isValidDate(final String headerName) {
+        try {
+            _dateFormatter.parse(get_req_header(headerName));
+            return true;
+        } catch (final ParseException e) {
+            return false;
+        }
     }
 }

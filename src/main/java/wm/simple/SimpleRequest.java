@@ -5,11 +5,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetAddress;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 import org.simpleframework.http.Response;
 import wm.Header;
 import wm.Request;
@@ -30,6 +33,7 @@ public class SimpleRequest
     private       boolean                          _doRedirect = false;
     private final Map<String, String>              _atomMatches;
     private       String                           _dispPath;
+    private final SimpleDateFormat                 _dateFormatter;
 
 
     /**
@@ -48,6 +52,8 @@ public class SimpleRequest
         _response    = response;    // FIXME: Check for NULL.
         _atomMatches = atomMatches; // FIXME: Check for NULL.
         _dispPath    = dispPath;    // FIXME: Check for NULL.
+        _dateFormatter = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz");
+        _dateFormatter.setTimeZone(TimeZone.getTimeZone("GMT"));
     }
 
 
@@ -295,7 +301,22 @@ public class SimpleRequest
     /** {@inheritDoc} */
     @Override
     public Date get_req_header_date(final String headerName) {
-        return new Date(_request.getDate(headerName));
+        try {
+            return _dateFormatter.parse(get_req_header(headerName));
+        } catch (final ParseException e) {
+            return null;
+        }
     }
 
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean isValidDate(final String headerName) {
+        try {
+            _dateFormatter.parse(get_req_header(headerName));
+            return true;
+        } catch (final ParseException e) {
+            return false;
+        }
+    }
 }

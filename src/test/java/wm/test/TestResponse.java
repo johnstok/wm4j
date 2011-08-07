@@ -9,10 +9,12 @@ package wm.test;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.TimeZone;
 import wm.BodyWriter;
 import wm.Response;
 import wm.Status;
@@ -27,11 +29,22 @@ public class TestResponse
     implements
         Response {
 
-    private Status _status;
+    private Status                              _status;
+    private final SimpleDateFormat              _dateFormatter;
     private final HashMap<String, List<String>> _headers =
         new HashMap<String, List<String>>();
-    private byte[] _body;
-    private final Date _originationTime = new Date();
+    private byte[]                               _body;
+    private final Date                           _originationTime = new Date();
+
+
+
+    /**
+     * Constructor.
+     */
+    public TestResponse() {
+        _dateFormatter = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz");
+        _dateFormatter.setTimeZone(TimeZone.getTimeZone("GMT"));
+    }
 
 
     /** {@inheritDoc} */
@@ -102,6 +115,6 @@ public class TestResponse
     /** {@inheritDoc} */
     @Override
     public void setHeader(final String name, final Date value) {
-        throw new UnsupportedOperationException("Method not implemented.");
+        setHeader(name, _dateFormatter.format(value));
     }
 }

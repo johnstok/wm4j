@@ -12,6 +12,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -32,6 +33,15 @@ import wm.test.TestResponse;
  * @author Keith Webster Johnston.
  */
 public class EngineTest {
+
+    /* MISSING TESTS
+     * =============
+     *
+     *  + All date comparisons should occur at millisecond precision.
+     *  + Multiple values for conditional request headers.
+     *  + Comma separated values for conditional request headers.
+     *
+     * ===========*/
 
     private Engine       _engine;
     private TestResponse _response;
@@ -156,6 +166,477 @@ public class EngineTest {
 
         // ASSERT
         Assert.assertSame(Status.FORBIDDEN, _response.getStatus());
+    }
+
+
+    @Test
+    public void deleteWithWildcardIfnonematchGivesPreconditionFailed() { // I13, J18
+
+        // ARRANGE
+        _request.setHeader(Header.IF_NONE_MATCH, "*");
+        _request.setMethod(Method.DELETE);
+        final Resource resource = new TestResource(
+            new Properties(),
+            _request,
+            new HashMap<String, Object>()) {
+
+            @Override public Set<String> allowed_methods() {
+                return Collections.singleton(Method.DELETE);
+            }
+        };
+
+        // ACT
+        _engine.process(resource, _response);
+
+        // ASSERT
+        Assert.assertSame(Status.PRECONDITION_FAILED, _response.getStatus());
+    }
+
+
+
+    @Test
+    public void deleteWithMatchedIfnonematchGivesPreconditionFailed() { // K13, J18
+
+        // ARRANGE
+        _request.setHeader(Header.IF_NONE_MATCH, "foo");
+        _request.setMethod(Method.DELETE);
+        final Resource resource = new TestResource(
+            new Properties(),
+            _request,
+            new HashMap<String, Object>()) {
+
+            @Override public Set<String> allowed_methods() {
+                return Collections.singleton(Method.DELETE);
+            }
+
+            /** {@inheritDoc} */
+            @Override
+            public ETag generate_etag() { return new ETag("foo"); }
+        };
+
+        // ACT
+        _engine.process(resource, _response);
+
+        // ASSERT
+        Assert.assertSame(Status.PRECONDITION_FAILED, _response.getStatus());
+    }
+
+
+
+    @Test
+    public void getWithMatchedIfnonematchGivesNotModified() { // K13, J18
+
+        // ARRANGE
+        _request.setHeader(Header.IF_NONE_MATCH, "foo");
+        final Resource resource = new TestResource(
+            new Properties(),
+            _request,
+            new HashMap<String, Object>()) {
+
+            /** {@inheritDoc} */
+            @Override
+            public ETag generate_etag() { return new ETag("foo"); }
+        };
+
+        // ACT
+        _engine.process(resource, _response);
+
+        // ASSERT
+        Assert.assertSame(Status.NOT_MODIFIED, _response.getStatus());
+    }
+
+
+    @Test
+    public void getWithLessRecentIfunmodifiedsinceGivesPreconditionFailed() { // H12
+
+        // ARRANGE
+        _request.setHeader(Header.IF_UNMODIFIED_SINCE, new Date(0));
+        final Resource resource = new TestResource(
+            new Properties(),
+            _request,
+            new HashMap<String, Object>()) {
+
+            /** {@inheritDoc} */
+            @Override
+            public Date last_modified() { return new Date(); }
+        };
+
+        // ACT
+        _engine.process(resource, _response);
+
+        // ASSERT
+        Assert.assertSame(Status.PRECONDITION_FAILED, _response.getStatus());
+    }
+
+
+    @Test
+    public void getWithUnmatchedIfmatchGivesPreconditionFailed() { // G11
+
+        // ARRANGE
+        _request.setHeader(Header.IF_MATCH, "foo");
+        final Resource resource = new TestResource(
+            new Properties(),
+            _request,
+            new HashMap<String, Object>()) {
+
+            /** {@inheritDoc} */
+            @Override
+            public ETag generate_etag() { return new ETag("bar"); }
+        };
+
+        // ACT
+        _engine.process(resource, _response);
+
+        // ASSERT
+        Assert.assertSame(Status.PRECONDITION_FAILED, _response.getStatus());
+    }
+
+
+    @Test
+    public void getWithFutureIfmodifiedsinceReturnsOk() { // L15
+
+        // ARRANGE
+        final Date d = new Date(Long.MAX_VALUE);
+        _request.setHeader(Header.IF_MODIFIED_SINCE, d);
+        final Charset UTF8 = Charset.forName("UTF-8");
+        final Resource resource = new TestResource(
+            new Properties(),
+            _request,
+            new HashMap<String, Object>()) {
+
+            /** {@inheritDoc} */
+            @Override
+            public Date last_modified() { return new Date(0); }
+
+            @Override
+            public Map<MediaType, BodyWriter> content_types_provided() {
+                final BodyWriter bw = new BodyWriter() {
+                    @Override public void write(final OutputStream outputStream) throws IOException {
+                        outputStream.write("Hello, world!".getBytes(UTF8));
+                    }
+                };
+
+                return Collections.singletonMap(MediaType.ANY,  bw);
+            }
+        };
+
+        // ACT
+        _engine.process(resource, _response);
+
+        // ASSERT
+        Assert.assertSame(Status.OK, _response.getStatus());
+        Assert.assertEquals(
+            "Hello, world!",
+            _response.getBodyAsString(UTF8));
+    }
+
+
+    @Test
+    public void getWithLessRecentIfmodifiedsinceReturnsOk() { // L17
+
+        // ARRANGE
+        final Date d = new Date(0);
+        _request.setHeader(Header.IF_MODIFIED_SINCE, d);
+        final Charset UTF8 = Charset.forName("UTF-8");
+        final Resource resource = new TestResource(
+            new Properties(),
+            _request,
+            new HashMap<String, Object>()) {
+
+            /** {@inheritDoc} */
+            @Override
+            public Date last_modified() { return new Date(2000); }
+
+            @Override
+            public Map<MediaType, BodyWriter> content_types_provided() {
+                final BodyWriter bw = new BodyWriter() {
+                    @Override public void write(final OutputStream outputStream) throws IOException {
+                        outputStream.write("Hello, world!".getBytes(UTF8));
+                    }
+                };
+
+                return Collections.singletonMap(MediaType.ANY,  bw);
+            }
+        };
+
+        // ACT
+        _engine.process(resource, _response);
+
+        // ASSERT
+        Assert.assertSame(Status.OK, _response.getStatus());
+        Assert.assertEquals(
+            "Hello, world!",
+            _response.getBodyAsString(UTF8));
+    }
+
+
+    @Test
+    public void getWithSameIfmodifiedsinceReturnsNotModified() { // L17
+
+        // ARRANGE
+        final Date d = new Date(1000);
+        _request.setHeader(Header.IF_MODIFIED_SINCE, d);
+        final Resource resource = new TestResource(
+            new Properties(),
+            _request,
+            new HashMap<String, Object>()) {
+
+            /** {@inheritDoc} */
+            @Override
+            public Date last_modified() { return d; }
+        };
+
+        // ACT
+        _engine.process(resource, _response);
+
+        // ASSERT
+        Assert.assertSame(Status.NOT_MODIFIED, _response.getStatus());
+    }
+
+
+    @Test
+    public void getWithMoreRecentIfmodifiedsinceReturnsNotModified() { // L17
+
+        // ARRANGE
+        final Date d = new Date(2000);
+        _request.setHeader(Header.IF_MODIFIED_SINCE, d);
+        final Resource resource = new TestResource(
+            new Properties(),
+            _request,
+            new HashMap<String, Object>()) {
+
+            /** {@inheritDoc} */
+            @Override
+            public Date last_modified() { return new Date(0); }
+        };
+
+        // ACT
+        _engine.process(resource, _response);
+
+        // ASSERT
+        Assert.assertSame(Status.NOT_MODIFIED, _response.getStatus());
+    }
+
+
+    @Test
+    public void getWithMoreRecentIfunmodifiedsinceReturnsOk() { // H12
+
+        // ARRANGE
+        final Date d = new Date();
+        _request.setHeader(Header.IF_UNMODIFIED_SINCE, d);
+        final Charset UTF8 = Charset.forName("UTF-8");
+        final Resource resource = new TestResource(
+            new Properties(),
+            _request,
+            new HashMap<String, Object>()) {
+
+            /** {@inheritDoc} */
+            @Override
+            public Date last_modified() { return new Date(0); }
+
+            @Override
+            public Map<MediaType, BodyWriter> content_types_provided() {
+                final BodyWriter bw = new BodyWriter() {
+                    @Override public void write(final OutputStream outputStream) throws IOException {
+                        outputStream.write("Hello, world!".getBytes(UTF8));
+                    }
+                };
+
+                return Collections.singletonMap(MediaType.ANY,  bw);
+            }
+        };
+
+        // ACT
+        _engine.process(resource, _response);
+
+        // ASSERT
+        Assert.assertSame(Status.OK, _response.getStatus());
+        Assert.assertEquals(
+            "Hello, world!",
+            _response.getBodyAsString(UTF8));
+    }
+
+
+    @Test
+    public void getWithSameIfunmodifiedsinceReturnsOk() { // H12
+
+        // ARRANGE
+        final Date d = new Date(1000); // HTTP uses millisecond precision ;-)
+        _request.setHeader(Header.IF_UNMODIFIED_SINCE, d);
+        final Charset UTF8 = Charset.forName("UTF-8");
+        final Resource resource = new TestResource(
+            new Properties(),
+            _request,
+            new HashMap<String, Object>()) {
+
+            /** {@inheritDoc} */
+            @Override
+            public Date last_modified() { return d; }
+
+            @Override
+            public Map<MediaType, BodyWriter> content_types_provided() {
+                final BodyWriter bw = new BodyWriter() {
+                    @Override public void write(final OutputStream outputStream) throws IOException {
+                        outputStream.write("Hello, world!".getBytes(UTF8));
+                    }
+                };
+
+                return Collections.singletonMap(MediaType.ANY,  bw);
+            }
+        };
+
+        // ACT
+        _engine.process(resource, _response);
+
+        // ASSERT
+        Assert.assertSame(Status.OK, _response.getStatus());
+        Assert.assertEquals(
+            "Hello, world!",
+            _response.getBodyAsString(UTF8));
+    }
+
+
+    @Test
+    public void getWithInvalidIfmodifiedsinceReturnsOk() { // L14
+
+        // ARRANGE
+        _request.setHeader(Header.IF_MODIFIED_SINCE, "foo");
+        final Charset UTF8 = Charset.forName("UTF-8");
+        final Resource resource = new TestResource(
+            new Properties(),
+            _request,
+            new HashMap<String, Object>()) {
+
+            @Override
+            public Map<MediaType, BodyWriter> content_types_provided() {
+                final BodyWriter bw = new BodyWriter() {
+                    @Override public void write(final OutputStream outputStream) throws IOException {
+                        outputStream.write("Hello, world!".getBytes(UTF8));
+                    }
+                };
+
+                return Collections.singletonMap(MediaType.ANY,  bw);
+            }
+        };
+
+        // ACT
+        _engine.process(resource, _response);
+
+        // ASSERT
+        Assert.assertSame(Status.OK, _response.getStatus());
+        Assert.assertEquals(
+            "Hello, world!",
+            _response.getBodyAsString(UTF8));
+    }
+
+
+    @Test
+    public void getWithInvalidIfunmodifiedsinceReturnsOk() { // H11
+
+        // ARRANGE
+        _request.setHeader(Header.IF_UNMODIFIED_SINCE, "foo");
+        final Charset UTF8 = Charset.forName("UTF-8");
+        final Resource resource = new TestResource(
+            new Properties(),
+            _request,
+            new HashMap<String, Object>()) {
+
+            @Override
+            public Map<MediaType, BodyWriter> content_types_provided() {
+                final BodyWriter bw = new BodyWriter() {
+                    @Override public void write(final OutputStream outputStream) throws IOException {
+                        outputStream.write("Hello, world!".getBytes(UTF8));
+                    }
+                };
+
+                return Collections.singletonMap(MediaType.ANY,  bw);
+            }
+        };
+
+        // ACT
+        _engine.process(resource, _response);
+
+        // ASSERT
+        Assert.assertSame(Status.OK, _response.getStatus());
+        Assert.assertEquals(
+            "Hello, world!",
+            _response.getBodyAsString(UTF8));
+    }
+
+
+    @Test
+    public void getWithMatchedIfmatchReturnsOk() { // G11
+
+        // ARRANGE
+        _request.setHeader(Header.IF_MATCH, "foo");
+        final Charset UTF8 = Charset.forName("UTF-8");
+        final Resource resource = new TestResource(
+            new Properties(),
+            _request,
+            new HashMap<String, Object>()) {
+
+            /** {@inheritDoc} */
+            @Override
+            public ETag generate_etag() { return new ETag("foo"); }
+
+            @Override
+            public Map<MediaType, BodyWriter> content_types_provided() {
+                final BodyWriter bw = new BodyWriter() {
+                    @Override public void write(final OutputStream outputStream) throws IOException {
+                        outputStream.write("Hello, world!".getBytes(UTF8));
+                    }
+                };
+
+                return Collections.singletonMap(MediaType.ANY,  bw);
+            }
+        };
+
+        // ACT
+        _engine.process(resource, _response);
+
+        // ASSERT
+        Assert.assertSame(Status.OK, _response.getStatus());
+        Assert.assertEquals(
+            "Hello, world!",
+            _response.getBodyAsString(UTF8));
+    }
+
+
+    @Test
+    public void getWithWildcardIfmatchReturnsOk() { // G09
+
+        // ARRANGE
+        _request.setHeader(Header.IF_MATCH, "*");
+        final Charset UTF8 = Charset.forName("UTF-8");
+        final Resource resource = new TestResource(
+            new Properties(),
+            _request,
+            new HashMap<String, Object>()) {
+
+            /** {@inheritDoc} */
+            @Override
+            public ETag generate_etag() { return new ETag("bar"); }
+
+            @Override
+            public Map<MediaType, BodyWriter> content_types_provided() {
+                final BodyWriter bw = new BodyWriter() {
+                    @Override public void write(final OutputStream outputStream) throws IOException {
+                        outputStream.write("Hello, world!".getBytes(UTF8));
+                    }
+                };
+
+                return Collections.singletonMap(MediaType.ANY,  bw);
+            }
+        };
+
+        // ACT
+        _engine.process(resource, _response);
+
+        // ASSERT
+        Assert.assertSame(Status.OK, _response.getStatus());
+        Assert.assertEquals(
+            "Hello, world!",
+            _response.getBodyAsString(UTF8));
     }
 
 

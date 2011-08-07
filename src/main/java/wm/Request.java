@@ -332,4 +332,14 @@ public interface Request {
      * @return The header as a date.
      */
     Date get_req_header_date(String headerName);
+
+
+    /**
+     * Confirm the value of the specified header is a HTTP date.
+     *
+     * @param headerName
+     *
+     * @return True if the date is valid; false otherwise.
+     */
+    boolean isValidDate(String headerName);
 }

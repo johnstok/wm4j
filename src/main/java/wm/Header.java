@@ -98,7 +98,12 @@ public final class Header {
         "Accept-Charset";                                          //$NON-NLS-1$
 
     /** CONTENT_LENGTH : String. */
-    public static final String CONTENT_LENGTH = "Content-Length";  //$NON-NLS-1$
+    public static final String CONTENT_LENGTH =
+        "Content-Length";                                          //$NON-NLS-1$
+
+    /** IF_UNMODIFIED_SINCE : String. */
+    public static final String IF_UNMODIFIED_SINCE =
+        "If-Unmodified-Since";                                     //$NON-NLS-1$
 
 
     /**

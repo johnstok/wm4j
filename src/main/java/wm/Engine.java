@@ -188,7 +188,149 @@ public class Engine {
             response.setStatus(Status.TEMPORARY_REDIRECT);
             response.setHeader(Header.LOCATION, tempUri.toString()); // TODO: Confirm serialisation of URIs
         } else {
+            GO8(resource,response);
+        }
+    }
+
+
+    private void GO8(final Resource resource,
+                     final Response response) throws HttpException {
+        if (null!=resource._request.get_req_header(Header.IF_MATCH)) {
+            G09(resource, response);
+        } else {
+            H10(resource, response);
+        }
+    }
+
+
+    private void G09(final Resource resource,
+                     final Response response) throws HttpException {
+        if ("*".equals(resource._request.get_req_header(Header.IF_MATCH))) {
+            H10(resource, response);
+        } else {
+            G11(resource, response);
+        }
+    }
+
+
+    private void G11(final Resource resource,
+                     final Response response) throws HttpException {
+        if (resource._request.get_req_header(Header.IF_MATCH).equals(resource.generate_etag().getValue())) {
+            H10(resource, response);
+        } else {
+            response.setStatus(Status.PRECONDITION_FAILED);
+        }
+    }
+
+
+    private void L13(final Resource resource,
+                     final Response response) throws HttpException {
+        if (null!=resource._request.get_req_header(Header.IF_MODIFIED_SINCE)) {
+            L14(resource, response);
+        } else {
             M16(resource, response);
+        }
+
+    }
+
+
+    private void L14(final Resource resource,
+                     final Response response) throws HttpException {
+        if (resource._request.isValidDate(Header.IF_MODIFIED_SINCE)) {
+            L15(resource, response);
+        } else {
+            M16(resource, response);
+        }
+    }
+
+
+    private void L15(final Resource resource,
+                     final Response response) throws HttpException {
+        if (resource._request.get_req_header_date(Header.IF_MODIFIED_SINCE).after(new Date())) { // TODO: Compare with message origination rather than 'now'?
+            M16(resource, response);
+        } else {
+            L17(resource, response);
+        }
+    }
+
+
+    private void L17(final Resource resource,
+                     final Response response) throws HttpException {
+        if (resource._request.get_req_header_date(Header.IF_MODIFIED_SINCE).before(resource.last_modified())) {
+            M16(resource, response);
+        } else {
+            response.setStatus(Status.NOT_MODIFIED);
+        }
+    }
+
+
+    private void I12(final Resource resource,
+                     final Response response) throws HttpException {
+        if (null!=resource._request.get_req_header(Header.IF_NONE_MATCH)) {
+            I13(resource, response);
+        } else {
+            L13(resource, response);
+        }
+    }
+
+
+    private void I13(final Resource resource,
+                     final Response response) throws HttpException {
+        if ("*".equals(resource._request.get_req_header(Header.IF_NONE_MATCH))) {
+            J18(resource, response);
+        } else {
+            K13(resource, response);
+        }
+    }
+
+
+    private void J18(final Resource resource,
+                     final Response response) {
+        if (Method.GET==resource._request.get_req_method()
+            || Method.HEAD==resource._request.get_req_method()) {
+            response.setStatus(Status.NOT_MODIFIED);
+        } else {
+            response.setStatus(Status.PRECONDITION_FAILED);
+        }
+    }
+
+
+    private void K13(final Resource resource,
+                     final Response response) throws HttpException {
+        if (resource._request.get_req_header(Header.IF_NONE_MATCH).equals(resource.generate_etag().getValue())) {
+            J18(resource, response);
+        } else {
+            L13(resource, response);
+        }
+    }
+
+
+    private void H10(final Resource resource,
+                     final Response response) throws HttpException {
+        if (null!=resource._request.get_req_header(Header.IF_UNMODIFIED_SINCE)) {
+            H11(resource, response);
+        } else {
+            I12(resource, response);
+        }
+    }
+
+
+    private void H11(final Resource resource,
+                     final Response response) throws HttpException {
+        if (resource._request.isValidDate(Header.IF_UNMODIFIED_SINCE)) {
+            H12(resource, response);
+        } else {
+            I12(resource, response);
+        }
+    }
+
+
+    private void H12(final Resource resource,
+                     final Response response) throws HttpException {
+        if (resource._request.get_req_header_date(Header.IF_UNMODIFIED_SINCE).before(resource.last_modified())) {
+            response.setStatus(Status.PRECONDITION_FAILED);
+        } else {
+            I12(resource, response);
         }
     }
 
