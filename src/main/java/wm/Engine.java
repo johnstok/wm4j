@@ -10,14 +10,11 @@ import static wm.Header.*;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.charset.Charset;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.TimeZone;
 
 
 /**
@@ -119,24 +116,24 @@ public class Engine {
                 response.setStatus(Status.OK);
 
                 // ETag 14.19
-                final String eTag = resource.generate_etag().getValue();
-                if (null!=eTag) { response.setHeader(E_TAG, eTag); }
+                final ETag eTag = resource.generate_etag();
+                if (null!=eTag) { response.setHeader(E_TAG, eTag.getValue()); }
 
                 // Last-Modified 14.29
-                // FIXME: Invalid strings not handled well; is max-long an appropriate default?
-                try {
-                    final SimpleDateFormat dateFormatter = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz");
-                    dateFormatter.setTimeZone(TimeZone.getTimeZone("GMT"));
-                    final String requestDateString = response.getHeader(Header.DATE);
-                    final long messageDate =
-                        (null==requestDateString) ? Long.MAX_VALUE : dateFormatter.parse(requestDateString).getTime();
-                    final long lastModified = resource.last_modified().getTime();
+                final Date lastModified = resource.last_modified();
+                final Date messageOriginationTime = response.getOriginationTime();
+
+                /*
+                 * An origin server MUST NOT send a Last-Modified date which
+                 * is later than the server's time of message origination.
+                 * In such cases, where the resource's last modification
+                 * would indicate some time in the future, the server MUST
+                 * replace that date with the message origination date.
+                 */
+                if (null!=lastModified) {
                     response.setHeader(
                         Header.LAST_MODIFIED,
-                        dateFormatter.format((lastModified<messageDate) ? new Date(lastModified) : new Date(messageDate)));
-                } catch (final ParseException e) {
-                    // TODO Auto-generated catch block.
-                    throw new HttpException(e);
+                        (lastModified.after(messageOriginationTime)) ? messageOriginationTime : lastModified);
                 }
 
                 response.write(resource.content_types_provided().entrySet().iterator().next().getValue()); // FIXME: Awful.
@@ -165,9 +162,19 @@ public class Engine {
 
 
     private void G07(final Resource resource,
-                        final Response response) throws HttpException {
+                     final Response response) throws HttpException {
         if (resource.resource_exists()) {
             G07a(resource, response);
+        } else {
+            H07(resource, response);
+        }
+    }
+
+
+    private void H07(final Resource resource,
+                     final Response response) throws HttpException {
+        if ("*".equals(resource._request.get_req_header(Header.IF_MATCH))) {
+            response.setStatus(Status.PRECONDITION_FAILED);
         } else {
             I07(resource, response);
         }
@@ -175,7 +182,7 @@ public class Engine {
 
 
     private void G07a(final Resource resource,
-                     final Response response) throws HttpException { // Added to support redirect for existing resources - confirm logic.
+                      final Response response) throws HttpException { // Added to support redirect for existing resources - confirm logic.
         final URI tempUri = resource.moved_temporarily();
         if (null!=tempUri) {
             response.setStatus(Status.TEMPORARY_REDIRECT);

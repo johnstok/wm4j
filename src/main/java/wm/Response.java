@@ -8,6 +8,7 @@ package wm;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.Date;
 
 
 /**
@@ -73,4 +74,21 @@ public interface Response {
      * @return
      */
     boolean hasBody();
+
+
+    /**
+     * The time at which the server originated the response message.
+     *
+     * @return
+     */
+    Date getOriginationTime();
+
+
+    /**
+     * TODO: Add a description for this method.
+     *
+     * @param name
+     * @param value
+     */
+    void setHeader(String name, Date value);
 }

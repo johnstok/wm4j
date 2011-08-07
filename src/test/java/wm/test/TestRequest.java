@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetAddress;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -282,4 +283,10 @@ public class TestRequest
         _method = method;
     }
 
+
+    /** {@inheritDoc} */
+    @Override
+    public Date get_req_header_date(final String headerName) {
+        throw new UnsupportedOperationException("Method not implemented.");
+    }
 }

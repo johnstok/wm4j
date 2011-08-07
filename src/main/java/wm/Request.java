@@ -9,6 +9,7 @@ package wm;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetAddress;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -188,7 +189,7 @@ public interface Request {
 
 
     /**
-     * Look up the current value of an outgoing request header..
+     * Look up the current value of an outgoing request header.
      *
      * @param headerName
      * @return
@@ -322,4 +323,13 @@ public interface Request {
      * @return
      */
     Request remove_resp_header(String headerName);
+
+
+    /**
+     * Look up the current value of an outgoing request header.
+     *
+     * @param headerName
+     * @return The header as a date.
+     */
+    Date get_req_header_date(String headerName);
 }

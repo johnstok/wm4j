@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetAddress;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -288,6 +289,13 @@ public class SimpleRequest
     public Request set_resp_redirect(final boolean redirect) {
         _doRedirect = redirect;
         return this;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public Date get_req_header_date(final String headerName) {
+        return new Date(_request.getDate(headerName));
     }
 
 }

@@ -160,6 +160,29 @@ public class EngineTest {
 
 
     @Test
+    public void getForNonExistentResourceGivesPreconditionFailed() {
+
+        // ARRANGE
+        _request.setHeader(Header.IF_MATCH, "*");
+        final Resource resource = new TestResource(
+            new Properties(),
+            _request,
+            new HashMap<String, Object>()) {
+
+            @Override public boolean resource_exists() {
+                return false;
+            }
+        };
+
+        // ACT
+        _engine.process(resource, _response);
+
+        // ASSERT
+        Assert.assertSame(Status.PRECONDITION_FAILED, _response.getStatus());
+    }
+
+
+    @Test
     public void getForNonExistentResourceGivesGone() {
 
         // ARRANGE

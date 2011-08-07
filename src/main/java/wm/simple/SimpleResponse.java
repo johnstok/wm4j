@@ -21,6 +21,7 @@ package wm.simple;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.Date;
 import wm.BodyWriter;
 import wm.Response;
 import wm.Status;
@@ -36,6 +37,7 @@ public class SimpleResponse
         Response {
 
     private final org.simpleframework.http.Response _response;
+    private final Date _originationTime = new Date();
 
 
     /**
@@ -95,6 +97,20 @@ public class SimpleResponse
     @Override
     public boolean hasBody() {
         throw new UnsupportedOperationException("Method not implemented.");
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public Date getOriginationTime() {
+        return _originationTime; // TODO: Make defensive copy?
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void setHeader(final String name, final Date value) {
+        _response.setDate(name, value.getTime());
     }
 
 }
