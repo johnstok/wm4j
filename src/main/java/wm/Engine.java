@@ -147,8 +147,10 @@ public class Engine {
 
 
     public final void process(final Resource resource,
-                                 final Response response) {
+                              final Response response) {
         try {
+            response.setHeader(Header.SERVER, "wm4j/1.0.0");
+            response.setHeader(Header.DATE, response.getOriginationTime());
             B12(resource, response);
         } catch (final HttpException e) {
             // TODO handle committed responses.
