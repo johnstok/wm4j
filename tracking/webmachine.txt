@@ -1,8 +1,3 @@
-Cacheable
-Rangeable
-exists
-Secure
-
 Fully implements state machine:
 * Decision B2
 * PUT on existing resource -> P11
@@ -14,7 +9,37 @@ Fully implements state machine:
 * Redirect N11
 * New resource P11
 
+Request/response Logging.
+
 Range support.
+
+Enhanced error handling.
+
+Improve Request,Response,Resource APIs.
+
+Type-safe configuration - i.e. replace Properties field.
+
+Language negotiation.
+
+Encoding negotiation.
+
+Setting of 'Vary' header following negotiations.
+
+Setting of appropriate 'Content-*' headers.
+
+Setting of 'Cache-Control' header.
+
+Implementation of Path object's methods.
+
+GZip compression for 'Content-Encoding' header (including ETag support).
+
+Cookies? (See RFC)
+
+Content-Disposition? (See RFC)
+
+Support for 'Authorization' header.
+
+Improved 503 support: 'Retry-After' and configurable entity body.
 
 Easy to test each method on a resource e.g. isWellFormed()
 
