@@ -286,8 +286,8 @@ public class Engine {
 
     private void J18(final Resource resource,
                      final Response response) {
-        if (Method.GET==resource._request.get_req_method()
-            || Method.HEAD==resource._request.get_req_method()) {
+        if (Method.GET.equals(resource._request.get_req_method())
+            || Method.HEAD.equals(resource._request.get_req_method())) {
             response.setStatus(Status.NOT_MODIFIED);
         } else {
             response.setStatus(Status.PRECONDITION_FAILED);
