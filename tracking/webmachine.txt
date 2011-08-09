@@ -1,4 +1,4 @@
-Fully implements state machine:
+Fully implement state machine:
 * Decision B2
 * PUT on existing resource -> P11
 * Positive path for M7 & N5 -> N11, etc.
@@ -16,8 +16,6 @@ Range support.
 Enhanced error handling.
 
 Improve Request,Response,Resource APIs.
-
-Type-safe configuration - i.e. replace Properties field.
 
 Language negotiation.
 
@@ -46,3 +44,5 @@ Easy to test each method on a resource e.g. isWellFormed()
 'Higher level abstraction over HTTP'
 
 Idea: HTML5 canvas version of HTTP flow chart.
+
+Idea: Support for performance features recommended via YSlow & PageSpeed.
