@@ -113,7 +113,18 @@ public final class Header {
      * @return
      */
     public static List<WeightedValue> parseAcceptCharset(final String headerValue) {
-        return null; // FIXME: Implement.
+        throw new UnsupportedOperationException("Method not implemented.");
+    }
+
+
+    /**
+     * TODO: Add a description for this method.
+     *
+     * @param get_req_header
+     * @return
+     */
+    public static List<WeightedValue> parseAcceptEncoding(final String get_req_header) {
+        throw new UnsupportedOperationException("Method not implemented.");
     }
 
 

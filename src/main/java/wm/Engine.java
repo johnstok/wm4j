@@ -40,17 +40,23 @@ public class Engine {
     }
 
 
-    private ContentEncoding acceptEncoding(final Request request,
-                                           final Set<String> encodings_provided) {
-        return null;
+    private String acceptEncoding(final Request request,
+                                  final Set<String> encodings_provided) {
+        final List<WeightedValue> clientEncodings =
+            Header.parseAcceptEncoding(
+                request.get_req_header(Header.ACCEPT_ENCODING));
+        ContentNegotiator negotiator = new ContentNegotiator(encodings_provided);
+        return negotiator.selectEncoding(clientEncodings);
     }
 
 
     private LanguageTag acceptLanguage(final Request request,
                                        final Set<LanguageTag> languages_provided) {
+        final List<WeightedValue> clientLanguages =
+            LanguageNegotiator.parse(request.get_req_header(Header.ACCEPT_LANGUAGE));
         LanguageNegotiator negotiator =
             new LanguageNegotiator(languages_provided);
-        return negotiator.selectLanguage(LanguageNegotiator.parse(request.get_req_header(Header.ACCEPT_LANGUAGE)));
+        return negotiator.selectLanguage(clientLanguages);
     }
 
 
@@ -428,7 +434,7 @@ public class Engine {
 
     private void F07(final Resource resource,
                      final Response response) throws HttpException {
-        final ContentEncoding encoding =
+        final String encoding =
             acceptEncoding(resource._request, resource.encodings_provided());
         if (null==encoding) {
             response.setStatus(Status.NOT_ACCEPTABLE);

@@ -50,6 +50,23 @@ public class ContentNegotiator {
 
 
     /**
+     * Constructor.
+     *
+     * @param values The supported encodings
+     */
+    public ContentNegotiator(final Set<String> values) {
+        final List<WeightedValue> supported = new ArrayList<WeightedValue>();
+        for (String value : values) {
+            supported.add(new WeightedValue(value, 1.0f));
+        }
+        Collections.sort(supported);
+        _supportedEncodings = new LinkedHashSet<WeightedValue>(supported);
+        _supportedEncodings.add(IDENTITY);
+        _supportedEncodings.remove(ANY);
+    }
+
+
+    /**
      * Select an encoding from the specified list.
      *
      * @param clientEncodings The allowed encodings.
