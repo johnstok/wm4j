@@ -22,6 +22,7 @@ package wm.negotiation;
 import static org.junit.Assert.*;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -60,5 +61,55 @@ public class LanguageNegotiatorTest {
 
         // ASSERT
         assertEquals(new LanguageTag("en"), selected);
+    }
+
+
+    @Test
+    public void parseSingleRange() {
+
+        // ACT
+        List<WeightedValue> ranges = LanguageNegotiator.parse("en");
+
+        // ASSERT
+        assertEquals(1, ranges.size());
+        assertEquals(new WeightedValue("en", 1.0f), ranges.get(0));
+    }
+
+
+    @Test
+    public void parseSingleRangeWithQuality() {
+
+        // ACT
+        List<WeightedValue> ranges = LanguageNegotiator.parse("en;q=0.2");
+
+        // ASSERT
+        assertEquals(1, ranges.size());
+        assertEquals(new WeightedValue("en", 0.2f), ranges.get(0));
+    }
+
+
+    @Test
+    public void parseMultipleRangeWithQuality() {
+
+        // ACT
+        List<WeightedValue> ranges = LanguageNegotiator.parse("en;q=0.2,da;g=0.9");
+
+        // ASSERT
+        assertEquals(2, ranges.size());
+        assertEquals(new WeightedValue("en", 0.2f), ranges.get(0));
+        assertEquals(new WeightedValue("da", 0.9f), ranges.get(1));
+    }
+
+
+    @Test
+    public void parseMultipleRangeSomeQuality() {
+
+        // ACT
+        List<WeightedValue> ranges = LanguageNegotiator.parse("en;q=0.2,da");
+
+        // ASSERT
+        assertEquals(2, ranges.size());
+        assertEquals(new WeightedValue("en", 0.2f), ranges.get(0));
+        assertEquals(new WeightedValue("da", 1.0f), ranges.get(1));
     }
 }

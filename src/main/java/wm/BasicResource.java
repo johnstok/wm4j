@@ -13,7 +13,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -129,8 +128,8 @@ public abstract class BasicResource
 
     /** {@inheritDoc} */
     @Override
-    public Set<Locale> languages_provided() {
-        return new HashSet<Locale>();
+    public Set<LanguageTag> languages_provided() {
+        return null;
     }
 
     /** {@inheritDoc} */

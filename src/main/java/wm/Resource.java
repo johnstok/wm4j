@@ -9,7 +9,6 @@ package wm;
 import java.net.URI;
 import java.nio.charset.Charset;
 import java.util.Date;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -215,11 +214,13 @@ public abstract class Resource {
 
 
     /**
-     * TODO: Add a description for this method.
+     * Query the languages in which this resource is available.
      *
-     * @return
+     * Returning NULL indicates language negotiation is not supported.
+     *
+     * @return A set of available languages.
      */
-    abstract Set<Locale> languages_provided();
+    abstract Set<LanguageTag> languages_provided();
 
 
     /**

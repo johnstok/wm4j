@@ -26,6 +26,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import wm.LanguageTag;
+import wm.Value;
 import wm.WeightedValue;
 
 
@@ -113,8 +114,8 @@ public class LanguageNegotiator {
     }
 
 
-    /*
-     * Parse 'Accept-Language' header:
+    /**
+     * Parse an 'Accept-Language' header into a list of weighted values.
      *
      * Accept-Language = "Accept-Language" ":"
      *                   1#( language-range [ ";" "q" "=" qvalue ] )
@@ -128,5 +129,23 @@ public class LanguageNegotiator {
      *  - duplicate lRange (incl case variations).
      *  - malformed lRange
      *  - malformed field
+     *
+     * TODO: Add a description for this method.
+     *
+     * @param get_req_header
+     * @return
      */
+    public static List<WeightedValue> parse(final String value) {
+        List<WeightedValue> wValues = new ArrayList<WeightedValue>();
+
+        if (null==value || 1>value.trim().length()) { return wValues; }
+
+        String[] lRanges = value.split(",");
+        for (String lRange : lRanges) {
+            if (null==lRange || 1>lRange.trim().length()) { continue; }
+            wValues.add(Value.parse(lRange).asWeightedValue("q",1f));
+        }
+
+        return wValues;
+    }
 }

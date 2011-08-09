@@ -12,9 +12,9 @@ import java.net.URI;
 import java.nio.charset.Charset;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import wm.negotiation.LanguageNegotiator;
 
 
 /**
@@ -24,13 +24,6 @@ import java.util.Set;
  */
 public class Engine {
 
-    /**
-     * TODO: Add a description for this method.
-     *
-     * @param request
-     * @param content_types_provided
-     * @return
-     */
     private MediaType accept(final Request request,
                              final Map<MediaType, BodyWriter> content_types_provided) {
         // Order Accept values by q value then specificity
@@ -38,13 +31,6 @@ public class Engine {
     }
 
 
-    /**
-     * TODO: Add a description for this method.
-     *
-     * @param request
-     * @param charsets_provided
-     * @return
-     */
     private Charset acceptCharset(final Request request,
                                   final Set<Charset> charsets_provided) {
         final List<WeightedValue> clientCharsets =
@@ -54,29 +40,17 @@ public class Engine {
     }
 
 
-    /**
-     * TODO: Add a description for this method.
-     *
-     * @param request
-     * @param encodings_provided
-     * @return
-     */
     private ContentEncoding acceptEncoding(final Request request,
                                            final Set<String> encodings_provided) {
         return null;
     }
 
 
-    /**
-     * TODO: Add a description for this method.
-     *
-     * @param request
-     * @param languages_provided
-     * @return
-     */
-    private Locale acceptLanguage(final Request request,
-                                  final Set<Locale> languages_provided) {
-        return null;
+    private LanguageTag acceptLanguage(final Request request,
+                                       final Set<LanguageTag> languages_provided) {
+        LanguageNegotiator negotiator =
+            new LanguageNegotiator(languages_provided);
+        return negotiator.selectLanguage(LanguageNegotiator.parse(request.get_req_header(Header.ACCEPT_LANGUAGE)));
     }
 
 
@@ -498,7 +472,7 @@ public class Engine {
 
     private void D05(final Resource resource,
                      final Response response) throws HttpException {
-        final Locale language =
+        final LanguageTag language =
             acceptLanguage(resource._request, resource.languages_provided());
         if (null==language) {
             response.setStatus(Status.NOT_ACCEPTABLE);
