@@ -445,11 +445,19 @@ public class Engine {
     private void F06(final Resource resource,
                     final Response response) throws HttpException {
         if (exists(Header.ACCEPT_ENCODING, resource._request)) {
-            final ContentEncoding encoding =
-                acceptEncoding(resource._request, resource.encodings_provided());
-            if (null==encoding) {                                     // F7
-                response.setStatus(Status.NOT_ACCEPTABLE);
-            }
+            F07(resource, response);
+        } else {
+            G07(resource, response);
+        }
+    }
+
+
+    private void F07(final Resource resource,
+                     final Response response) throws HttpException {
+        final ContentEncoding encoding =
+            acceptEncoding(resource._request, resource.encodings_provided());
+        if (null==encoding) {
+            response.setStatus(Status.NOT_ACCEPTABLE);
         } else {
             G07(resource, response);
         }
@@ -459,11 +467,19 @@ public class Engine {
     private void E05(final Resource resource,
                      final Response response) throws HttpException {
         if (exists(Header.ACCEPT_CHARSET, resource._request)) {
-            final Charset charset =
-                acceptCharset(resource._request, resource.charsets_provided());
-            if (null==charset) {                                      // E6
-                response.setStatus(Status.NOT_ACCEPTABLE);
-            }
+            E06(resource, response);
+        } else {
+            F06(resource, response);
+        }
+    }
+
+
+    private void E06(final Resource resource,
+                     final Response response) throws HttpException {
+        final Charset charset =
+            acceptCharset(resource._request, resource.charsets_provided());
+        if (null==charset) {
+            response.setStatus(Status.NOT_ACCEPTABLE);
         } else {
             F06(resource, response);
         }
@@ -473,11 +489,19 @@ public class Engine {
     private void D04(final Resource resource,
                      final Response response) throws HttpException {
         if (exists(Header.ACCEPT_LANGUAGE, resource._request)) {
-            final Locale language =
-                acceptLanguage(resource._request, resource.languages_provided());
-            if (null==language) {                                     // D5
-                response.setStatus(Status.NOT_ACCEPTABLE);
-            }
+            D05(resource, response);
+        } else {
+            E05(resource, response);
+        }
+    }
+
+
+    private void D05(final Resource resource,
+                     final Response response) throws HttpException {
+        final Locale language =
+            acceptLanguage(resource._request, resource.languages_provided());
+        if (null==language) {
+            response.setStatus(Status.NOT_ACCEPTABLE);
         } else {
             E05(resource, response);
         }
@@ -487,12 +511,19 @@ public class Engine {
     private void C03(final Resource resource,
                      final Response response) throws HttpException {
         if (exists(Header.ACCEPT, resource._request)) {
-            final MediaType mediaType =
-                accept(
-                    resource._request, resource.content_types_provided());
-            if (null==mediaType) {                                    // C4
-                response.setStatus(Status.NOT_ACCEPTABLE);
-            }
+            C04(resource, response);
+        } else {
+            D04(resource, response);
+        }
+    }
+
+
+    private void C04(final Resource resource,
+                     final Response response) throws HttpException {
+        final MediaType mediaType =
+            accept(resource._request, resource.content_types_provided());
+        if (null==mediaType) {
+            response.setStatus(Status.NOT_ACCEPTABLE);
         } else {
             D04(resource, response);
         }
