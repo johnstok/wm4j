@@ -16,7 +16,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 import org.junit.After;
 import org.junit.Assert;
@@ -55,7 +54,6 @@ public class EngineTest {
         // ARRANGE
         _request.setMethod(Method.DELETE);
         final Resource resource = new TestResource(
-            new Properties(),
             _request,
             new HashMap<String, Object>()) {
 
@@ -82,7 +80,6 @@ public class EngineTest {
         // ARRANGE
         _request.setMethod(Method.DELETE);
         final Resource resource = new TestResource(
-            new Properties(),
             _request,
             new HashMap<String, Object>()) {
 
@@ -113,7 +110,6 @@ public class EngineTest {
         // ARRANGE
         _request.setMethod(Method.DELETE);
         final Resource resource = new TestResource(
-            new Properties(),
             _request,
             new HashMap<String, Object>());
 
@@ -130,7 +126,6 @@ public class EngineTest {
 
         // ARRANGE
         final Resource resource = new TestResource(
-            new Properties(),
             null,
             new HashMap<String, Object>()) {
 
@@ -152,7 +147,6 @@ public class EngineTest {
 
         // ARRANGE
         final Resource resource = new TestResource(
-            new Properties(),
             null,
             new HashMap<String, Object>()) {
 
@@ -176,7 +170,6 @@ public class EngineTest {
         _request.setHeader(Header.IF_NONE_MATCH, "*");
         _request.setMethod(Method.DELETE);
         final Resource resource = new TestResource(
-            new Properties(),
             _request,
             new HashMap<String, Object>()) {
 
@@ -201,7 +194,6 @@ public class EngineTest {
         _request.setHeader(Header.IF_NONE_MATCH, "foo");
         _request.setMethod(Method.DELETE);
         final Resource resource = new TestResource(
-            new Properties(),
             _request,
             new HashMap<String, Object>()) {
 
@@ -229,7 +221,6 @@ public class EngineTest {
         // ARRANGE
         _request.setHeader(Header.IF_NONE_MATCH, "foo");
         final Resource resource = new TestResource(
-            new Properties(),
             _request,
             new HashMap<String, Object>()) {
 
@@ -252,7 +243,6 @@ public class EngineTest {
         // ARRANGE
         _request.setHeader(Header.IF_UNMODIFIED_SINCE, new Date(0));
         final Resource resource = new TestResource(
-            new Properties(),
             _request,
             new HashMap<String, Object>()) {
 
@@ -275,7 +265,6 @@ public class EngineTest {
         // ARRANGE
         _request.setHeader(Header.IF_MATCH, "foo");
         final Resource resource = new TestResource(
-            new Properties(),
             _request,
             new HashMap<String, Object>()) {
 
@@ -300,7 +289,6 @@ public class EngineTest {
         _request.setHeader(Header.IF_MODIFIED_SINCE, d);
         final Charset UTF8 = Charset.forName("UTF-8");
         final Resource resource = new TestResource(
-            new Properties(),
             _request,
             new HashMap<String, Object>()) {
 
@@ -339,7 +327,6 @@ public class EngineTest {
         _request.setHeader(Header.IF_MODIFIED_SINCE, d);
         final Charset UTF8 = Charset.forName("UTF-8");
         final Resource resource = new TestResource(
-            new Properties(),
             _request,
             new HashMap<String, Object>()) {
 
@@ -377,7 +364,6 @@ public class EngineTest {
         final Date d = new Date(1000);
         _request.setHeader(Header.IF_MODIFIED_SINCE, d);
         final Resource resource = new TestResource(
-            new Properties(),
             _request,
             new HashMap<String, Object>()) {
 
@@ -401,7 +387,6 @@ public class EngineTest {
         final Date d = new Date(2000);
         _request.setHeader(Header.IF_MODIFIED_SINCE, d);
         final Resource resource = new TestResource(
-            new Properties(),
             _request,
             new HashMap<String, Object>()) {
 
@@ -426,7 +411,6 @@ public class EngineTest {
         _request.setHeader(Header.IF_UNMODIFIED_SINCE, d);
         final Charset UTF8 = Charset.forName("UTF-8");
         final Resource resource = new TestResource(
-            new Properties(),
             _request,
             new HashMap<String, Object>()) {
 
@@ -465,7 +449,6 @@ public class EngineTest {
         _request.setHeader(Header.IF_UNMODIFIED_SINCE, d);
         final Charset UTF8 = Charset.forName("UTF-8");
         final Resource resource = new TestResource(
-            new Properties(),
             _request,
             new HashMap<String, Object>()) {
 
@@ -503,7 +486,6 @@ public class EngineTest {
         _request.setHeader(Header.IF_MODIFIED_SINCE, "foo");
         final Charset UTF8 = Charset.forName("UTF-8");
         final Resource resource = new TestResource(
-            new Properties(),
             _request,
             new HashMap<String, Object>()) {
 
@@ -537,7 +519,6 @@ public class EngineTest {
         _request.setHeader(Header.IF_UNMODIFIED_SINCE, "foo");
         final Charset UTF8 = Charset.forName("UTF-8");
         final Resource resource = new TestResource(
-            new Properties(),
             _request,
             new HashMap<String, Object>()) {
 
@@ -571,7 +552,6 @@ public class EngineTest {
         _request.setHeader(Header.IF_MATCH, "foo");
         final Charset UTF8 = Charset.forName("UTF-8");
         final Resource resource = new TestResource(
-            new Properties(),
             _request,
             new HashMap<String, Object>()) {
 
@@ -609,7 +589,6 @@ public class EngineTest {
         _request.setHeader(Header.IF_MATCH, "*");
         final Charset UTF8 = Charset.forName("UTF-8");
         final Resource resource = new TestResource(
-            new Properties(),
             _request,
             new HashMap<String, Object>()) {
 
@@ -646,7 +625,6 @@ public class EngineTest {
         // ARRANGE
         _request.setHeader(Header.IF_MATCH, "*");
         final Resource resource = new TestResource(
-            new Properties(),
             _request,
             new HashMap<String, Object>()) {
 
@@ -668,7 +646,6 @@ public class EngineTest {
 
         // ARRANGE
         final Resource resource = new TestResource(
-            new Properties(),
             _request,
             new HashMap<String, Object>()) {
 
@@ -694,7 +671,6 @@ public class EngineTest {
 
         // ARRANGE
         final Resource resource = new TestResource(
-            new Properties(),
             _request,
             new HashMap<String, Object>()) {
 
@@ -729,7 +705,6 @@ public class EngineTest {
 
         // ARRANGE
         final Resource resource = new TestResource(
-            new Properties(),
             _request,
             new HashMap<String, Object>()) {
 
@@ -764,7 +739,6 @@ public class EngineTest {
 
         // ARRANGE
         final Resource resource = new TestResource(
-            new Properties(),
             _request,
             new HashMap<String, Object>()) {
 
@@ -789,7 +763,6 @@ public class EngineTest {
         // ARRANGE
         final Charset UTF8 = Charset.forName("UTF-8");
         final Resource resource = new TestResource(
-            new Properties(),
             _request,
             new HashMap<String, Object>()) {
 
@@ -821,7 +794,6 @@ public class EngineTest {
 
         // ARRANGE
         final Resource resource = new TestResource(
-            new Properties(),
             null,
             new HashMap<String, Object>()) {
 
@@ -844,7 +816,6 @@ public class EngineTest {
         // ARRANGE
         _request.setMethod(Method.OPTIONS);
         final Resource resource = new TestResource(
-            new Properties(),
             _request,
             new HashMap<String, Object>());
 
@@ -867,7 +838,6 @@ public class EngineTest {
         _request.setMethod(Method.POST);
         _response.setBody(new byte[] {0});
         final Resource resource = new TestResource(
-            new Properties(),
             _request,
             new HashMap<String, Object>()) {
 
@@ -909,7 +879,6 @@ public class EngineTest {
         // ARRANGE
         _request.setMethod(Method.PUT);
         final Resource resource = new TestResource(
-            new Properties(),
             _request,
             new HashMap<String, Object>()) {
 
@@ -945,7 +914,6 @@ public class EngineTest {
         // ARRANGE
         _request.setMethod(Method.PUT);
         final Resource resource = new TestResource(
-            new Properties(),
             _request,
             new HashMap<String, Object>()) {
 
@@ -978,7 +946,6 @@ public class EngineTest {
         _request.setMethod(Method.PUT);
         _response.setHeader(Header.LOCATION, "http://iamjohnstok.com/"); // FIXME: How does this get set by the resource?
         final Resource resource = new TestResource(
-            new Properties(),
             _request,
             new HashMap<String, Object>()) {
 
@@ -1004,7 +971,6 @@ public class EngineTest {
 
         // ARRANGE
         final Resource resource = new TestResource(
-            new Properties(),
             null,
             new HashMap<String, Object>()) {
 
@@ -1052,7 +1018,6 @@ public class EngineTest {
         // ARRANGE
         _request.setHeader(Header.ACCEPT_CHARSET, Charset.defaultCharset().name());
         final Resource resource = new TestResource(
-            new Properties(),
             _request,
             new HashMap<String, Object>());
 
@@ -1069,7 +1034,6 @@ public class EngineTest {
         // ARRANGE
         _request.setHeader(Header.ACCEPT_ENCODING, ContentEncoding.GZIP);
         final Resource resource = new TestResource(
-            new Properties(),
             _request,
             new HashMap<String, Object>());
 
@@ -1087,7 +1051,6 @@ public class EngineTest {
         // ARRANGE
         _request.setHeader(Header.ACCEPT_LANGUAGE, Locale.UK.toString());
         final Resource resource = new TestResource(
-            new Properties(),
             _request,
             new HashMap<String, Object>());
 
@@ -1105,7 +1068,6 @@ public class EngineTest {
         // ARRANGE
         _request.setHeader(Header.ACCEPT, "text/html"); // TODO: Add MediaType class.
         final Resource resource = new TestResource(
-            new Properties(),
             _request,
             new HashMap<String, Object>());
 
@@ -1122,7 +1084,6 @@ public class EngineTest {
 
         // ARRANGE
         final Resource resource = new TestResource(
-            new Properties(),
             null,
             new HashMap<String, Object>()) {
 
@@ -1144,7 +1105,6 @@ public class EngineTest {
 
         // ARRANGE
         final Resource resource = new TestResource(
-            new Properties(),
             null,
             new HashMap<String, Object>()) {
 
@@ -1166,7 +1126,6 @@ public class EngineTest {
 
         // ARRANGE
         final Resource resource = new TestResource(
-            new Properties(),
             null,
             new HashMap<String, Object>()) {
 
@@ -1189,7 +1148,6 @@ public class EngineTest {
         // ARRANGE
         _request.setMethod("FOO");                                 //$NON-NLS-1$
         final Resource resource = new TestResource(
-            new Properties(),
             _request,
             new HashMap<String, Object>());
 
@@ -1206,7 +1164,6 @@ public class EngineTest {
 
         // ARRANGE
         final Resource resource = new TestResource(
-            new Properties(),
             null,
             new HashMap<String, Object>()) {
 

@@ -14,7 +14,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 
 
@@ -30,14 +29,12 @@ public abstract class BasicResource
     /**
      * Constructor.
      *
-     * @param configuration
      * @param request
      * @param contex
      */
-    public BasicResource(final Properties configuration,
-                         final Request request,
+    public BasicResource(final Request request,
                          final Map<String, Object> contex) {
-        super(configuration, request, contex);
+        super(request, contex);
     }
 
     /** {@inheritDoc} */

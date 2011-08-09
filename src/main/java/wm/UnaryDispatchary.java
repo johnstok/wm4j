@@ -3,10 +3,9 @@ package wm;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 
 
-public class UnaryDispatchary
+public class UnaryDispatchary<T>
     implements
         Dispatcher {
 
@@ -15,7 +14,7 @@ public class UnaryDispatchary
 
 
     private final Class<? extends Resource> _clazz;
-    private final Properties                _properties;
+    private final T                         _configuration;
 
 
     /**
@@ -24,9 +23,9 @@ public class UnaryDispatchary
      * @param clazz The resource class that will handle requests.
      */
     public UnaryDispatchary(final Class<? extends Resource> clazz,
-                            final Properties properties) {
+                            final T configuration) {
         _clazz = clazz; // FIXME: Check for NULL. Other checks too?
-        _properties = properties; // FIXME: Make defensive copy. Check for NULL. Other checks too?
+        _configuration = configuration; // FIXME: Check for NULL. Other checks too?
     }
 
 
@@ -35,8 +34,8 @@ public class UnaryDispatchary
     public Resource dispatch(final Request request) throws HttpException {
         try {
             Map<String, Object> context = new HashMap<String, Object>();
-            return _clazz.getConstructor(Properties.class, Request.class, Map.class)
-                         .newInstance(_properties, request, context); // TODO: Defensive copy _properties
+            return _clazz.getConstructor(_configuration.getClass(), Request.class, Map.class)
+                         .newInstance(_configuration, request, context);
         } catch (InstantiationException e) {
             throw new HttpException(FAILED_TO_CREATE_RESOURCE, e);
         } catch (IllegalAccessException e) {

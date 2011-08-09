@@ -8,7 +8,6 @@ package wm.test;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 import wm.BasicResource;
 import wm.BodyReader;
 import wm.BodyWriter;
@@ -28,14 +27,12 @@ public class TestResource
     /**
      * Constructor.
      *
-     * @param configuration
      * @param request
      * @param contex
      */
-    public TestResource(final Properties configuration,
-                        final Request request,
+    public TestResource(final Request request,
                         final Map<String, Object> contex) {
-        super(configuration, request, contex);
+        super(request, contex);
     }
 
 

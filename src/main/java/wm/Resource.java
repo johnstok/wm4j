@@ -10,7 +10,6 @@ import java.net.URI;
 import java.nio.charset.Charset;
 import java.util.Date;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 
 
@@ -23,8 +22,6 @@ import java.util.Set;
  */
 public abstract class Resource {
 
-    // TODO: Make fields prove with accessors?
-    protected final Properties          _configuration;
     protected final Request             _request;
     protected final Map<String, Object> _contex;
 
@@ -32,14 +29,11 @@ public abstract class Resource {
     /**
      * Constructor.
      *
-     * @param configuration A configuration property list from the dispatcher.
      * @param request
      * @param contex
      */
-    public Resource(final Properties configuration,
-                    final Request request,
+    public Resource(final Request request,
                     final Map<String, Object> contex) {
-        _configuration = configuration;
         _request = request;
         _contex = contex;
     }
