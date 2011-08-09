@@ -57,7 +57,7 @@ public class LanguageNegotiatorTest {
     public void simpleMatchNoSubs() {
 
         // ACT
-        LanguageTag selected  = _negotiator.selectLanguage(new WeightedValue("en", 1f));
+        final LanguageTag selected  = _negotiator.selectLanguage(new WeightedValue("en", 1f));
 
         // ASSERT
         assertEquals(new LanguageTag("en"), selected);
@@ -68,7 +68,7 @@ public class LanguageNegotiatorTest {
     public void parseSingleRange() {
 
         // ACT
-        List<WeightedValue> ranges = LanguageNegotiator.parse("en");
+        final List<WeightedValue> ranges = LanguageNegotiator.parse("en");
 
         // ASSERT
         assertEquals(1, ranges.size());
@@ -80,7 +80,7 @@ public class LanguageNegotiatorTest {
     public void parseSingleRangeWithQuality() {
 
         // ACT
-        List<WeightedValue> ranges = LanguageNegotiator.parse("en;q=0.2");
+        final List<WeightedValue> ranges = LanguageNegotiator.parse("en;q=0.2");
 
         // ASSERT
         assertEquals(1, ranges.size());
@@ -92,7 +92,7 @@ public class LanguageNegotiatorTest {
     public void parseMultipleRangeWithQuality() {
 
         // ACT
-        List<WeightedValue> ranges = LanguageNegotiator.parse("en;q=0.2,da;g=0.9");
+        final List<WeightedValue> ranges = LanguageNegotiator.parse("en;q=0.2,da;g=0.9");
 
         // ASSERT
         assertEquals(2, ranges.size());
@@ -105,11 +105,22 @@ public class LanguageNegotiatorTest {
     public void parseMultipleRangeSomeQuality() {
 
         // ACT
-        List<WeightedValue> ranges = LanguageNegotiator.parse("en;q=0.2,da");
+        final List<WeightedValue> ranges = LanguageNegotiator.parse("en;q=0.2,da");
 
         // ASSERT
         assertEquals(2, ranges.size());
         assertEquals(new WeightedValue("en", 0.2f), ranges.get(0));
         assertEquals(new WeightedValue("da", 1.0f), ranges.get(1));
+    }
+
+
+    @Test
+    public void parseMultipleRangeZeroQuality() {
+
+        // ACT
+        final LanguageTag lang = _negotiator.selectLanguage(new WeightedValue("en", 0f));
+
+        // ASSERT
+        assertNull(lang);
     }
 }

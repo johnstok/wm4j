@@ -80,18 +80,17 @@ public class LanguageNegotiator {
         /*
          * If no language-range in the field matches the tag, the language
          * quality factor assigned is 0.
-         *
-         * I.e. reject available languages for which there is no range match.
          */
 
         /*
-         * If an Accept-Language header is present, then all languages which are
-         * assigned a quality factor greater than 0 are acceptable.
+         * Spec indicates an alternative algorithm:
+         *  - For each supported language assign a q factor based on the Accept-Languages header.
+         *  - Choose the lang with the highest q factor.
          */
 
-        for (WeightedValue lRange : languageRanges) {
-            // TODO: Reject weights of 0 or less.
-            for (LanguageTag lTag : _availableLanguages) {
+        for (final WeightedValue lRange : languageRanges) {
+            if (0>=lRange.getWeight()) { break; } // q <=0 is unacceptable.
+            for (final LanguageTag lTag : _availableLanguages) {
                 if (lTag.matchedBy(lRange.getValue())) {
                     return lTag;
                 }
@@ -136,12 +135,12 @@ public class LanguageNegotiator {
      * @return
      */
     public static List<WeightedValue> parse(final String value) {
-        List<WeightedValue> wValues = new ArrayList<WeightedValue>();
+        final List<WeightedValue> wValues = new ArrayList<WeightedValue>();
 
         if (null==value || 1>value.trim().length()) { return wValues; }
 
-        String[] lRanges = value.split(",");
-        for (String lRange : lRanges) {
+        final String[] lRanges = value.split(",");
+        for (final String lRange : lRanges) {
             if (null==lRange || 1>lRange.trim().length()) { continue; }
             wValues.add(Value.parse(lRange).asWeightedValue("q",1f));
         }
