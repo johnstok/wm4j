@@ -31,6 +31,7 @@ import org.junit.Test;
  */
 public class LanguageTagTest {
 
+
     @Test
     public void sameAreEqual() {
 
@@ -43,6 +44,7 @@ public class LanguageTagTest {
         // ASSERT
         assertTrue(equal);
     }
+
 
     @Test
     public void equivalentAreEqual() {
@@ -58,6 +60,7 @@ public class LanguageTagTest {
         assertTrue(equal);
     }
 
+
     @Test
     public void varyingCasesAreEqual() {
 
@@ -70,5 +73,223 @@ public class LanguageTagTest {
 
         // ASSERT
         assertTrue(equal);
+    }
+
+
+    @Test
+    public void equivalentMatch() {
+
+        // ARRANGE
+        LanguageTag t = new LanguageTag("en");
+
+        // ACT
+        boolean matches = t.matchedBy("en");
+
+        // ASSERT
+        assertTrue(matches);
+    }
+
+
+    @Test
+    public void varyingCasesMatch() {
+
+        // ARRANGE
+        LanguageTag t = new LanguageTag("En");
+
+        // ACT
+        boolean matches = t.matchedBy("eN");
+
+        // ASSERT
+        assertTrue(matches);
+    }
+
+
+    @Test
+    public void lessSpecificMatch() {
+
+        // ARRANGE
+        LanguageTag t = new LanguageTag("en-gb");
+
+        // ACT
+        boolean matches = t.matchedBy("en");
+
+        // ASSERT
+        assertTrue(matches);
+    }
+
+
+    @Test
+    public void lessSpecificCaseInsensitiveMatch() {
+
+        // ARRANGE
+        LanguageTag t = new LanguageTag("eN-gB");
+
+        // ACT
+        boolean matches = t.matchedBy("En");
+
+        // ASSERT
+        assertTrue(matches);
+    }
+
+
+    @Test
+    public void moreSpecificWontMatch() {
+
+        // ARRANGE
+        LanguageTag t = new LanguageTag("en");
+
+        // ACT
+        boolean matches = t.matchedBy("en-gb");
+
+        // ASSERT
+        assertFalse(matches);
+    }
+
+
+    @Test
+    public void tooShortWontMatch() {
+
+        // ARRANGE
+        LanguageTag t = new LanguageTag("en-gb");
+
+        // ACT
+        boolean matches = t.matchedBy("e");
+
+        // ASSERT
+        assertFalse(matches);
+    }
+
+
+    @Test
+    public void EndsWithDashWontMatch() {
+
+        // ARRANGE
+        LanguageTag t = new LanguageTag("en-gb");
+
+        // ACT
+        boolean matches = t.matchedBy("en-");
+
+        // ASSERT
+        assertFalse(matches);
+    }
+
+
+    @Test
+    public void emptyDisallowed() {
+
+        // ARRANGE
+
+        // ACT
+        new LanguageTag(" \n\t");
+
+        // ASSERT
+    }
+
+
+    @Test
+    public void zlsDisallowed() {
+
+        // ARRANGE
+
+        // ACT
+        new LanguageTag("");
+
+        // ASSERT
+    }
+
+
+    @Test
+    public void nullDisallowed() {
+
+        // ARRANGE
+
+        // ACT
+        new LanguageTag(null);
+
+        // ASSERT
+    }
+
+
+    @Test
+    public void whitespaceDisallowed() {
+
+        // ARRANGE
+
+        // ACT
+        new LanguageTag("en gb");
+
+        // ASSERT
+    }
+
+
+    @Test
+    public void nonAlphaDisallowed() {
+
+        // ARRANGE
+
+        // ACT
+        new LanguageTag("e1");
+
+        // ASSERT
+    }
+
+
+    @Test
+    public void malformed1Disallowed() {
+
+        // ARRANGE
+
+        // ACT
+        new LanguageTag("-en");
+
+        // ASSERT
+    }
+
+
+    @Test
+    public void malformed2Disallowed() {
+
+        // ARRANGE
+
+        // ACT
+        new LanguageTag("en-");
+
+        // ASSERT
+    }
+
+
+    @Test
+    public void malformed3Disallowed() {
+
+        // ARRANGE
+
+        // ACT
+        new LanguageTag("en--gb");
+
+        // ASSERT
+    }
+
+
+    @Test
+    public void tooLong1Disallowed() {
+
+        // ARRANGE
+
+        // ACT
+        new LanguageTag("abcdefghi");
+
+        // ASSERT
+    }
+
+
+    @Test
+    public void tooLong2Disallowed() {
+
+        // ARRANGE
+
+        // ACT
+        new LanguageTag("en-abcdefghi");
+
+        // ASSERT
     }
 }

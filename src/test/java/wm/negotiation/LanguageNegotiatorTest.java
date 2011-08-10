@@ -43,7 +43,11 @@ public class LanguageNegotiatorTest {
 
     @Before
     public void setUp() {
-        _negotiator = new LanguageNegotiator(new HashSet<LanguageTag>(Arrays.asList(new LanguageTag("en"))));
+        _negotiator = new LanguageNegotiator(new HashSet<LanguageTag>(Arrays.asList(
+            new LanguageTag("sv"),
+            new LanguageTag("sv-se"),
+            new LanguageTag("en"),
+            new LanguageTag("fr-ca"))));
     }
 
 
@@ -61,6 +65,50 @@ public class LanguageNegotiatorTest {
 
         // ASSERT
         assertEquals(new LanguageTag("en"), selected);
+    }
+
+
+    @Test
+    public void matchesMoreSpecific() {
+
+        // ACT
+        final LanguageTag selected  = _negotiator.selectLanguage(new WeightedValue("fr", 1f));
+
+        // ASSERT
+        assertEquals(new LanguageTag("fr-ca"), selected);
+    }
+
+
+    @Test
+    public void noMatchForLessSpecific() {
+
+        // ACT
+        final LanguageTag selected  = _negotiator.selectLanguage(new WeightedValue("en-gb", 1f));
+
+        // ASSERT
+        assertNull(selected);
+    }
+
+
+    @Test
+    public void qualityAssociatesWithMostSpecificMatch() {
+
+        // ACT
+        final LanguageTag selected  = _negotiator.selectLanguage(new WeightedValue("sv-se", 0.1f), new WeightedValue("sv", 1f));
+
+        // ASSERT
+        assertEquals(new LanguageTag("sv"), selected);
+    }
+
+
+    @Test
+    public void wildcardMatchesAnything() {
+
+        // ACT
+        final LanguageTag selected  = _negotiator.selectLanguage(new WeightedValue("*", 1f), new WeightedValue("sv", 0f), new WeightedValue("en", 0f));
+
+        // ASSERT
+        assertEquals(new LanguageTag("fr-ca"), selected);
     }
 
 

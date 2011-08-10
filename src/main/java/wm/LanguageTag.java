@@ -19,6 +19,8 @@
  *---------------------------------------------------------------------------*/
 package wm;
 
+import java.util.Locale;
+
 
 /**
  * Identifies a natural language spoken, written, etc. by human beings.
@@ -39,31 +41,41 @@ package wm;
  */
 public class LanguageTag {
 
-    // TODO: Replace with java.util.Locale ?
+    private final String _value;
 
-    private final String _primary;
 
     /**
      * Constructor.
      *
-     * @param primary
+     * @param value
      */
-    public LanguageTag(final String primary) {
+    public LanguageTag(final String value) {
         /*
          * White space is not allowed within the tag and all tags are
          * case-insensitive.
          */
-        _primary = primary; // TODO: Check for empty.
+        _value = Contract.require().matches("\\p{Alpha}{1,8}(-\\p{Alpha}{1,8})*", value);
     }
 
 
+    /**
+     * TODO: Add a description for this method.
+     *
+     * @param languageRange
+     *
+     * @return
+     */
     public boolean matchedBy(final String languageRange) { // See 14.4
         /*
          * A language-range matches a language-tag if it exactly equals the tag,
          * or if it exactly equals a prefix of the tag such that the first tag
          * character following the prefix is "-"
          */
-        return _primary.equals(languageRange); // Also, 'tag starts with range' - eg 'en' matches 'en-gb'.
+        String ciTag   = _value.toLowerCase(Locale.US);
+        String ciRange = languageRange.toLowerCase(Locale.US);
+        return ciTag.equals(ciRange)
+               || (ciTag.startsWith(ciRange)
+                   && '-'==ciTag.charAt(languageRange.length()));
     }
 
 
@@ -73,7 +85,7 @@ public class LanguageTag {
         final int prime = 31;
         int result = 1;
         result =
-            prime * result + ((_primary == null) ? 0 : _primary.hashCode());
+            prime * result + ((_value == null) ? 0 : _value.hashCode());
         return result;
     }
 
@@ -91,13 +103,32 @@ public class LanguageTag {
             return false;
         }
         LanguageTag other = (LanguageTag) obj;
-        if (_primary == null) {
-            if (other._primary != null) {
+        if (_value == null) {
+            if (other._value != null) {
                 return false;
             }
-        } else if (!_primary.equalsIgnoreCase(other._primary)) {
+        } else if (!_value.equalsIgnoreCase(other._value)) {
             return false;
         }
         return true;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString() {
+        return _value;
+    }
+
+
+    /**
+     * TODO: Add a description for this method.
+     *
+     * @param languageRange
+     *
+     * @return
+     */
+    public int matchDepth(final String languageRange) {
+        return (matchedBy(languageRange)) ? languageRange.split("-").length : 0 ;
     }
 }

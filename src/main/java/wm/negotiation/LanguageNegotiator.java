@@ -60,44 +60,58 @@ public class LanguageNegotiator {
      */
     public LanguageTag selectLanguage(final List<WeightedValue> languageRanges) {
 
-        Collections.sort(languageRanges);
+        /*
+         * Spec indicates algorithm:
+         *  - For each supported language assign a q factor based on the
+         *    Accept-Languages header.
+         *  - Choose the lang with the highest q factor.
+         */
+        List<WeightedValue> tags = new ArrayList<WeightedValue>();
+
+        /*
+         * If no language-range in the field matches the tag, the language
+         * quality factor assigned is 0.
+         */
+        float defaultWeight = 0;
 
         /*
          * The special range "*", if present in the Accept-Language field,
          * matches every tag not matched by any other range present in the
          * Accept-Language field.
          */
-
-        /*
-         * The language quality factor assigned to a language-tag by the
-         * Accept-Language field is the quality value of the longest
-         * language-range in the field that matches the language-tag.
-         *
-         * Accept-Language: en-gb;q=0.8, en;q=0.7
-         * Quality for lTag 'en-gb' is 0.8 even though 'en-gb' is "matched by" 'en'.
-         */
-
-        /*
-         * If no language-range in the field matches the tag, the language
-         * quality factor assigned is 0.
-         */
-
-        /*
-         * Spec indicates an alternative algorithm:
-         *  - For each supported language assign a q factor based on the Accept-Languages header.
-         *  - Choose the lang with the highest q factor.
-         */
-
-        for (final WeightedValue lRange : languageRanges) {
-            if (0>=lRange.getWeight()) { break; } // q <=0 is unacceptable.
-            for (final LanguageTag lTag : _availableLanguages) {
-                if (lTag.matchedBy(lRange.getValue())) {
-                    return lTag;
-                }
+        for (WeightedValue v : languageRanges) {
+            if ("*".equals(v.getValue())) {
+                defaultWeight = v.getWeight();
             }
         }
 
-        return null;
+        for (LanguageTag avail : _availableLanguages) {
+            float weight = defaultWeight;
+            int   depth  = 0;
+
+            for (WeightedValue v : languageRanges) {
+                /*
+                 * The language quality factor assigned to a language-tag by the
+                 * Accept-Language field is the quality value of the longest
+                 * language-range in the field that matches the language-tag.
+                 *
+                 * Accept-Language: en-gb;q=0.7, en;q=0.8
+                 * Quality for lTag 'en-gb' is 0.7 even though 'en-gb' is "matched by" 'en'.
+                 */
+                int matchDepth = avail.matchDepth(v.getValue());
+                if (matchDepth>depth) {
+                    weight = v.getWeight();
+                    depth = matchDepth;
+                }
+            }
+            if (weight>0) {
+                tags.add(new WeightedValue(avail.toString(), weight));
+            }
+        }
+
+        Collections.sort(tags);
+
+        return (tags.size()<1) ? null : new LanguageTag(tags.get(0).getValue());
     }
 
 
