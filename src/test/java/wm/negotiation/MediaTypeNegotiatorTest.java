@@ -39,7 +39,7 @@ public class MediaTypeNegotiatorTest {
         // ARRANGE
 
         // ACT
-        List<WeightedValue> ranges = MediaTypeNegotiator.parse("audio/basic");
+        final List<WeightedValue> ranges = MediaTypeNegotiator.parse("audio/basic");
 
         // ASSERT
         assertEquals(1, ranges.size());
@@ -53,7 +53,7 @@ public class MediaTypeNegotiatorTest {
         // ARRANGE
 
         // ACT
-        List<WeightedValue> ranges = MediaTypeNegotiator.parse("audio/*; q=0.2, audio/basic");
+        final List<WeightedValue> ranges = MediaTypeNegotiator.parse("audio/* ; q=0.2 , audio/basic");
 
         // ASSERT
         assertEquals(2, ranges.size());
@@ -61,5 +61,65 @@ public class MediaTypeNegotiatorTest {
         assertEquals(0.2f, ranges.get(0).getWeight());
         assertEquals("audio/basic", ranges.get(1).getValue());
         assertEquals(1f, ranges.get(1).getWeight());
+    }
+
+    @Test
+    public void parseSingleWithQuality() {
+        final List<WeightedValue> ranges = MediaTypeNegotiator.parse("application/xml;q=.5");
+        assertEquals(1, ranges.size());
+        assertEquals("application/xml", ranges.get(0).getValue());
+        assertEquals(.5f, ranges.get(0).getWeight());
+    }
+
+    @Test
+    public void parseMissingQValue() {
+
+        final List<WeightedValue> ranges = MediaTypeNegotiator.parse("application/xml;q=");
+        assertEquals(1, ranges.size());
+        assertEquals("application/xml", ranges.get(0).getValue());
+        assertEquals(1f, ranges.get(0).getWeight());
+    }
+
+    @Test
+    public void qValueTooHigh() {
+
+        final List<WeightedValue> ranges = MediaTypeNegotiator.parse("application/xml;q=3");
+        assertEquals(1, ranges.size());
+        assertEquals("application/xml", ranges.get(0).getValue());
+        assertEquals(1f, ranges.get(0).getWeight());
+    }
+
+    @Test
+    public void qValueTooLow() {
+
+        final List<WeightedValue> ranges = MediaTypeNegotiator.parse("application/xml;q=-1");
+        assertEquals(1, ranges.size());
+        assertEquals("application/xml", ranges.get(0).getValue());
+        assertEquals(0f, ranges.get(0).getWeight());
+    }
+
+    @Test
+    public void invalidWildcard() {
+
+        final List<WeightedValue> ranges = MediaTypeNegotiator.parse(" *; q=.2");
+        assertEquals(1, ranges.size());
+        assertEquals("*/*", ranges.get(0).getValue());
+        assertEquals(.2f, ranges.get(0).getWeight());
+    }
+
+    @Test
+    public void invalidQuality() {
+
+        final List<WeightedValue> ranges = MediaTypeNegotiator.parse("application/xml; q=bad");
+        assertEquals(0, ranges.size());
+    }
+
+    @Test
+    public void acceptExtensionsPreserved() {
+
+        final List<WeightedValue> ranges = MediaTypeNegotiator.parse("application/xml ; foo=bar;q=.3;b=other");
+        assertEquals(1, ranges.size());
+        assertEquals("application/xml;b=other", ranges.get(0).getValue());
+        assertEquals(.3f, ranges.get(0).getWeight());
     }
 }

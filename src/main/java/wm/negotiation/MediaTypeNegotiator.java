@@ -101,7 +101,11 @@ public class MediaTypeNegotiator {
         final String[] mtRanges = value.split(",");
         for (final String mtRange : mtRanges) {
             if (null==mtRange || 1>mtRange.trim().length()) { continue; }
-            wValues.add(Value.parse(mtRange).asWeightedValue("q",1f));
+            try {
+                wValues.add(Value.parse(mtRange).asWeightedValue("q",1f));
+            } catch (final NumberFormatException e) {
+                // TODO: Log invalid weighted value.
+            }
         }
 
         return wValues;

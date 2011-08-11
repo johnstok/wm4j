@@ -21,6 +21,8 @@ package wm;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 /**
@@ -63,12 +65,21 @@ public class Value {
      * @return
      */
     public static Value parse(final String string) {
-        HashMap<String, String> properties = new HashMap<String, String>();
+        final HashMap<String, String> properties = new HashMap<String, String>();
 
-        String[] parts = string.split(";");
+        final String[] parts = string.split(";");
         for (int i=1; i<parts.length; i++) {
-            String[] kvPair = parts[i].split("=");
-            properties.put(kvPair[0].trim(), kvPair[1].trim());
+            final Matcher m =
+                Pattern.compile("("+Syntax.TOKEN+"+)[ ]*=[ ]*("+Syntax.TOKEN+"*)")
+                .matcher(parts[i].trim());
+            if (m.matches()) {
+                final int count = m.groupCount();
+                if (m.groupCount()==1) {
+                    properties.put(m.group(1), "");
+                } else {
+                    properties.put(m.group(1), m.group(2));
+                }
+            }
         }
 
         return new Value(parts[0].trim(), properties);
@@ -85,10 +96,12 @@ public class Value {
      */
     public WeightedValue asWeightedValue(final String weightingPropertyName,
                                          final float defaultWeight) {
-        String weightProperty = _props.get(weightingPropertyName);
-        return new WeightedValue(
-            _value,
-            (null==weightProperty) ? defaultWeight : Float.parseFloat(weightProperty));
+        final String weightProperty = _props.get(weightingPropertyName);
+        float weight =
+            (null==weightProperty || weightProperty.trim().isEmpty()) ? defaultWeight :Float.parseFloat(weightProperty);
+        if (weight<0) { weight=0; }
+        if (weight>defaultWeight) { weight=defaultWeight; }
+        return new WeightedValue(_value, weight);
     }
 
 
@@ -115,7 +128,7 @@ public class Value {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        Value other = (Value) obj;
+        final Value other = (Value) obj;
         if (_props == null) {
             if (other._props != null) {
                 return false;
