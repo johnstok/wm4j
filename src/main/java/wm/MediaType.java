@@ -10,6 +10,8 @@ package wm;
 /**
  * TODO: Add a description for this type.
  *
+ * Implements RFC-2616, section 3.7.
+ *
  * @author Keith Webster Johnston.
  */
 public class MediaType {

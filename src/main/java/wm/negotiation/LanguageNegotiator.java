@@ -138,17 +138,17 @@ public class LanguageNegotiator {
      * represents an estimate of the user's preference for the languages
      * specified by that range. The quality value defaults to "q=1".
      *
-     * Handle:
-     *  - duplicate lRange (incl case variations).
-     *  - malformed lRange
-     *  - malformed field
+     * @param value The value to parse.
      *
-     * TODO: Add a description for this method.
-     *
-     * @param get_req_header
-     * @return
+     * @return The corresponding list of weighted values.
      */
     public static List<WeightedValue> parse(final String value) {
+        /*
+         * TODO Handle:
+         *  - duplicate lRange (incl case variations).
+         *  - malformed lRange
+         *  - malformed field
+         */
         final List<WeightedValue> wValues = new ArrayList<WeightedValue>();
 
         if (null==value || 1>value.trim().length()) { return wValues; }

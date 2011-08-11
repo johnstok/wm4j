@@ -68,10 +68,10 @@ public class Value {
         String[] parts = string.split(";");
         for (int i=1; i<parts.length; i++) {
             String[] kvPair = parts[i].split("=");
-            properties.put(kvPair[0], kvPair[1]);
+            properties.put(kvPair[0].trim(), kvPair[1].trim());
         }
 
-        return new Value(parts[0], properties);
+        return new Value(parts[0].trim(), properties);
     }
 
 

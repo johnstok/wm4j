@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import wm.negotiation.LanguageNegotiator;
+import wm.negotiation.MediaTypeNegotiator;
 
 
 /**
@@ -26,8 +27,9 @@ public class Engine {
 
     private MediaType accept(final Request request,
                              final Map<MediaType, BodyWriter> content_types_provided) {
-        // Order Accept values by q value then specificity
-        return null;
+        final List<WeightedValue> clientMediaTypes =
+            MediaTypeNegotiator.parse(request.get_req_header(Header.ACCEPT));
+        return new MediaTypeNegotiator(content_types_provided.keySet()).select(clientMediaTypes);
     }
 
 
