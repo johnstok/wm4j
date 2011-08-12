@@ -20,7 +20,15 @@
 package wm.negotiation;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import wm.MediaType;
 import wm.Value;
@@ -42,10 +50,20 @@ public class MediaTypeNegotiator {
     /**
      * Constructor.
      *
-     * @param keySet
+     * @param availableMediaTypes
      */
-    public MediaTypeNegotiator(final Set<MediaType> availableMediaTypes) {
-        _availableMediaTypes = availableMediaTypes; // TODO: Make defensive copy?
+    public MediaTypeNegotiator(final Collection<MediaType> availableMediaTypes) {
+        _availableMediaTypes = new LinkedHashSet<MediaType>(availableMediaTypes);
+    }
+
+
+    /**
+     * Constructor.
+     *
+     * @param availableMediaTypes
+     */
+    public MediaTypeNegotiator(final MediaType... availableMediaTypes) {
+        this(Arrays.asList(availableMediaTypes));
     }
 
 
@@ -162,6 +180,90 @@ public class MediaTypeNegotiator {
      * @return The selected media type.
      */
     public MediaType select(final List<WeightedValue> mediaRanges) {
-        return null;
+
+        if (null==mediaRanges || 0==mediaRanges.size()) {
+            // Any media type is acceptable - return the first.
+            // FIXME: Doesn't handle 0 available media types.
+            return _availableMediaTypes.iterator().next();
+        }
+
+        // Calculate weights
+        Map<MediaType, Float> weightedMediaTypes = weights(mediaRanges);
+
+        // No matches.
+        if (0==weightedMediaTypes.size()) { return null; }
+
+        // Select best quality media type.
+        return
+            Collections.max(
+                weightedMediaTypes.entrySet(),
+                new Comparator<Map.Entry<MediaType, Float>>() {
+                    @Override
+                    public int compare(final Entry<MediaType, Float> o1,
+                                       final Entry<MediaType, Float> o2) {
+                        return Float.compare(o1.getValue(), o2.getValue());
+                    }
+            }).getKey();
+    }
+
+
+    /**
+     * Negotiate a media type.
+     *
+     * @see MediaTypeNegotiator#select(List)
+     *
+     * @param mediaRanges The range of accepted media types.
+     *
+     * @return The selected media type.
+     */
+    public MediaType select(final WeightedValue... mediaRanges) {
+        return select(Arrays.asList(mediaRanges));
+    }
+
+
+    /**
+     * Calculate the quality for each available media type.
+     *
+     * @param mediaRanges The media ranges specifying quality weightings.
+     *
+     * @return A map from media type to quality weighting.
+     */
+    public Map<MediaType, Float> weights(final List<WeightedValue> mediaRanges) {
+
+        Map<MediaType, Float> weights = new HashMap<MediaType, Float>();
+
+        /*
+         * If no range in the field matches the media type, the quality factor
+         * assigned is 0.
+         */
+        float defaultWeight = 0;
+
+        for (MediaType avail : _availableMediaTypes) {
+            float weight = defaultWeight;
+            MediaType match = null;
+
+            for (WeightedValue v : mediaRanges) {
+                MediaType mediaRange = new MediaType(v.getValue());
+                if (avail.matches(mediaRange) && mediaRange.precedes(match)) {
+                    weight = v.getWeight();
+                    match = mediaRange;
+                }
+            }
+            weights.put(avail, weight);
+        }
+
+        return weights;
+    }
+
+
+    /**
+     * Calculate the quality for each available media type.
+     *
+     * @param mediaRanges The media ranges specifying quality weightings.
+     *
+     * @return A map from media type to quality weighting.
+     */
+    public Map<MediaType, Float> weights(final WeightedValue... mediaRanges) {
+        return weights(Arrays.asList(mediaRanges));
     }
 }

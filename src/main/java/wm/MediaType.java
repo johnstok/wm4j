@@ -2,7 +2,20 @@
  * Copyright © 2011 Keith Webster Johnston.
  * All rights reserved.
  *
- * Revision      $Rev$
+ * This file is part of wm4j.
+ *
+ * wm4j is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option) any
+ * later version.
+ *
+ * wm4j is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with wm4j.  If not, see <http://www.gnu.org/licenses/>.
  *---------------------------------------------------------------------------*/
 package wm;
 
@@ -132,7 +145,7 @@ public class MediaType {
 
 
     /**
-     * Text whether the specified media type matches this one.
+     * Test whether the specified media type matches this one.
      *
      * @param mediaType The media type to test.
      *
@@ -144,13 +157,13 @@ public class MediaType {
 
 
     /**
-     * Text whether the specified media type matches this one.
+     * Test whether the specified media type matches this one.
      *
      * @param mediaType The media type to test.
      *
      * @return True if the provided media type matches; false otherwise.
      */
-    private boolean matches(final MediaType mediaType) {
+    public boolean matches(final MediaType mediaType) {
         if (_type.equalsIgnoreCase(mediaType._type) && _subtype.equalsIgnoreCase(mediaType._subtype)) {
             return true;
         } else if (_type.equalsIgnoreCase(mediaType._type) && "*".equals(mediaType._subtype)) {
@@ -162,6 +175,36 @@ public class MediaType {
     }
 
 
+    /** {@inheritDoc} */
+    @Override
+    public String toString() {
+        return _type+"/"+_subtype;
+    }
+
+
     public static final MediaType ANY = new MediaType("*", "*");
     public static final MediaType HTML = new MediaType("text", "html");
+    public static final MediaType XML = new MediaType("application", "xml");
+    public static final MediaType JPEG = new MediaType("image", "jpeg");
+    public static final MediaType JSON = new MediaType("application", "json");
+
+
+    /**
+     * TODO: Add a description for this method.
+     *
+     * @param match
+     * @return
+     */
+    public boolean precedes(final MediaType mediaType) {
+        if (null==mediaType) {
+            return true;
+        } else if (ANY.equals(mediaType) && !"*".equals(_type)) {
+            return true;
+        } else if (_type.equalsIgnoreCase(mediaType._type)
+                   && "*".equals(mediaType._subtype)
+                   && !"*".equals(_subtype)) {
+            return true;
+        }
+        return false;
+    }
 }

@@ -21,7 +21,9 @@ package wm.negotiation;
 
 import static org.junit.Assert.*;
 import java.util.List;
+import java.util.Map;
 import org.junit.Test;
+import wm.MediaType;
 import wm.WeightedValue;
 
 
@@ -32,6 +34,111 @@ import wm.WeightedValue;
  * @author Keith Webster Johnston.
  */
 public class MediaTypeNegotiatorTest {
+
+    @Test
+    public void simpleSelection() {
+
+        // ARRANGE
+        MediaTypeNegotiator n = new MediaTypeNegotiator(MediaType.HTML);
+
+        // ACT
+        MediaType mt = n.select(new WeightedValue("text/html", 1f));
+
+        // ASSERT
+        assertEquals(MediaType.HTML, mt);
+    }
+
+    @Test
+    public void selectionOnWeight() {
+
+        // ARRANGE
+        MediaTypeNegotiator n =
+            new MediaTypeNegotiator(MediaType.HTML, MediaType.XML);
+
+        // ACT
+        MediaType mt =
+            n.select(
+                new WeightedValue("text/html", .5f),
+                new WeightedValue("application/xml", .6f));
+
+        // ASSERT
+        assertEquals(MediaType.XML, mt);
+    }
+
+    @Test
+    public void selectionWithWildcard() {
+
+        // ARRANGE
+        MediaTypeNegotiator n =
+            new MediaTypeNegotiator(MediaType.HTML, MediaType.JPEG);
+
+        // ACT
+        MediaType mt =
+            n.select(
+                new WeightedValue("text/html", .5f),
+                new WeightedValue("image/*", .6f));
+
+        // ASSERT
+        assertEquals(MediaType.JPEG, mt);
+    }
+
+    @Test
+    public void selectionWithAny() {
+
+        // ARRANGE
+        MediaTypeNegotiator n =
+            new MediaTypeNegotiator(MediaType.HTML);
+
+        // ACT
+        MediaType mt =
+            n.select(
+                new WeightedValue("application/xml", .5f),
+                new WeightedValue("*/*", .6f));
+
+        // ASSERT
+        assertEquals(MediaType.HTML, mt);
+    }
+
+    @Test
+    public void qualityRespectsPrecedence() {
+
+        // ARRANGE
+        MediaTypeNegotiator n =
+            new MediaTypeNegotiator(
+                MediaType.XML, MediaType.JSON, MediaType.JPEG);
+
+        // ACT
+        Map<MediaType, Float> weights =
+            n.weights(
+                new WeightedValue("application/xml", .6f),
+                new WeightedValue("application/*",   .5f),
+                new WeightedValue("*/*",             .4f));
+
+        // ASSERT
+        assertEquals(3, weights.size());
+        assertEquals(.6f, weights.get(MediaType.XML));
+        assertEquals(.5f, weights.get(MediaType.JSON));
+        assertEquals(.4f, weights.get(MediaType.JPEG));
+    }
+
+    @Test
+    public void selectionRespectsPrecedence() {
+
+        // ARRANGE
+        MediaTypeNegotiator n =
+            new MediaTypeNegotiator(
+                MediaType.XML, MediaType.JSON, MediaType.JPEG);
+
+        // ACT
+        MediaType mt =
+            n.select(
+                new WeightedValue("application/xml", .4f),
+                new WeightedValue("application/*",   .5f),
+                new WeightedValue("*/*",             .6f));
+
+        // ASSERT
+        assertEquals(MediaType.JPEG, mt);
+    }
 
     @Test
     public void parseSingleNoWeight() {
