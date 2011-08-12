@@ -29,6 +29,7 @@ import org.junit.Test;
  *
  * @author Keith Webster Johnston.
  */
+@SuppressWarnings("unused")
 public class LanguageTagTest {
 
 
@@ -180,9 +181,14 @@ public class LanguageTagTest {
         // ARRANGE
 
         // ACT
-        new LanguageTag(" \n\t");
+        try {
+            new LanguageTag(" \n\t");
+            fail();
 
         // ASSERT
+        } catch (IllegalArgumentException e) {
+            assertEquals("String ' \n\t' does not match regular expression /\\p{Alpha}{1,8}(-\\p{Alpha}{1,8})*/.", e.getMessage());
+        }
     }
 
 
@@ -192,9 +198,14 @@ public class LanguageTagTest {
         // ARRANGE
 
         // ACT
-        new LanguageTag("");
+        try {
+            new LanguageTag("");
+            fail();
 
         // ASSERT
+        } catch (IllegalArgumentException e) {
+            assertEquals("String '' does not match regular expression /\\p{Alpha}{1,8}(-\\p{Alpha}{1,8})*/.", e.getMessage());
+        }
     }
 
 
@@ -204,9 +215,14 @@ public class LanguageTagTest {
         // ARRANGE
 
         // ACT
-        new LanguageTag(null);
+        try {
+            new LanguageTag(null);
+            fail();
 
         // ASSERT
+        } catch (NullPointerException e) {
+            assertNull(e.getMessage());
+        }
     }
 
 
@@ -216,9 +232,14 @@ public class LanguageTagTest {
         // ARRANGE
 
         // ACT
-        new LanguageTag("en gb");
+        try {
+            new LanguageTag("en gb");
+            fail();
 
         // ASSERT
+        } catch (IllegalArgumentException e) {
+            assertEquals("String 'en gb' does not match regular expression /\\p{Alpha}{1,8}(-\\p{Alpha}{1,8})*/.", e.getMessage());
+        }
     }
 
 
@@ -228,9 +249,14 @@ public class LanguageTagTest {
         // ARRANGE
 
         // ACT
-        new LanguageTag("e1");
+        try {
+            new LanguageTag("e1");
+            fail();
 
         // ASSERT
+        } catch (IllegalArgumentException e) {
+            assertEquals("String 'e1' does not match regular expression /\\p{Alpha}{1,8}(-\\p{Alpha}{1,8})*/.", e.getMessage());
+        }
     }
 
 
@@ -240,9 +266,14 @@ public class LanguageTagTest {
         // ARRANGE
 
         // ACT
-        new LanguageTag("-en");
+        try {
+            new LanguageTag("-en");
+            fail();
 
         // ASSERT
+        } catch (IllegalArgumentException e) {
+            assertEquals("String '-en' does not match regular expression /\\p{Alpha}{1,8}(-\\p{Alpha}{1,8})*/.", e.getMessage());
+        }
     }
 
 
@@ -252,9 +283,14 @@ public class LanguageTagTest {
         // ARRANGE
 
         // ACT
-        new LanguageTag("en-");
+        try {
+            new LanguageTag("en-");
+            fail();
 
         // ASSERT
+        } catch (IllegalArgumentException e) {
+            assertEquals("String 'en-' does not match regular expression /\\p{Alpha}{1,8}(-\\p{Alpha}{1,8})*/.", e.getMessage());
+        }
     }
 
 
@@ -264,9 +300,14 @@ public class LanguageTagTest {
         // ARRANGE
 
         // ACT
-        new LanguageTag("en--gb");
+        try {
+            new LanguageTag("en--gb");
+            fail();
 
         // ASSERT
+        } catch (IllegalArgumentException e) {
+            assertEquals("String 'en--gb' does not match regular expression /\\p{Alpha}{1,8}(-\\p{Alpha}{1,8})*/.", e.getMessage());
+        }
     }
 
 
@@ -276,9 +317,14 @@ public class LanguageTagTest {
         // ARRANGE
 
         // ACT
-        new LanguageTag("abcdefghi");
+        try {
+            new LanguageTag("abcdefghi");
+            fail();
 
         // ASSERT
+        } catch (IllegalArgumentException e) {
+            assertEquals("String 'abcdefghi' does not match regular expression /\\p{Alpha}{1,8}(-\\p{Alpha}{1,8})*/.", e.getMessage());
+        }
     }
 
 
@@ -288,8 +334,13 @@ public class LanguageTagTest {
         // ARRANGE
 
         // ACT
-        new LanguageTag("en-abcdefghi");
+        try {
+            new LanguageTag("en-abcdefghi");
+            fail();
 
         // ASSERT
+        } catch (IllegalArgumentException e) {
+            assertEquals("String 'en-abcdefghi' does not match regular expression /\\p{Alpha}{1,8}(-\\p{Alpha}{1,8})*/.", e.getMessage());
+        }
     }
 }
