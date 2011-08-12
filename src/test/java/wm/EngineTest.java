@@ -1052,7 +1052,12 @@ public class EngineTest {
         _request.setHeader(Header.ACCEPT_LANGUAGE, Locale.UK.toString());
         final Resource resource = new TestResource(
             _request,
-            new HashMap<String, Object>());
+            new HashMap<String, Object>()) {
+
+                @Override public Set<LanguageTag> languages_provided() {
+                    return Collections.singleton(new LanguageTag("fr"));
+                }
+        };
 
         // ACT
         _engine.process(resource, _response);
