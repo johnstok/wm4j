@@ -46,3 +46,7 @@ Easy to test each method on a resource e.g. isWellFormed()
 Idea: HTML5 canvas version of HTTP flow chart.
 
 Idea: Support for performance features recommended via YSlow & PageSpeed.
+
+Idea: URI templating library
+
+Ideas from HTML5 boilerplate lib
