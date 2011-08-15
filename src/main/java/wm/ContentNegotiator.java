@@ -25,6 +25,10 @@ import java.util.Set;
  *
  * @author Keith Webster Johnston.
  */
+@Specifications({
+    @Specification(name="rfc-2616", section="3.5"),
+    @Specification(name="rfc-2616", section="14.3")
+})
 public class ContentNegotiator {
 
     private static final WeightedValue ANY =
@@ -56,7 +60,7 @@ public class ContentNegotiator {
      */
     public ContentNegotiator(final Set<String> values) {
         final List<WeightedValue> supported = new ArrayList<WeightedValue>();
-        for (String value : values) {
+        for (final String value : values) {
             supported.add(new WeightedValue(value, 1.0f));
         }
         Collections.sort(supported);

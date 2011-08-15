@@ -144,13 +144,30 @@ public final class Header {
 
 
     /**
-     * TODO: Add a description for this method.
+     * Parse an 'Accept-Encoding' header into a list of weighted values.
      *
-     * @param get_req_header
+     * @param value
+     *
      * @return
      */
-    public static List<WeightedValue> parseAcceptEncoding(final String get_req_header) {
-        throw new UnsupportedOperationException("Method not implemented.");
+    public static List<WeightedValue> parseAcceptEncoding(final String value) {
+        /*
+         * TODO Handle:
+         *  - duplicate eRange (incl case variations).
+         *  - malformed eRange
+         *  - malformed field
+         */
+        final List<WeightedValue> wValues = new ArrayList<WeightedValue>();
+
+        if (null==value || 1>value.trim().length()) { return wValues; }
+
+        final String[] eRanges = value.split(",");
+        for (final String eRange : eRanges) {
+            if (null==eRange || 1>eRange.trim().length()) { continue; }
+            wValues.add(Value.parse(eRange).asWeightedValue("q",1f));
+        }
+
+        return wValues;
     }
 
 

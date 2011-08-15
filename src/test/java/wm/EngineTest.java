@@ -1038,7 +1038,9 @@ public class EngineTest {
     public void unacceptableRequestEncodingGivesNotAcceptable() {
 
         // ARRANGE
-        _request.setHeader(Header.ACCEPT_ENCODING, ContentEncoding.GZIP);
+        _request.setHeader(
+            Header.ACCEPT_ENCODING,
+            ContentEncoding.IDENTITY+";q=0,"+ContentEncoding.GZIP);
         final Resource resource = new TestResource(
             _request,
             new HashMap<String, Object>());
