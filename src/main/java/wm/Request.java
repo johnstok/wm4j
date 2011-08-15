@@ -342,4 +342,14 @@ public interface Request {
      * @return True if the date is valid; false otherwise.
      */
     boolean isValidDate(String headerName);
+
+
+    /**
+     * Does this request have at least one header with the specified name.
+     *
+     * @param headerName
+     *
+     * @return True if the request has such a header; false otherwise.
+     */
+    boolean hasHeader(String headerName);
 }

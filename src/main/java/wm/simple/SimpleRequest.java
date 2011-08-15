@@ -319,4 +319,11 @@ public class SimpleRequest
             return false;
         }
     }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean hasHeader(final String headerName) {
+        return null!=get_req_header(headerName);
+    }
 }

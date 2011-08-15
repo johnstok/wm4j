@@ -49,7 +49,7 @@ public class Engine {
         final List<WeightedValue> clientEncodings =
             Header.parseAcceptEncoding(
                 request.get_req_header(Header.ACCEPT_ENCODING));
-        ContentNegotiator negotiator = new ContentNegotiator(encodings_provided);
+        final ContentNegotiator negotiator = new ContentNegotiator(encodings_provided);
         return negotiator.selectEncoding(clientEncodings);
     }
 
@@ -58,14 +58,9 @@ public class Engine {
                                        final Set<LanguageTag> languages_provided) {
         final List<WeightedValue> clientLanguages =
             LanguageNegotiator.parse(request.get_req_header(Header.ACCEPT_LANGUAGE));
-        LanguageNegotiator negotiator =
+        final LanguageNegotiator negotiator =
             new LanguageNegotiator(languages_provided);
         return negotiator.selectLanguage(clientLanguages);
-    }
-
-
-    private boolean exists(final String headerName, final Request request) {
-        return null!=request.get_req_header(headerName);
     }
 
 
@@ -181,7 +176,7 @@ public class Engine {
 
     private void GO8(final Resource resource,
                      final Response response) throws HttpException {
-        if (null!=resource._request.get_req_header(Header.IF_MATCH)) {
+        if (resource._request.hasHeader(Header.IF_MATCH)) {
             G09(resource, response);
         } else {
             H10(resource, response);
@@ -211,7 +206,7 @@ public class Engine {
 
     private void L13(final Resource resource,
                      final Response response) throws HttpException {
-        if (null!=resource._request.get_req_header(Header.IF_MODIFIED_SINCE)) {
+        if (resource._request.hasHeader(Header.IF_MODIFIED_SINCE)) {
             L14(resource, response);
         } else {
             M16(resource, response);
@@ -252,7 +247,7 @@ public class Engine {
 
     private void I12(final Resource resource,
                      final Response response) throws HttpException {
-        if (null!=resource._request.get_req_header(Header.IF_NONE_MATCH)) {
+        if (resource._request.hasHeader(Header.IF_NONE_MATCH)) {
             I13(resource, response);
         } else {
             L13(resource, response);
@@ -293,7 +288,7 @@ public class Engine {
 
     private void H10(final Resource resource,
                      final Response response) throws HttpException {
-        if (null!=resource._request.get_req_header(Header.IF_UNMODIFIED_SINCE)) {
+        if (resource._request.hasHeader(Header.IF_UNMODIFIED_SINCE)) {
             H11(resource, response);
         } else {
             I12(resource, response);
@@ -428,7 +423,7 @@ public class Engine {
 
     private void F06(final Resource resource,
                     final Response response) throws HttpException {
-        if (exists(Header.ACCEPT_ENCODING, resource._request)) {
+        if (resource._request.hasHeader(Header.ACCEPT_ENCODING)) {
             F07(resource, response);
         } else {
             G07(resource, response);
@@ -450,7 +445,7 @@ public class Engine {
 
     private void E05(final Resource resource,
                      final Response response) throws HttpException {
-        if (exists(Header.ACCEPT_CHARSET, resource._request)) {
+        if (resource._request.hasHeader(Header.ACCEPT_CHARSET)) {
             E06(resource, response);
         } else {
             F06(resource, response);
@@ -472,7 +467,7 @@ public class Engine {
 
     private void D04(final Resource resource,
                      final Response response) throws HttpException {
-        if (exists(Header.ACCEPT_LANGUAGE, resource._request)) {
+        if (resource._request.hasHeader(Header.ACCEPT_LANGUAGE)) {
             D05(resource, response);
         } else {
             E05(resource, response);
@@ -494,7 +489,7 @@ public class Engine {
 
     private void C03(final Resource resource,
                      final Response response) throws HttpException {
-        if (exists(Header.ACCEPT, resource._request)) {
+        if (resource._request.hasHeader(Header.ACCEPT)) {
             C04(resource, response);
         } else {
             D04(resource, response);
