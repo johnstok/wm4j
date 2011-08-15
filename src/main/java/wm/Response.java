@@ -1,4 +1,5 @@
 /*-----------------------------------------------------------------------------
+
  * Copyright © 2011 Keith Webster Johnston.
  * All rights reserved.
  *
@@ -91,4 +92,20 @@ public interface Response {
      * @param value
      */
     void setHeader(String name, Date value);
+
+
+    /**
+     * TODO: Add a description for this method.
+     *
+     * @param charset
+     */
+    void setCharset(Charset charset);
+
+
+    /**
+     * TODO: Add a description for this method.
+     *
+     * @param mediaType
+     */
+    void setMediaType(MediaType mediaType);
 }

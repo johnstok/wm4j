@@ -12,29 +12,32 @@
 * New resource P11
 
 ## Conneg
+  * header unspecified; resource specified -> select any
+  * header specified; resource unspecified -> ?
+  * neither specified -> ?
   * Consistent API
   * Consistent Javadoc
-  * Move to 'wm.negotiation'
   * Consistent implementation
   * Missing tests for parser
   * Missing tests for negotiator
   * Media type selection based on params (e.g. 'text/html;level=1')
+  * Setting of 'Vary' header following negotiations. Think this can be hard-coded?
+  * Setting of appropriate 'Content-*' headers.
   
 ## Bindings
    * Servlet API
    * Simple HTTP
+   * Extract common code to abstract base class.
   
 Enhanced error handling.
 
 Improve Request,Response,Resource APIs.
 
-Setting of 'Vary' header following negotiations.
-
-Setting of appropriate 'Content-*' headers.
-
 Setting of 'Cache-Control' header.
 
 Implementation of Path object's methods.
+
+Support for multiple headers with the same key.
 
 
 # Enhancement

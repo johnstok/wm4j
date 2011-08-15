@@ -10,6 +10,7 @@ import static wm.Header.*;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -28,7 +29,7 @@ import wm.negotiation.MediaTypeNegotiator;
 public class Engine {
 
     private MediaType accept(final Request request,
-                             final Map<MediaType, BodyWriter> content_types_provided) {
+                             final Map<MediaType, ? extends BodyWriter> content_types_provided) {
         final List<WeightedValue> clientMediaTypes =
             MediaTypeNegotiator.parse(request.get_req_header(Header.ACCEPT));
         return new MediaTypeNegotiator(content_types_provided.keySet()).select(clientMediaTypes);
@@ -77,14 +78,15 @@ public class Engine {
     private void O20(final Resource resource,
                      final Response response) throws HttpException {
         if (response.hasBody()) {
-            O18(resource, response);
+            O18_multiple_representations(resource, response);
         } else {
             response.setStatus(Status.NO_CONTENT);
         }
     }
 
 
-    private void O18(final Resource resource,
+    private void O18_multiple_representations(
+                     final Resource resource,
                      final Response response) throws HttpException {
         // TODO: Set appropriate headers for response.
         if (resource.multiple_choices()) {
@@ -422,10 +424,14 @@ public class Engine {
 
 
     private void F06(final Resource resource,
-                    final Response response) throws HttpException {
+                     final Response response) throws HttpException {
         if (resource._request.hasHeader(Header.ACCEPT_ENCODING)) {
             F07(resource, response);
         } else {
+            final String enc = first(resource.encodings_provided());
+            if (null!=enc) {
+                response.setHeader(Header.CONTENT_ENCODING, enc);
+            }
             G07(resource, response);
         }
     }
@@ -438,6 +444,7 @@ public class Engine {
         if (null==encoding) {
             response.setStatus(Status.NOT_ACCEPTABLE);
         } else {
+            response.setHeader(Header.CONTENT_ENCODING, encoding);
             G07(resource, response);
         }
     }
@@ -460,6 +467,7 @@ public class Engine {
         if (null==charset) {
             response.setStatus(Status.NOT_ACCEPTABLE);
         } else {
+            response.setCharset(charset);
             F06(resource, response);
         }
     }
@@ -470,8 +478,20 @@ public class Engine {
         if (resource._request.hasHeader(Header.ACCEPT_LANGUAGE)) {
             D05(resource, response);
         } else {
+            final LanguageTag lt = first(resource.languages_provided());
+            if (null!=lt) {
+                response.setHeader(Header.CONTENT_LANGUAGE, lt.toString());
+            }
             E05(resource, response);
         }
+    }
+
+
+    private <T> T first(final Set<T> set) {
+        if (null==set) { return null; }
+        final List<T> list = new ArrayList<T>(set);
+        if (1>list.size()) { return null; }
+        return list.get(0);
     }
 
 
@@ -482,6 +502,7 @@ public class Engine {
         if (null==language) {
             response.setStatus(Status.NOT_ACCEPTABLE);
         } else {
+            response.setHeader(Header.CONTENT_LANGUAGE, language.toString());
             E05(resource, response);
         }
     }
@@ -504,6 +525,7 @@ public class Engine {
         if (null==mediaType) {
             response.setStatus(Status.NOT_ACCEPTABLE);
         } else {
+            response.setMediaType(mediaType);
             D04(resource, response);
         }
     }
@@ -660,7 +682,7 @@ public class Engine {
         if (Method.PUT==resource._request.get_req_method()) {
             O14(resource, response);
         } else {
-            O18(resource, response);
+            O18_multiple_representations(resource, response);
         }
     }
 

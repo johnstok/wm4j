@@ -42,10 +42,35 @@ public class EngineTest {
      *
      * ===========*/
 
+    private static final class HelloWorldWriter
+        implements
+            BodyWriter {
+
+        private final Charset _charset;
+
+
+        /**
+         * Constructor.
+         *
+         * @param charset
+         */
+        private HelloWorldWriter(final Charset charset) {
+            _charset = charset;
+        }
+
+
+        @Override public void write(final OutputStream outputStream) throws IOException {
+            outputStream.write("Hello, world!".getBytes(_charset));
+        }
+    }
+
+
     private Engine       _engine;
     private TestResponse _response;
     private TestRequest  _request;
     private static final String TARGET_URI = "http://localhost/foo";
+    static final Charset UTF_8 = Charset.forName("UTF-8");
+    static final Charset UTF_16 = Charset.forName("UTF-16");
 
 
     @Test
@@ -760,22 +785,14 @@ public class EngineTest {
     @Test
     public void getResourceCanReturnOk() {
 
-        // ARRANGE
-        final Charset UTF8 = Charset.forName("UTF-8");
-        final Resource resource = new TestResource(
-            _request,
-            new HashMap<String, Object>()) {
+        // ACT
+        final Resource resource =
+            new TestResource(_request, new HashMap<String, Object>()) {
 
-            @Override
-            public Map<MediaType, BodyWriter> content_types_provided() {
-                final BodyWriter bw = new BodyWriter() {
-                    @Override public void write(final OutputStream outputStream) throws IOException {
-                        outputStream.write("Hello, world!".getBytes(UTF8));
-                    }
-                };
-
-                return Collections.singletonMap(MediaType.ANY,  bw);
-            }
+                @Override
+                public Map<MediaType, HelloWorldWriter> content_types_provided() {
+                    return Collections.singletonMap(MediaType.ANY,  new HelloWorldWriter(UTF_8));
+                }
         };
 
         // ACT
@@ -785,7 +802,169 @@ public class EngineTest {
         Assert.assertSame(Status.OK, _response.getStatus());
         Assert.assertEquals(
             "Hello, world!",
-            _response.getBodyAsString(UTF8));
+            _response.getBodyAsString(UTF_8));
+    }
+
+
+    @Test
+    public void requestConnegWithoutAcceptSelectsDefaults() {
+
+        // ACT
+        final Resource resource =
+            new TestResource(_request, new HashMap<String, Object>()) {
+
+                @Override
+                public Map<MediaType, HelloWorldWriter> content_types_provided() {
+                    return Collections.singletonMap(MediaType.JSON,  new HelloWorldWriter(UTF_8));
+                }
+
+                @Override
+                public Set<LanguageTag> languages_provided() {
+                    return Collections.singleton(new LanguageTag("da"));
+                }
+
+                @Override
+                public Set<String> encodings_provided() {
+                    return Collections.singleton(ContentEncoding.GZIP);
+                }
+
+                @Override
+                public Set<Charset> charsets_provided() {
+                    return Collections.singleton(UTF_16);
+                }
+        };
+
+        // ACT
+        _engine.process(resource, _response);
+
+        // ASSERT
+        Assert.assertSame(Status.OK, _response.getStatus());
+        Assert.assertEquals("da", _response.getHeader(Header.CONTENT_LANGUAGE));
+        Assert.assertEquals(ContentEncoding.GZIP, _response.getHeader(Header.CONTENT_ENCODING));
+        Assert.assertEquals(MediaType.JSON.toString()+"; charset="+UTF_16, _response.getHeader(Header.CONTENT_TYPE));
+        Assert.assertEquals(
+            "Hello, world!",
+            _response.getBodyAsString(UTF_8));
+    }
+
+
+    @Test
+    public void okWithConnegReturnsLanguage() {
+
+        // ACT
+        _request.setHeader(Header.ACCEPT_LANGUAGE, "en");
+        final Resource resource =
+            new TestResource(_request, new HashMap<String, Object>()) {
+
+                @Override
+                public Map<MediaType, HelloWorldWriter> content_types_provided() {
+                    return Collections.singletonMap(MediaType.ANY,  new HelloWorldWriter(UTF_8));
+                }
+
+                @Override
+                public Set<LanguageTag> languages_provided() {
+                    return Collections.singleton(new LanguageTag("en"));
+                }
+        };
+
+        // ACT
+        _engine.process(resource, _response);
+
+        // ASSERT
+        Assert.assertSame(Status.OK, _response.getStatus());
+        Assert.assertEquals("en", _response.getHeader(Header.CONTENT_LANGUAGE));
+        Assert.assertEquals(
+            "Hello, world!",
+            _response.getBodyAsString(UTF_8));
+    }
+
+
+    @Test
+    public void okWithConnegReturnsEncoding() {
+
+        // ACT
+        _request.setHeader(Header.ACCEPT_ENCODING, ContentEncoding.GZIP);
+        final Resource resource =
+            new TestResource(_request, new HashMap<String, Object>()) {
+
+                @Override
+                public Map<MediaType, HelloWorldWriter> content_types_provided() {
+                    return Collections.singletonMap(MediaType.ANY,  new HelloWorldWriter(UTF_8));
+                }
+
+                @Override
+                public Set<String> encodings_provided() {
+                    return Collections.singleton(ContentEncoding.GZIP);
+                }
+        };
+
+        // ACT
+        _engine.process(resource, _response);
+
+        // ASSERT
+        Assert.assertSame(Status.OK, _response.getStatus());
+        Assert.assertEquals(ContentEncoding.GZIP, _response.getHeader(Header.CONTENT_ENCODING));
+        Assert.assertEquals(
+            "Hello, world!",
+            _response.getBodyAsString(UTF_8));
+    }
+
+
+    @Test
+    public void okWithConnegReturnsMediaType() {
+
+        // ACT
+        _request.setHeader(Header.ACCEPT, MediaType.HTML.toString());
+        final Resource resource =
+            new TestResource(_request, new HashMap<String, Object>()) {
+
+                @Override
+                public Map<MediaType, HelloWorldWriter> content_types_provided() {
+                    return Collections.singletonMap(MediaType.HTML, new HelloWorldWriter(UTF_8));
+                }
+        };
+
+        // ACT
+        _engine.process(resource, _response);
+
+        // ASSERT
+        Assert.assertSame(Status.OK, _response.getStatus());
+        Assert.assertEquals(MediaType.HTML.toString(), _response.getHeader(Header.CONTENT_TYPE));
+        Assert.assertEquals(
+            "Hello, world!",
+            _response.getBodyAsString(UTF_8));
+    }
+
+
+    @Test
+    public void okWithConnegReturnsCharset() {
+
+        // ACT
+        _request.setHeader(Header.ACCEPT, MediaType.HTML.toString());
+        _request.setHeader(Header.ACCEPT_CHARSET, "utf-8");
+        final Resource resource =
+            new TestResource(_request, new HashMap<String, Object>()) {
+
+                @Override
+                public Map<MediaType, HelloWorldWriter> content_types_provided() {
+                    return Collections.singletonMap(MediaType.HTML, new HelloWorldWriter(UTF_8));
+                }
+
+                @Override
+                public Set<Charset> charsets_provided() {
+                    return Collections.singleton(UTF_8);
+                }
+        };
+
+        // ACT
+        _engine.process(resource, _response);
+
+        // ASSERT
+        Assert.assertSame(Status.OK, _response.getStatus());
+        Assert.assertEquals(MediaType.HTML.toString()+"; charset="+UTF_8, _response.getHeader(Header.CONTENT_TYPE));
+        Assert.assertEquals(
+            "Hello, world!",
+            _response.getBodyAsString(UTF_8));
     }
 
 

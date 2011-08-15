@@ -38,14 +38,14 @@ public class TestResource
 
     /** {@inheritDoc} */
     @Override
-    public Map<MediaType, BodyWriter> content_types_provided() {
+    public Map<MediaType, ? extends BodyWriter> content_types_provided() {
         return new HashMap<MediaType, BodyWriter>();
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public Map<MediaType, BodyReader> content_types_accepted() {
+    public Map<MediaType, ? extends BodyReader> content_types_accepted() {
         return new HashMap<MediaType, BodyReader>();
     }
 

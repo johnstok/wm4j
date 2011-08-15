@@ -106,6 +106,10 @@ public final class Header {
     public static final String IF_UNMODIFIED_SINCE =
         "If-Unmodified-Since";                                     //$NON-NLS-1$
 
+    /** CONTENT_LANGUAGE : String. */
+    public static final String CONTENT_LANGUAGE =
+        "Content-Language";                                        //$NON-NLS-1$
+
 
     /**
      * Parse an 'Accept-Charset' header into a list of weighted values.

@@ -79,7 +79,7 @@ public abstract class Resource {
      *
      * @return
      */
-    public abstract Map<MediaType, BodyReader> content_types_accepted();
+    public abstract Map<MediaType, ? extends BodyReader> content_types_accepted();
 
 
     /**
@@ -93,7 +93,7 @@ public abstract class Resource {
      *
      * @return
      */
-    public abstract Map<MediaType, BodyWriter> content_types_provided();
+    public abstract Map<MediaType, ? extends BodyWriter> content_types_provided();
 
 
     /**
