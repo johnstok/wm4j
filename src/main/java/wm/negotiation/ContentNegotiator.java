@@ -9,7 +9,7 @@
  * Changes: see version control.
  *-----------------------------------------------------------------------------
  */
-package wm;
+package wm.negotiation;
 
 
 import java.util.ArrayList;
@@ -18,6 +18,10 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import wm.ContentEncoding;
+import wm.Specification;
+import wm.Specifications;
+import wm.WeightedValue;
 
 
 /**

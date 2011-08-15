@@ -14,6 +14,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import wm.negotiation.CharsetNegotiator;
+import wm.negotiation.ContentNegotiator;
 import wm.negotiation.LanguageNegotiator;
 import wm.negotiation.MediaTypeNegotiator;
 

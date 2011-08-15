@@ -9,7 +9,7 @@
  * Changes: see version control.
  *-----------------------------------------------------------------------------
  */
-package wm;
+package wm.negotiation;
 
 
 import static org.junit.Assert.assertEquals;
@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.List;
 import org.junit.Test;
 import wm.ContentEncoding;
-import wm.ContentNegotiator;
 import wm.WeightedValue;
 
 

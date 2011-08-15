@@ -4,7 +4,7 @@
  *
  * Revision      $Rev$
  *---------------------------------------------------------------------------*/
-package wm;
+package wm.negotiation;
 
 import java.nio.charset.Charset;
 import java.nio.charset.IllegalCharsetNameException;
@@ -17,6 +17,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import wm.Specification;
+import wm.Specifications;
+import wm.WeightedValue;
 
 
 /**

@@ -4,7 +4,7 @@
  *
  * Revision      $Rev$
  *---------------------------------------------------------------------------*/
-package wm;
+package wm.negotiation;
 
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -13,6 +13,7 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import wm.WeightedValue;
 
 
 
