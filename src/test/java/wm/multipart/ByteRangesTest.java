@@ -14,7 +14,6 @@ package wm.multipart;
 import static org.junit.Assert.*;
 import java.io.File;
 import org.junit.Test;
-import wm.multipart.ByteRanges;
 
 
 
@@ -35,7 +34,7 @@ public class ByteRangesTest {
 
         // ACT
         final File f =
-            new File("src/test/resources/iaj/web/acceptance/index.html");
+            new File("src/test/resources/index.html");
         final ByteRanges ranges = new ByteRanges(f);
 
         assertEquals(
