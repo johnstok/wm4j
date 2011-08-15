@@ -22,8 +22,8 @@ package wm.simple;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.Date;
+import wm.AbstractResponse;
 import wm.BodyWriter;
-import wm.Response;
 import wm.Status;
 
 
@@ -33,11 +33,10 @@ import wm.Status;
  * @author Keith Webster Johnston.
  */
 public class SimpleResponse
-    implements
-        Response {
+    extends
+        AbstractResponse {
 
     private final org.simpleframework.http.Response _response;
-    private final Date _originationTime = new Date();
 
 
     /**
@@ -102,15 +101,7 @@ public class SimpleResponse
 
     /** {@inheritDoc} */
     @Override
-    public Date getOriginationTime() {
-        return _originationTime; // TODO: Make defensive copy?
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
     public void setHeader(final String name, final Date value) {
         _response.setDate(name, value.getTime());
     }
-
 }

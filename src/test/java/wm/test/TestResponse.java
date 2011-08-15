@@ -15,8 +15,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.TimeZone;
+import wm.AbstractResponse;
 import wm.BodyWriter;
-import wm.Response;
 import wm.Status;
 
 
@@ -26,16 +26,14 @@ import wm.Status;
  * @author Keith Webster Johnston.
  */
 public class TestResponse
-    implements
-        Response {
+    extends
+        AbstractResponse {
 
     private Status                              _status;
     private final SimpleDateFormat              _dateFormatter;
     private final HashMap<String, List<String>> _headers =
         new HashMap<String, List<String>>();
     private byte[]                               _body;
-    private final Date                           _originationTime = new Date();
-
 
 
     /**
@@ -102,13 +100,6 @@ public class TestResponse
 
     public void setBody(final byte[] body) {
         _body=body;
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public Date getOriginationTime() {
-        return _originationTime ;
     }
 
 
