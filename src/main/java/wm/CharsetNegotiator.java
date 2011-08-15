@@ -10,10 +10,12 @@ import java.nio.charset.Charset;
 import java.nio.charset.IllegalCharsetNameException;
 import java.nio.charset.UnsupportedCharsetException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 
@@ -22,6 +24,10 @@ import java.util.Set;
  *
  * @author Keith Webster Johnston.
  */
+@Specifications ({
+    @Specification (name="rfc-2616", section="3.4"),
+    @Specification (name="rfc-2616", section="14.2")
+})
 public class CharsetNegotiator {
 
     // Default q value is 1
@@ -49,6 +55,36 @@ public class CharsetNegotiator {
     }
 
 
+    /**
+     * Constructor.
+     *
+     * @param charsets Charsets supported by the server.
+     */
+    public CharsetNegotiator(final Charset... charsets) {
+        this(Arrays.asList(charsets));
+    }
+
+
+    /**
+     * Select the preferred charset from those available.
+     *
+     * The special value "*", if present in the Accept-Charset field, matches
+     * every character set (including ISO-8859-1) which is not mentioned
+     * elsewhere in the Accept-Charset field. If no "*" is present in an
+     * Accept-Charset field, then all character sets not explicitly mentioned
+     * get a quality value of 0, except for ISO-8859-1, which gets a quality
+     * value of 1 if not explicitly mentioned.
+     *
+     * If no Accept-Charset header is present, the default is that any character
+     * set is acceptable. If an Accept-Charset header is present, and if the
+     * server cannot send a response which is acceptable according to the
+     * Accept-Charset header, then the server SHOULD send an error response with
+     * the 406 (not acceptable) status code, though the sending of an
+     * unacceptable response is also allowed.
+     *
+     * @param clientCharsets
+     * @return
+     */
     public Charset selectCharset(final List<WeightedValue> clientCharsets) {
 
         // If no header is present any charset is acceptable.
@@ -59,7 +95,7 @@ public class CharsetNegotiator {
 
         final List<String> disallowed = new ArrayList<String>();
         for (WeightedValue wv : clientCharsets) {
-            if (wv.getWeight()<=0) { disallowed.add(wv.getValue()); }
+            if (wv.getWeight()<=0) { disallowed.add(wv.getValue().toLowerCase(Locale.US)); }
         }
 
         // If * isn't present it gets q=0
@@ -94,7 +130,8 @@ public class CharsetNegotiator {
         }
 
         try {
-            return Charset.forName(charsetName);
+            Charset cs = Charset.forName(charsetName);
+            return _charsets.contains(cs) ? cs : null;
         } catch (IllegalCharsetNameException e) {
             return null;
         } catch (UnsupportedCharsetException e) {
@@ -105,18 +142,11 @@ public class CharsetNegotiator {
     }
 
 
-    /**
-     * TODO: Add a description for this method.
-     *
-     * @param aliases
-     * @param disallowed
-     * @return
-     */
     private boolean isAllowed(final Charset charset,
                               final List<String> disallowed) {
-        if (disallowed.contains(charset.name())) { return false; }
+        if (disallowed.contains(charset.name().toLowerCase(Locale.US))) { return false; }
         for (String alias : charset.aliases()) {
-            if (disallowed.contains(alias)) { return false; }
+            if (disallowed.contains(alias.toLowerCase(Locale.US))) { return false; }
         }
         return true;
     }

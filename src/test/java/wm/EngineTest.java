@@ -1016,10 +1016,16 @@ public class EngineTest {
     public void unacceptableRequestCharsetGivesNotAcceptable() {
 
         // ARRANGE
-        _request.setHeader(Header.ACCEPT_CHARSET, Charset.defaultCharset().name());
+        _request.setHeader(Header.ACCEPT_CHARSET, "UTF-8");
         final Resource resource = new TestResource(
             _request,
-            new HashMap<String, Object>());
+            new HashMap<String, Object>()) {
+            /** {@inheritDoc} */
+            @Override
+            public Set<Charset> charsets_provided() {
+                return Collections.singleton(Charset.forName("UTF-16"));
+            }
+        };
 
         // ACT
         _engine.process(resource, _response);

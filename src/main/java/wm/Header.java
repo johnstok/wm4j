@@ -11,6 +11,7 @@
  */
 package wm;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -107,13 +108,38 @@ public final class Header {
 
 
     /**
-     * TODO: Add a description for this method.
+     * Parse an 'Accept-Charset' header into a list of weighted values.
      *
-     * @param get_req_header
+     * <pre>
+     *       Accept-Charset = "Accept-Charset" ":"
+     *        1#( ( charset | "*" )[ ";" "q" "=" qvalue ] )
+     * </pre>
+     *
+     * Each charset MAY be given an associated quality value which represents
+     * the user's preference for that charset. The default value is q=1.
+     *
+     * @param value
+     *
      * @return
      */
-    public static List<WeightedValue> parseAcceptCharset(final String headerValue) {
-        throw new UnsupportedOperationException("Method not implemented.");
+    public static List<WeightedValue> parseAcceptCharset(final String value) {
+        /*
+         * TODO Handle:
+         *  - duplicate cRange (incl case variations).
+         *  - malformed cRange
+         *  - malformed field
+         */
+        final List<WeightedValue> wValues = new ArrayList<WeightedValue>();
+
+        if (null==value || 1>value.trim().length()) { return wValues; }
+
+        final String[] cRanges = value.split(",");
+        for (final String cRange : cRanges) {
+            if (null==cRange || 1>cRange.trim().length()) { continue; }
+            wValues.add(Value.parse(cRange).asWeightedValue("q",1f));
+        }
+
+        return wValues;
     }
 
 

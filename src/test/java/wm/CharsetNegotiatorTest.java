@@ -13,8 +13,6 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import wm.CharsetNegotiator;
-import wm.WeightedValue;
 
 
 
@@ -25,12 +23,16 @@ import wm.WeightedValue;
  */
 public class CharsetNegotiatorTest {
 
+    private static final Charset UTF_8      = Charset.forName("UTF-8");
+    private static final Charset UTF_16BE   = Charset.forName("UTF-16BE");
+    private static final Charset ISO_8859_1 = Charset.forName("iso-8859-1");
+
     CharsetNegotiator _negotiator;
 
 
     @Before
     public void setUp() {
-        _negotiator = new CharsetNegotiator();
+        _negotiator = new CharsetNegotiator(UTF_16BE, UTF_8, ISO_8859_1);
     }
 
 
@@ -58,10 +60,10 @@ public class CharsetNegotiatorTest {
         Charset selected  =
             _negotiator.selectCharset(
                 Collections.singletonList(
-                    new WeightedValue(Charset.defaultCharset().name(), 1f)));
+                    new WeightedValue("utf-8", 1f)));
 
         // ASSERT
-        Assert.assertEquals(Charset.defaultCharset(), selected);
+        Assert.assertEquals(UTF_8, selected);
     }
 
 
@@ -72,10 +74,10 @@ public class CharsetNegotiatorTest {
         Charset selected  =
             _negotiator.selectCharset(
                 Collections.singletonList(
-                    new WeightedValue(Charset.defaultCharset().name(), 0.5f)));
+                    new WeightedValue("utf-8", 0.5f)));
 
         // ASSERT
-        Assert.assertEquals(Charset.forName("iso-8859-1"), selected);
+        Assert.assertEquals(ISO_8859_1, selected);
     }
 
 
@@ -153,13 +155,12 @@ public class CharsetNegotiatorTest {
         Charset selected  =
             _negotiator.selectCharset(
                 new ArrayList<WeightedValue>() {{
-                    add(new WeightedValue("foo", 1f));
                     add(new WeightedValue("*", 0.1f));
                 }}
             );
 
         // ASSERT
-        Assert.assertEquals(Charset.forName("Big5"), selected);
+        Assert.assertEquals(UTF_8, selected);
     }
 
 
@@ -170,13 +171,13 @@ public class CharsetNegotiatorTest {
         Charset selected  =
             _negotiator.selectCharset(
                 new ArrayList<WeightedValue>() {{
-                    add(new WeightedValue("Big5", 0f));
+                    add(new WeightedValue("utf-8", 0f));
                     add(new WeightedValue("*",    1f));
                 }}
             );
 
         // ASSERT
-        Assert.assertEquals(Charset.forName("Big5-HKSCS"), selected);
+        Assert.assertEquals(UTF_16BE, selected);
     }
 
 
@@ -187,13 +188,13 @@ public class CharsetNegotiatorTest {
         Charset selected  =
             _negotiator.selectCharset(
                 new ArrayList<WeightedValue>() {{
-                    add(new WeightedValue("csBig5", 0f));
+                    add(new WeightedValue("UnicodeBigUnmarked", 0f));
                     add(new WeightedValue("*",    1f));
                 }}
             );
 
         // ASSERT
-        Assert.assertEquals(Charset.forName("Big5-HKSCS"), selected);
+        Assert.assertEquals(UTF_8, selected);
     }
 
 
@@ -206,11 +207,11 @@ public class CharsetNegotiatorTest {
                 new ArrayList<WeightedValue>() {{
                     add(new WeightedValue("*",   0.001f));
                     add(new WeightedValue("utf-8", 0.5f));
-                    add(new WeightedValue("cp1250", 1f));
+                    add(new WeightedValue("utf-16be", 1f));
                 }}
             );
 
         // ASSERT
-        Assert.assertEquals(Charset.forName("cp1250"), selected);
+        Assert.assertEquals(UTF_16BE, selected);
     }
 }
