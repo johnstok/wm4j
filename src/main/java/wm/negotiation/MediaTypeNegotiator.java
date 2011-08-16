@@ -42,7 +42,9 @@ import wm.WeightedValue;
  *
  * @author Keith Webster Johnston.
  */
-public class MediaTypeNegotiator {
+public class MediaTypeNegotiator
+    implements
+        Negotiator<MediaType> {
 
     private final Set<MediaType> _availableMediaTypes;
 
@@ -178,7 +180,10 @@ public class MediaTypeNegotiator {
      * @param mediaRanges The range of accepted media types.
      *
      * @return The selected media type.
+     *
+     * @see Negotiator#select(List)
      */
+    @Override
     public MediaType select(final List<WeightedValue> mediaRanges) {
 
         if (null==mediaRanges || 0==mediaRanges.size()) {
@@ -188,7 +193,7 @@ public class MediaTypeNegotiator {
         }
 
         // Calculate weights
-        Map<MediaType, Float> weightedMediaTypes = weights(mediaRanges);
+        final Map<MediaType, Float> weightedMediaTypes = weights(mediaRanges);
 
         // No matches.
         if (0==weightedMediaTypes.size()) { return null; }
@@ -230,20 +235,20 @@ public class MediaTypeNegotiator {
      */
     public Map<MediaType, Float> weights(final List<WeightedValue> mediaRanges) {
 
-        Map<MediaType, Float> weights = new HashMap<MediaType, Float>();
+        final Map<MediaType, Float> weights = new HashMap<MediaType, Float>();
 
         /*
          * If no range in the field matches the media type, the quality factor
          * assigned is 0.
          */
-        float defaultWeight = 0;
+        final float defaultWeight = 0;
 
-        for (MediaType avail : _availableMediaTypes) {
+        for (final MediaType avail : _availableMediaTypes) {
             float weight = defaultWeight;
             MediaType match = null;
 
-            for (WeightedValue v : mediaRanges) {
-                MediaType mediaRange = new MediaType(v.getValue());
+            for (final WeightedValue v : mediaRanges) {
+                final MediaType mediaRange = new MediaType(v.getValue());
                 if (avail.matches(mediaRange) && mediaRange.precedes(match)) {
                     weight = v.getWeight();
                     match = mediaRange;

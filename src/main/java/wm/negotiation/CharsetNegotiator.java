@@ -31,7 +31,9 @@ import wm.WeightedValue;
     @Specification (name="rfc-2616", section="3.4"),
     @Specification (name="rfc-2616", section="14.2")
 })
-public class CharsetNegotiator {
+public class CharsetNegotiator
+    implements
+        Negotiator<Charset> {
 
     // Default q value is 1
     // * matches all un-mentioned charsets (incl iso-8859-1)
@@ -87,8 +89,11 @@ public class CharsetNegotiator {
      *
      * @param clientCharsets
      * @return
+     *
+     * @see Negotiator#select(List)
      */
-    public Charset selectCharset(final List<WeightedValue> clientCharsets) {
+    @Override
+    public Charset select(final List<WeightedValue> clientCharsets) {
 
         // If no header is present any charset is acceptable.
         if (null==clientCharsets) { return null; }
@@ -97,7 +102,7 @@ public class CharsetNegotiator {
             new ArrayList<WeightedValue>(clientCharsets);
 
         final List<String> disallowed = new ArrayList<String>();
-        for (WeightedValue wv : clientCharsets) {
+        for (final WeightedValue wv : clientCharsets) {
             if (wv.getWeight()<=0) { disallowed.add(wv.getValue().toLowerCase(Locale.US)); }
         }
 
@@ -113,9 +118,9 @@ public class CharsetNegotiator {
 
         Collections.sort(copy);
 
-        for (WeightedValue clientCharset : copy) {
+        for (final WeightedValue clientCharset : copy) {
             if (clientCharset.getWeight()<=0) { break; }
-            Charset charset = find(clientCharset.getValue(), disallowed);
+            final Charset charset = find(clientCharset.getValue(), disallowed);
             if (null!=charset) { return charset; }
         }
 
@@ -126,20 +131,20 @@ public class CharsetNegotiator {
     private Charset find(final String charsetName,
                          final List<String> disallowed) {
         if ("*".equals(charsetName)) {
-            for (Charset charset : _charsets) {
+            for (final Charset charset : _charsets) {
                 if (isAllowed(charset, disallowed)) { return charset; }
             }
             return null;
         }
 
         try {
-            Charset cs = Charset.forName(charsetName);
+            final Charset cs = Charset.forName(charsetName);
             return _charsets.contains(cs) ? cs : null;
-        } catch (IllegalCharsetNameException e) {
+        } catch (final IllegalCharsetNameException e) {
             return null;
-        } catch (UnsupportedCharsetException e) {
+        } catch (final UnsupportedCharsetException e) {
             return null;
-        } catch (IllegalArgumentException e) {
+        } catch (final IllegalArgumentException e) {
             return null;
         }
     }
@@ -148,7 +153,7 @@ public class CharsetNegotiator {
     private boolean isAllowed(final Charset charset,
                               final List<String> disallowed) {
         if (disallowed.contains(charset.name().toLowerCase(Locale.US))) { return false; }
-        for (String alias : charset.aliases()) {
+        for (final String alias : charset.aliases()) {
             if (disallowed.contains(alias.toLowerCase(Locale.US))) { return false; }
         }
         return true;
@@ -157,7 +162,7 @@ public class CharsetNegotiator {
 
     private boolean contains(final String charset,
                              final List<WeightedValue> weightedValues) {
-        for (WeightedValue weightedValue : weightedValues) {
+        for (final WeightedValue weightedValue : weightedValues) {
             if (charset.equals(weightedValue.getValue())) { return true; }
         }
         return false;

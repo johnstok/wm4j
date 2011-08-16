@@ -33,7 +33,9 @@ import wm.WeightedValue;
     @Specification(name="rfc-2616", section="3.5"),
     @Specification(name="rfc-2616", section="14.3")
 })
-public class ContentNegotiator {
+public class ContentNegotiator
+    implements
+        Negotiator<String> {
 
     private static final WeightedValue ANY =
         new WeightedValue(ContentEncoding.ANY, 0.001f);
@@ -81,7 +83,8 @@ public class ContentNegotiator {
      *
      * @return The encoding selected using the HTTP 1.1 algorithm.
      */
-    public String selectEncoding(final List<WeightedValue> clientEncodings) {
+    @Override
+    public String select(final List<WeightedValue> clientEncodings) {
         if (null == clientEncodings) { return ContentEncoding.IDENTITY; }
 
         final List<WeightedValue> disallowedEncodings =
@@ -126,6 +129,6 @@ public class ContentNegotiator {
      * @return The encoding selected using the HTTP 1.1 algorithm.
      */
     public String selectEncoding(final WeightedValue... clientEncodings) {
-        return selectEncoding(Arrays.asList(clientEncodings));
+        return select(Arrays.asList(clientEncodings));
     }
 }

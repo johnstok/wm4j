@@ -41,7 +41,7 @@ public class Engine {
         final List<WeightedValue> clientCharsets =
             Header.parseAcceptCharset(
                 request.get_req_header(Header.ACCEPT_CHARSET));
-        return new CharsetNegotiator(charsets_provided).selectCharset(clientCharsets);
+        return new CharsetNegotiator(charsets_provided).select(clientCharsets);
     }
 
 
@@ -51,7 +51,7 @@ public class Engine {
             Header.parseAcceptEncoding(
                 request.get_req_header(Header.ACCEPT_ENCODING));
         final ContentNegotiator negotiator = new ContentNegotiator(encodings_provided);
-        return negotiator.selectEncoding(clientEncodings);
+        return negotiator.select(clientEncodings);
     }
 
 
@@ -61,7 +61,7 @@ public class Engine {
             LanguageNegotiator.parse(request.get_req_header(Header.ACCEPT_LANGUAGE));
         final LanguageNegotiator negotiator =
             new LanguageNegotiator(languages_provided);
-        return negotiator.selectLanguage(clientLanguages);
+        return negotiator.select(clientLanguages);
     }
 
 

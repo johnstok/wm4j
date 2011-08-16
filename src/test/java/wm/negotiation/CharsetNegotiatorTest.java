@@ -47,7 +47,7 @@ public class CharsetNegotiatorTest {
     public void nullGivesNull() {
 
         // ACT
-        Charset selected  = _negotiator.selectCharset(null);
+        Charset selected  = _negotiator.select(null);
 
         // ASSERT
         Assert.assertNull(selected);
@@ -59,7 +59,7 @@ public class CharsetNegotiatorTest {
 
         // ACT
         Charset selected  =
-            _negotiator.selectCharset(
+            _negotiator.select(
                 Collections.singletonList(
                     new WeightedValue("utf-8", 1f)));
 
@@ -73,7 +73,7 @@ public class CharsetNegotiatorTest {
 
         // ACT
         Charset selected  =
-            _negotiator.selectCharset(
+            _negotiator.select(
                 Collections.singletonList(
                     new WeightedValue("utf-8", 0.5f)));
 
@@ -87,7 +87,7 @@ public class CharsetNegotiatorTest {
 
         // ACT
         Charset selected  =
-            _negotiator.selectCharset(
+            _negotiator.select(
                 new ArrayList<WeightedValue>() {{
                     add(new WeightedValue("*", 0f));
                     add(new WeightedValue("foo", 1f));
@@ -104,7 +104,7 @@ public class CharsetNegotiatorTest {
 
         // ACT
         Charset selected  =
-            _negotiator.selectCharset(
+            _negotiator.select(
                 new ArrayList<WeightedValue>() {{
                     add(new WeightedValue("iso-8859-1", 0f));
                     add(new WeightedValue("foo", 1f));
@@ -121,7 +121,7 @@ public class CharsetNegotiatorTest {
 
         // ACT
         Charset selected  =
-            _negotiator.selectCharset(
+            _negotiator.select(
                 new ArrayList<WeightedValue>() {{
                     add(new WeightedValue("*", 0f));
                 }}
@@ -137,7 +137,7 @@ public class CharsetNegotiatorTest {
 
         // ACT
         Charset selected  =
-            _negotiator.selectCharset(
+            _negotiator.select(
                 new ArrayList<WeightedValue>() {{
                     add(new WeightedValue("foo", 1f));
                     add(new WeightedValue("bar", 0.5f));
@@ -154,7 +154,7 @@ public class CharsetNegotiatorTest {
 
         // ACT
         Charset selected  =
-            _negotiator.selectCharset(
+            _negotiator.select(
                 new ArrayList<WeightedValue>() {{
                     add(new WeightedValue("*", 0.1f));
                 }}
@@ -170,7 +170,7 @@ public class CharsetNegotiatorTest {
 
         // ACT
         Charset selected  =
-            _negotiator.selectCharset(
+            _negotiator.select(
                 new ArrayList<WeightedValue>() {{
                     add(new WeightedValue("utf-8", 0f));
                     add(new WeightedValue("*",    1f));
@@ -187,7 +187,7 @@ public class CharsetNegotiatorTest {
 
         // ACT
         Charset selected  =
-            _negotiator.selectCharset(
+            _negotiator.select(
                 new ArrayList<WeightedValue>() {{
                     add(new WeightedValue("UnicodeBigUnmarked", 0f));
                     add(new WeightedValue("*",    1f));
@@ -204,7 +204,7 @@ public class CharsetNegotiatorTest {
 
         // ACT
         Charset selected  =
-            _negotiator.selectCharset(
+            _negotiator.select(
                 new ArrayList<WeightedValue>() {{
                     add(new WeightedValue("*",   0.001f));
                     add(new WeightedValue("utf-8", 0.5f));

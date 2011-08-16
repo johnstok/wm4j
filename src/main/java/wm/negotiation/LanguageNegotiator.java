@@ -37,7 +37,9 @@ import wm.WeightedValue;
  *
  * @author Keith Webster Johnston.
  */
-public class LanguageNegotiator {
+public class LanguageNegotiator
+    implements
+        Negotiator<LanguageTag> {
 
     private final Set<LanguageTag> _availableLanguages;
 
@@ -57,8 +59,11 @@ public class LanguageNegotiator {
      * @param languageRanges The range of accepted languages.
      *
      * @return The selected language.
+     *
+     * @see Negotiator#select(List)
      */
-    public LanguageTag selectLanguage(final List<WeightedValue> languageRanges) {
+    @Override
+    public LanguageTag select(final List<WeightedValue> languageRanges) {
 
         /*
          * Spec indicates algorithm:
@@ -66,7 +71,7 @@ public class LanguageNegotiator {
          *    Accept-Languages header.
          *  - Choose the lang with the highest q factor.
          */
-        List<WeightedValue> tags = new ArrayList<WeightedValue>();
+        final List<WeightedValue> tags = new ArrayList<WeightedValue>();
 
         /*
          * If no language-range in the field matches the tag, the language
@@ -79,17 +84,17 @@ public class LanguageNegotiator {
          * matches every tag not matched by any other range present in the
          * Accept-Language field.
          */
-        for (WeightedValue v : languageRanges) {
+        for (final WeightedValue v : languageRanges) {
             if ("*".equals(v.getValue())) {
                 defaultWeight = v.getWeight();
             }
         }
 
-        for (LanguageTag avail : _availableLanguages) {
+        for (final LanguageTag avail : _availableLanguages) {
             float weight = defaultWeight;
             int   depth  = 0;
 
-            for (WeightedValue v : languageRanges) {
+            for (final WeightedValue v : languageRanges) {
                 /*
                  * The language quality factor assigned to a language-tag by the
                  * Accept-Language field is the quality value of the longest
@@ -98,7 +103,7 @@ public class LanguageNegotiator {
                  * Accept-Language: en-gb;q=0.7, en;q=0.8
                  * Quality for lTag 'en-gb' is 0.7 even though 'en-gb' is "matched by" 'en'.
                  */
-                int matchDepth = avail.matchDepth(v.getValue());
+                final int matchDepth = avail.matchDepth(v.getValue());
                 if (matchDepth>depth) {
                     weight = v.getWeight();
                     depth = matchDepth;
@@ -123,7 +128,7 @@ public class LanguageNegotiator {
      * @return The selected language.
      */
     public LanguageTag selectLanguage(final WeightedValue... languageRanges) {
-        return selectLanguage(new ArrayList<WeightedValue>(Arrays.asList(languageRanges)));
+        return select(new ArrayList<WeightedValue>(Arrays.asList(languageRanges)));
     }
 
 
