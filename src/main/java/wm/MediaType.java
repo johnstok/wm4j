@@ -182,7 +182,7 @@ public class MediaType {
     }
 
 
-    public static final MediaType ANY = new MediaType("*", "*");
+    public static final MediaType ANY = new MediaType("*", "*"); // TODO: Should wildcards be allowed?
     public static final MediaType HTML = new MediaType("text", "html");
     public static final MediaType XML = new MediaType("application", "xml");
     public static final MediaType JPEG = new MediaType("image", "jpeg");

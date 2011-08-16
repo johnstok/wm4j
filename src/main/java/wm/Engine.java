@@ -65,6 +65,14 @@ public class Engine {
     }
 
 
+    private <T> T first(final Set<T> set) {
+        if (null==set) { return null; }
+        final List<T> list = new ArrayList<T>(set);
+        if (1>list.size()) { return null; }
+        return list.get(0);
+    }
+
+
     private void P11(final Resource resource,
                      final Response response) throws HttpException {
         if (null==response.getHeader(Header.LOCATION)) {
@@ -425,13 +433,11 @@ public class Engine {
 
     private void F06(final Resource resource,
                      final Response response) throws HttpException {
-        if (resource._request.hasHeader(Header.ACCEPT_ENCODING)) {
+        final String enc = first(resource.encodings_provided());
+        if (resource._request.hasHeader(Header.ACCEPT_ENCODING) && null!=enc) {
             F07(resource, response);
         } else {
-            final String enc = first(resource.encodings_provided());
-            if (null!=enc) {
-                response.setHeader(Header.CONTENT_ENCODING, enc);
-            }
+            response.setContentEncoding(enc);
             G07(resource, response);
         }
     }
@@ -444,7 +450,7 @@ public class Engine {
         if (null==encoding) {
             response.setStatus(Status.NOT_ACCEPTABLE);
         } else {
-            response.setHeader(Header.CONTENT_ENCODING, encoding);
+            response.setContentEncoding(encoding);
             G07(resource, response);
         }
     }
@@ -452,9 +458,11 @@ public class Engine {
 
     private void E05(final Resource resource,
                      final Response response) throws HttpException {
-        if (resource._request.hasHeader(Header.ACCEPT_CHARSET)) {
+        final Charset cs = first(resource.charsets_provided());
+        if (resource._request.hasHeader(Header.ACCEPT_CHARSET) && null!=cs) {
             E06(resource, response);
         } else {
+            response.setCharset(cs);
             F06(resource, response);
         }
     }
@@ -475,23 +483,15 @@ public class Engine {
 
     private void D04(final Resource resource,
                      final Response response) throws HttpException {
-        if (resource._request.hasHeader(Header.ACCEPT_LANGUAGE)) {
+        final LanguageTag lt = first(resource.languages_provided());
+        if (resource._request.hasHeader(Header.ACCEPT_LANGUAGE) && null!=lt) {
             D05(resource, response);
         } else {
-            final LanguageTag lt = first(resource.languages_provided());
             if (null!=lt) {
                 response.setHeader(Header.CONTENT_LANGUAGE, lt.toString());
             }
             E05(resource, response);
         }
-    }
-
-
-    private <T> T first(final Set<T> set) {
-        if (null==set) { return null; }
-        final List<T> list = new ArrayList<T>(set);
-        if (1>list.size()) { return null; }
-        return list.get(0);
     }
 
 
@@ -513,6 +513,10 @@ public class Engine {
         if (resource._request.hasHeader(Header.ACCEPT)) {
             C04(resource, response);
         } else {
+            final MediaType mt = first(resource.content_types_provided().keySet());
+            if (null!=mt) {
+                response.setMediaType(mt);
+            }
             D04(resource, response);
         }
     }

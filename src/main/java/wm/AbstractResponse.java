@@ -33,8 +33,9 @@ public abstract class AbstractResponse
         Response {
 
     private final Date _originationTime = new Date();
-    private Charset _charset;
-    private MediaType _mediaType;
+    private Charset    _charset;
+    private MediaType  _mediaType;
+    private String     _contentEncoding;
 
 
     /** {@inheritDoc} */
@@ -65,5 +66,19 @@ public abstract class AbstractResponse
     public void setMediaType(final MediaType mediaType) {
         _mediaType = mediaType;
         setContentType();
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void setContentEncoding(final String encoding) {
+        if (ContentEncoding.IDENTITY.equals(encoding)) {
+            // Don't send a header for 'identity'.
+            _contentEncoding = null;
+            setHeader(Header.CONTENT_ENCODING, (String) null);
+        } else {
+            _contentEncoding = encoding;
+            setHeader(Header.CONTENT_ENCODING, encoding);
+        }
     }
 }

@@ -108,4 +108,12 @@ public interface Response {
      * @param mediaType
      */
     void setMediaType(MediaType mediaType);
+
+
+    /**
+     * TODO: Add a description for this method.
+     *
+     * @param encoding
+     */
+    void setContentEncoding(String encoding);
 }

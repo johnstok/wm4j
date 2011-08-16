@@ -12,9 +12,10 @@
 * New resource P11
 
 ## Conneg
-  * header unspecified; resource specified -> select any
-  * header specified; resource unspecified -> ?
-  * neither specified -> ?
+  * header specified; resource specified -> Conneg, header
+  * header unspecified; resource specified -> No conneg, header
+  * header specified; resource unspecified -> No conneg, no header // How does WM handle this?
+  * neither specified -> No conneg, no header
   * Consistent API
   * Consistent Javadoc
   * Consistent implementation
@@ -22,7 +23,6 @@
   * Missing tests for negotiator
   * Media type selection based on params (e.g. 'text/html;level=1')
   * Setting of 'Vary' header following negotiations. Think this can be hard-coded?
-  * Setting of appropriate 'Content-*' headers.
   
 ## Bindings
    * Servlet API
@@ -41,6 +41,8 @@ Support for multiple headers with the same key.
 
 
 # Enhancement
+
+Support for request with Content-Encoding header, incl 415 response (see rfc-2616#14.11).
 
 Request/response Logging.
 

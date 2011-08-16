@@ -800,6 +800,9 @@ public class EngineTest {
 
         // ASSERT
         Assert.assertSame(Status.OK, _response.getStatus());
+        Assert.assertNull(_response.getHeader(Header.CONTENT_LANGUAGE));
+        Assert.assertNull(_response.getHeader(Header.CONTENT_ENCODING));
+        Assert.assertEquals(MediaType.ANY.toString(), _response.getHeader(Header.CONTENT_TYPE));
         Assert.assertEquals(
             "Hello, world!",
             _response.getBodyAsString(UTF_8));
@@ -878,6 +881,31 @@ public class EngineTest {
             _response.getBodyAsString(UTF_8));
     }
 
+    @Test
+    public void acceptWithUnknownLanguageGivesNoHeader() {
+
+        // ACT
+        _request.setHeader(Header.ACCEPT_LANGUAGE, "en");
+        final Resource resource =
+            new TestResource(_request, new HashMap<String, Object>()) {
+
+            @Override
+            public Map<MediaType, HelloWorldWriter> content_types_provided() {
+                return Collections.singletonMap(MediaType.ANY,  new HelloWorldWriter(UTF_8));
+            }
+        };
+
+        // ACT
+        _engine.process(resource, _response);
+
+        // ASSERT
+        Assert.assertSame(Status.OK, _response.getStatus());
+        Assert.assertNull(_response.getHeader(Header.CONTENT_LANGUAGE));
+        Assert.assertEquals(
+            "Hello, world!",
+            _response.getBodyAsString(UTF_8));
+    }
+
 
     @Test
     public void okWithConnegReturnsEncoding() {
@@ -904,6 +932,32 @@ public class EngineTest {
         // ASSERT
         Assert.assertSame(Status.OK, _response.getStatus());
         Assert.assertEquals(ContentEncoding.GZIP, _response.getHeader(Header.CONTENT_ENCODING));
+        Assert.assertEquals(
+            "Hello, world!",
+            _response.getBodyAsString(UTF_8));
+    }
+
+
+    @Test
+    public void acceptWithUnknownEncodingGivesNoHeader() {
+
+        // ACT
+        _request.setHeader(Header.ACCEPT_ENCODING, ContentEncoding.GZIP);
+        final Resource resource =
+            new TestResource(_request, new HashMap<String, Object>()) {
+
+            @Override
+            public Map<MediaType, HelloWorldWriter> content_types_provided() {
+                return Collections.singletonMap(MediaType.ANY,  new HelloWorldWriter(UTF_8));
+            }
+        };
+
+        // ACT
+        _engine.process(resource, _response);
+
+        // ASSERT
+        Assert.assertSame(Status.OK, _response.getStatus());
+        Assert.assertNull(_response.getHeader(Header.CONTENT_ENCODING));
         Assert.assertEquals(
             "Hello, world!",
             _response.getBodyAsString(UTF_8));
@@ -940,7 +994,6 @@ public class EngineTest {
     public void okWithConnegReturnsCharset() {
 
         // ACT
-        _request.setHeader(Header.ACCEPT, MediaType.HTML.toString());
         _request.setHeader(Header.ACCEPT_CHARSET, "utf-8");
         final Resource resource =
             new TestResource(_request, new HashMap<String, Object>()) {
@@ -962,6 +1015,32 @@ public class EngineTest {
         // ASSERT
         Assert.assertSame(Status.OK, _response.getStatus());
         Assert.assertEquals(MediaType.HTML.toString()+"; charset="+UTF_8, _response.getHeader(Header.CONTENT_TYPE));
+        Assert.assertEquals(
+            "Hello, world!",
+            _response.getBodyAsString(UTF_8));
+    }
+
+
+    @Test
+    public void acceptWithUnknownCharsetGivesNoCharset() {
+
+        // ACT
+        _request.setHeader(Header.ACCEPT_CHARSET, "utf-8");
+        final Resource resource =
+            new TestResource(_request, new HashMap<String, Object>()) {
+
+            @Override
+            public Map<MediaType, HelloWorldWriter> content_types_provided() {
+                return Collections.singletonMap(MediaType.HTML, new HelloWorldWriter(UTF_8));
+            }
+        };
+
+        // ACT
+        _engine.process(resource, _response);
+
+        // ASSERT
+        Assert.assertSame(Status.OK, _response.getStatus());
+        Assert.assertEquals(MediaType.HTML.toString(), _response.getHeader(Header.CONTENT_TYPE));
         Assert.assertEquals(
             "Hello, world!",
             _response.getBodyAsString(UTF_8));
