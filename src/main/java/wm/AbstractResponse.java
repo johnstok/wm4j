@@ -71,6 +71,13 @@ public abstract class AbstractResponse
 
     /** {@inheritDoc} */
     @Override
+    public MediaType getMediaType() {
+        return _mediaType;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
     public void setContentEncoding(final String encoding) {
         if (ContentEncoding.IDENTITY.equals(encoding)) {
             // Don't send a header for 'identity'.

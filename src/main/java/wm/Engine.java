@@ -125,7 +125,7 @@ public class Engine {
                         (lastModified.after(messageOriginationTime)) ? messageOriginationTime : lastModified);
                 }
 
-                response.write(resource.content_types_provided().entrySet().iterator().next().getValue()); // FIXME: Awful.
+                response.write(resource.content_types_provided().get(response.getMediaType()));
             } catch (final IOException e) {
                 // TODO handle committed responses.
                 response.setStatus(Status.INTERNAL_SERVER_ERROR);
