@@ -1,28 +1,28 @@
 # Mandatory
 
 ## Fully implement state machine:
-* Decision B2
-* PUT on existing resource -> P11
-* Positive path for M7 & N5 -> N11, etc.
-* Fix delete path around M20
-* Conflict handling O14
-* Multiple representations O18
-* Responses with no entity O20
-* Redirect N11
-* New resource P11
+* [ ] Decision B2
+* [x] PUT on existing resource -> P11
+* [ ] Positive path for M7 & N5 -> N11, etc.
+* [ ] Fix delete path around M20
+* [ ] Conflict handling O14
+* [ ] Multiple representations O18
+* [ ] Responses with no entity O20
+* [ ] Redirect N11
+* [ ] New resource P11
 
 ## Conneg
-  * header specified; resource specified -> Conneg, header
-  * header unspecified; resource specified -> No conneg, header
-  * header specified; resource unspecified -> No conneg, no header // How does WM handle this?
-  * neither specified -> No conneg, no header
-  * Consistent API
-  * Consistent Javadoc
-  * Consistent implementation
-  * Missing tests for parser
-  * Missing tests for negotiator
-  * Media type selection based on params (e.g. 'text/html;level=1')
-  * Setting of 'Vary' header following negotiations. Think this can be hard-coded?
+  * [x] header specified; resource specified -> Conneg, header
+  * [x] header unspecified; resource specified -> No conneg, header
+  * [x] header specified; resource unspecified -> No conneg, no header // How does WM handle this?
+  * [x] neither specified -> No conneg, no header
+  * [x] Consistent API
+  * [ ] Consistent Javadoc
+  * [ ] Consistent implementation
+  * [ ] Missing tests for parser
+  * [ ] Missing tests for negotiator
+  * [ ] Media type selection based on params (e.g. 'text/html;level=1')
+  * [ ] Setting of 'Vary' header following negotiations (decision G07). Think this can be hard-coded?
   
 ## Bindings
    * Servlet API

@@ -73,17 +73,24 @@ public class Engine {
     }
 
 
+    private void processRequestBody(final Resource resource,
+                                    final Response response) throws HttpException {
+        throw new UnsupportedOperationException("Method not implemented.");
+    }
+
+
     private void P11(final Resource resource,
                      final Response response) throws HttpException {
         if (null==response.getHeader(Header.LOCATION)) {
-            O20(resource, response);
+            O20_response_includes_an_entity(resource, response);
         } else {
             response.setStatus(Status.CREATED);
         }
     }
 
 
-    private void O20(final Resource resource,
+    private void O20_response_includes_an_entity(
+                     final Resource resource,
                      final Response response) throws HttpException {
         if (response.hasBody()) {
             O18_multiple_representations(resource, response);
@@ -125,6 +132,8 @@ public class Engine {
                         (lastModified.after(messageOriginationTime)) ? messageOriginationTime : lastModified);
                 }
 
+                // TODO: Set 'Expires' header.
+
                 response.write(resource.content_types_provided().get(response.getMediaType()));
             } catch (final IOException e) {
                 // TODO handle committed responses.
@@ -154,6 +163,7 @@ public class Engine {
 
     private void G07(final Resource resource,
                      final Response response) throws HttpException {
+        // TODO: Set variances.
         if (resource.resource_exists()) {
             G07a(resource, response);
         } else {
@@ -395,6 +405,7 @@ public class Engine {
         if (resource.is_conflict()) {
             response.setStatus(Status.CONFLICT);
         } else {
+            processRequestBody(resource, response);
             P11(resource, response);
         }
     }

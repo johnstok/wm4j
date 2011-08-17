@@ -1132,6 +1132,32 @@ public class EngineTest {
 
 
     @Test
+    public void putForExistingResourceGivesNoContent() {
+
+        // ARRANGE
+        _request.setMethod(Method.PUT);
+        final Resource resource = new TestResource(
+            _request,
+            new HashMap<String, Object>()) {
+
+            @Override public Set<String> allowed_methods() {
+                return Collections.singleton(Method.PUT);
+            }
+
+            @Override public boolean resource_exists() {
+                return true;
+            }
+        };
+
+        // ACT
+        _engine.process(resource, _response);
+
+        // ASSERT
+        Assert.assertSame(Status.NO_CONTENT, _response.getStatus());
+    }
+
+
+    @Test
     public void putForMissingResourceCanBeRedirected() {
 
         // ARRANGE
@@ -1198,11 +1224,10 @@ public class EngineTest {
 
 
     @Test
-    public void putForMissingResourceCreatesResource() throws Exception {
+    public void putForMissingResourceCreatesResource() {
 
         // ARRANGE
         _request.setMethod(Method.PUT);
-        _response.setHeader(Header.LOCATION, "http://iamjohnstok.com/"); // FIXME: How does this get set by the resource?
         final Resource resource = new TestResource(
             _request,
             new HashMap<String, Object>()) {
