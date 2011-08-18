@@ -12,16 +12,16 @@ import java.io.OutputStream;
 
 
 /**
- * TODO: Add a description for this type.
+ * API for writing the body of a response.
  *
  * @author Keith Webster Johnston.
  */
 public interface BodyWriter {
 
     /**
-     * TODO: Add a description for this method.
+     * Write the body to the supplied output stream.
      *
-     * @param outputStream
+     * @param outputStream The output stream to write to.
      */
     void write(OutputStream outputStream) throws IOException;
 

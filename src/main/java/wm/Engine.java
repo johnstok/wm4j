@@ -75,7 +75,15 @@ public class Engine {
 
     private void processRequestBody(final Resource resource,
                                     final Response response) throws HttpException {
-        throw new UnsupportedOperationException("Method not implemented.");
+        MediaType mt = MediaType.ANY; // FIXME: Extract media type.
+        BodyReader br = resource.content_types_accepted().get(mt); // TODO: Conneg required?
+        try {
+            br.read(resource._request.get_req_body_stream());
+        } catch (IOException e) {
+            // TODO Log exception.
+            response.setStatus(Status.INTERNAL_SERVER_ERROR);
+        }
+        response.setHeader(Header.LOCATION, resource._request.path());
     }
 
 
@@ -136,7 +144,8 @@ public class Engine {
 
                 response.write(resource.content_types_provided().get(response.getMediaType()));
             } catch (final IOException e) {
-                // TODO handle committed responses.
+                // TODO Handle committed responses.
+                // TODO Log exception.
                 response.setStatus(Status.INTERNAL_SERVER_ERROR);
             }
             response.setStatus(Status.OK);
@@ -338,7 +347,7 @@ public class Engine {
 
     private void I07(final Resource resource,
                      final Response response) throws HttpException {
-        if (Method.PUT==resource._request.get_req_method()) {
+        if (Method.PUT.equals(resource._request.get_req_method())) {
             I04(resource, response);
         } else {
             K07(resource, response);

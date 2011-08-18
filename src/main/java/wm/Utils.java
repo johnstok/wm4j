@@ -8,8 +8,8 @@ package wm;
 
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigInteger;
 import java.security.MessageDigest;
@@ -79,8 +79,8 @@ public final class Utils {
      * @param is
      * @param os
      */
-    public static void copy(final FileInputStream is,
-                            final OutputStream    os) throws IOException {
+    public static void copy(final InputStream  is,
+                            final OutputStream os) throws IOException {
         byte[] buffer = new byte[1024];
         int read = is.read(buffer);
         while (0<read) {
