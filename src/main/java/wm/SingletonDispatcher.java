@@ -26,7 +26,8 @@ public class SingletonDispatcher
 
     /** {@inheritDoc} */
     @Override
-    public Resource dispatch(final Request request) throws HttpException {
+    public Resource dispatch(final Request request,
+                             final Response response) throws HttpException {
         return _resource;
     }
 }

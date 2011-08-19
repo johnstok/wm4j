@@ -80,6 +80,7 @@ public class EngineTest {
         _request.setMethod(Method.DELETE);
         final Resource resource = new TestResource(
             _request,
+            _response,
             new HashMap<String, Object>()) {
 
             @Override public Set<String> allowed_methods() {
@@ -106,6 +107,7 @@ public class EngineTest {
         _request.setMethod(Method.DELETE);
         final Resource resource = new TestResource(
             _request,
+            _response,
             new HashMap<String, Object>()) {
 
             @Override public Set<String> allowed_methods() {
@@ -136,6 +138,7 @@ public class EngineTest {
         _request.setMethod(Method.DELETE);
         final Resource resource = new TestResource(
             _request,
+            _response,
             new HashMap<String, Object>());
 
         // ACT
@@ -152,6 +155,7 @@ public class EngineTest {
         // ARRANGE
         final Resource resource = new TestResource(
             null,
+            _response,
             new HashMap<String, Object>()) {
 
             @Override public boolean valid_entity_length() {
@@ -173,6 +177,7 @@ public class EngineTest {
         // ARRANGE
         final Resource resource = new TestResource(
             null,
+            _response,
             new HashMap<String, Object>()) {
 
             @Override public boolean forbidden() {
@@ -196,6 +201,7 @@ public class EngineTest {
         _request.setMethod(Method.DELETE);
         final Resource resource = new TestResource(
             _request,
+            _response,
             new HashMap<String, Object>()) {
 
             @Override public Set<String> allowed_methods() {
@@ -220,6 +226,7 @@ public class EngineTest {
         _request.setMethod(Method.DELETE);
         final Resource resource = new TestResource(
             _request,
+            _response,
             new HashMap<String, Object>()) {
 
             @Override public Set<String> allowed_methods() {
@@ -247,6 +254,7 @@ public class EngineTest {
         _request.setHeader(Header.IF_NONE_MATCH, "foo");
         final Resource resource = new TestResource(
             _request,
+            _response,
             new HashMap<String, Object>()) {
 
             /** {@inheritDoc} */
@@ -269,6 +277,7 @@ public class EngineTest {
         _request.setHeader(Header.IF_UNMODIFIED_SINCE, new Date(0));
         final Resource resource = new TestResource(
             _request,
+            _response,
             new HashMap<String, Object>()) {
 
             /** {@inheritDoc} */
@@ -291,6 +300,7 @@ public class EngineTest {
         _request.setHeader(Header.IF_MATCH, "foo");
         final Resource resource = new TestResource(
             _request,
+            _response,
             new HashMap<String, Object>()) {
 
             /** {@inheritDoc} */
@@ -315,6 +325,7 @@ public class EngineTest {
         final Charset UTF8 = Charset.forName("UTF-8");
         final Resource resource = new TestResource(
             _request,
+            _response,
             new HashMap<String, Object>()) {
 
             /** {@inheritDoc} */
@@ -353,6 +364,7 @@ public class EngineTest {
         final Charset UTF8 = Charset.forName("UTF-8");
         final Resource resource = new TestResource(
             _request,
+            _response,
             new HashMap<String, Object>()) {
 
             /** {@inheritDoc} */
@@ -390,6 +402,7 @@ public class EngineTest {
         _request.setHeader(Header.IF_MODIFIED_SINCE, d);
         final Resource resource = new TestResource(
             _request,
+            _response,
             new HashMap<String, Object>()) {
 
             /** {@inheritDoc} */
@@ -413,6 +426,7 @@ public class EngineTest {
         _request.setHeader(Header.IF_MODIFIED_SINCE, d);
         final Resource resource = new TestResource(
             _request,
+            _response,
             new HashMap<String, Object>()) {
 
             /** {@inheritDoc} */
@@ -437,6 +451,7 @@ public class EngineTest {
         final Charset UTF8 = Charset.forName("UTF-8");
         final Resource resource = new TestResource(
             _request,
+            _response,
             new HashMap<String, Object>()) {
 
             /** {@inheritDoc} */
@@ -475,6 +490,7 @@ public class EngineTest {
         final Charset UTF8 = Charset.forName("UTF-8");
         final Resource resource = new TestResource(
             _request,
+            _response,
             new HashMap<String, Object>()) {
 
             /** {@inheritDoc} */
@@ -512,6 +528,7 @@ public class EngineTest {
         final Charset UTF8 = Charset.forName("UTF-8");
         final Resource resource = new TestResource(
             _request,
+            _response,
             new HashMap<String, Object>()) {
 
             @Override
@@ -545,6 +562,7 @@ public class EngineTest {
         final Charset UTF8 = Charset.forName("UTF-8");
         final Resource resource = new TestResource(
             _request,
+            _response,
             new HashMap<String, Object>()) {
 
             @Override
@@ -578,6 +596,7 @@ public class EngineTest {
         final Charset UTF8 = Charset.forName("UTF-8");
         final Resource resource = new TestResource(
             _request,
+            _response,
             new HashMap<String, Object>()) {
 
             /** {@inheritDoc} */
@@ -615,6 +634,7 @@ public class EngineTest {
         final Charset UTF8 = Charset.forName("UTF-8");
         final Resource resource = new TestResource(
             _request,
+            _response,
             new HashMap<String, Object>()) {
 
             /** {@inheritDoc} */
@@ -651,6 +671,7 @@ public class EngineTest {
         _request.setHeader(Header.IF_MATCH, "*");
         final Resource resource = new TestResource(
             _request,
+            _response,
             new HashMap<String, Object>()) {
 
             @Override public boolean resource_exists() {
@@ -672,6 +693,7 @@ public class EngineTest {
         // ARRANGE
         final Resource resource = new TestResource(
             _request,
+            _response,
             new HashMap<String, Object>()) {
 
             @Override public boolean previously_existed() {
@@ -697,6 +719,7 @@ public class EngineTest {
         // ARRANGE
         final Resource resource = new TestResource(
             _request,
+            _response,
             new HashMap<String, Object>()) {
 
             @Override public URI moved_permanently() throws HttpException {
@@ -731,6 +754,7 @@ public class EngineTest {
         // ARRANGE
         final Resource resource = new TestResource(
             _request,
+            _response,
             new HashMap<String, Object>()) {
 
             @Override public URI moved_temporarily() throws HttpException {
@@ -765,6 +789,7 @@ public class EngineTest {
         // ARRANGE
         final Resource resource = new TestResource(
             _request,
+            _response,
             new HashMap<String, Object>()) {
 
             /** {@inheritDoc} */
@@ -787,7 +812,10 @@ public class EngineTest {
 
         // ACT
         final Resource resource =
-            new TestResource(_request, new HashMap<String, Object>()) {
+            new TestResource(
+                _request,
+                _response,
+                new HashMap<String, Object>()) {
 
                 @Override
                 public Map<MediaType, HelloWorldWriter> content_types_provided() {
@@ -814,7 +842,10 @@ public class EngineTest {
 
         // ACT
         final Resource resource =
-            new TestResource(_request, new HashMap<String, Object>()) {
+            new TestResource(
+                _request,
+                _response,
+                new HashMap<String, Object>()) {
 
                 @Override
                 public Map<MediaType, HelloWorldWriter> content_types_provided() {
@@ -857,7 +888,10 @@ public class EngineTest {
         // ACT
         _request.setHeader(Header.ACCEPT_LANGUAGE, "en");
         final Resource resource =
-            new TestResource(_request, new HashMap<String, Object>()) {
+            new TestResource(
+                _request,
+                _response,
+                new HashMap<String, Object>()) {
 
                 @Override
                 public Map<MediaType, HelloWorldWriter> content_types_provided() {
@@ -887,7 +921,10 @@ public class EngineTest {
         // ACT
         _request.setHeader(Header.ACCEPT_LANGUAGE, "en");
         final Resource resource =
-            new TestResource(_request, new HashMap<String, Object>()) {
+            new TestResource(
+                _request,
+                _response,
+                new HashMap<String, Object>()) {
 
             @Override
             public Map<MediaType, HelloWorldWriter> content_types_provided() {
@@ -913,7 +950,10 @@ public class EngineTest {
         // ACT
         _request.setHeader(Header.ACCEPT_ENCODING, ContentEncoding.GZIP);
         final Resource resource =
-            new TestResource(_request, new HashMap<String, Object>()) {
+            new TestResource(
+                _request,
+                _response,
+                new HashMap<String, Object>()) {
 
                 @Override
                 public Map<MediaType, HelloWorldWriter> content_types_provided() {
@@ -944,7 +984,10 @@ public class EngineTest {
         // ACT
         _request.setHeader(Header.ACCEPT_ENCODING, ContentEncoding.GZIP);
         final Resource resource =
-            new TestResource(_request, new HashMap<String, Object>()) {
+            new TestResource(
+                _request,
+                _response,
+                new HashMap<String, Object>()) {
 
             @Override
             public Map<MediaType, HelloWorldWriter> content_types_provided() {
@@ -970,7 +1013,10 @@ public class EngineTest {
         // ACT
         _request.setHeader(Header.ACCEPT, MediaType.HTML.toString());
         final Resource resource =
-            new TestResource(_request, new HashMap<String, Object>()) {
+            new TestResource(
+                _request,
+                _response,
+                new HashMap<String, Object>()) {
 
                 @Override
                 public Map<MediaType, HelloWorldWriter> content_types_provided() {
@@ -996,7 +1042,10 @@ public class EngineTest {
         // ACT
         _request.setHeader(Header.ACCEPT_CHARSET, "utf-8");
         final Resource resource =
-            new TestResource(_request, new HashMap<String, Object>()) {
+            new TestResource(
+                _request,
+                _response,
+                new HashMap<String, Object>()) {
 
                 @Override
                 public Map<MediaType, HelloWorldWriter> content_types_provided() {
@@ -1027,7 +1076,10 @@ public class EngineTest {
         // ACT
         _request.setHeader(Header.ACCEPT_CHARSET, "utf-8");
         final Resource resource =
-            new TestResource(_request, new HashMap<String, Object>()) {
+            new TestResource(
+                _request,
+                _response,
+                new HashMap<String, Object>()) {
 
             @Override
             public Map<MediaType, HelloWorldWriter> content_types_provided() {
@@ -1053,6 +1105,7 @@ public class EngineTest {
         // ARRANGE
         final Resource resource = new TestResource(
             null,
+            _response,
             new HashMap<String, Object>()) {
 
                 @Override public boolean malformed_request() {
@@ -1075,6 +1128,7 @@ public class EngineTest {
         _request.setMethod(Method.OPTIONS);
         final Resource resource = new TestResource(
             _request,
+            _response,
             new HashMap<String, Object>());
 
         // ACT
@@ -1097,6 +1151,7 @@ public class EngineTest {
         _response.setBody(new byte[] {0});
         final Resource resource = new TestResource(
             _request,
+            _response,
             new HashMap<String, Object>()) {
 
                 @Override public Set<String> allowed_methods() {
@@ -1138,6 +1193,7 @@ public class EngineTest {
         _request.setMethod(Method.PUT);
         final Resource resource = new TestResource(
             _request,
+            _response,
             new HashMap<String, Object>()) {
 
             @Override public Set<String> allowed_methods() {
@@ -1164,6 +1220,7 @@ public class EngineTest {
         _request.setMethod(Method.PUT);
         final Resource resource = new TestResource(
             _request,
+            _response,
             new HashMap<String, Object>()) {
 
             @Override public Set<String> allowed_methods() {
@@ -1199,6 +1256,7 @@ public class EngineTest {
         _request.setMethod(Method.PUT);
         final Resource resource = new TestResource(
             _request,
+            _response,
             new HashMap<String, Object>()) {
 
                 @Override public Set<String> allowed_methods() {
@@ -1230,6 +1288,7 @@ public class EngineTest {
         _request.setMethod(Method.PUT);
         final Resource resource = new TestResource(
             _request,
+            _response,
             new HashMap<String, Object>()) {
 
             @Override public Set<String> allowed_methods() {
@@ -1255,6 +1314,7 @@ public class EngineTest {
         // ARRANGE
         final Resource resource = new TestResource(
             null,
+            _response,
             new HashMap<String, Object>()) {
 
                 @Override public boolean service_available() {
@@ -1302,6 +1362,7 @@ public class EngineTest {
         _request.setHeader(Header.ACCEPT_CHARSET, "UTF-8");
         final Resource resource = new TestResource(
             _request,
+            _response,
             new HashMap<String, Object>()) {
             /** {@inheritDoc} */
             @Override
@@ -1326,6 +1387,7 @@ public class EngineTest {
             ContentEncoding.IDENTITY+";q=0,"+ContentEncoding.GZIP);
         final Resource resource = new TestResource(
             _request,
+            _response,
             new HashMap<String, Object>());
 
         // ACT
@@ -1343,6 +1405,7 @@ public class EngineTest {
         _request.setHeader(Header.ACCEPT_LANGUAGE, Locale.UK.toString());
         final Resource resource = new TestResource(
             _request,
+            _response,
             new HashMap<String, Object>()) {
 
                 @Override public Set<LanguageTag> languages_provided() {
@@ -1365,6 +1428,7 @@ public class EngineTest {
         _request.setHeader(Header.ACCEPT, "text/html"); // TODO: Add MediaType class.
         final Resource resource = new TestResource(
             _request,
+            _response,
             new HashMap<String, Object>());
 
         // ACT
@@ -1381,6 +1445,7 @@ public class EngineTest {
         // ARRANGE
         final Resource resource = new TestResource(
             null,
+            _response,
             new HashMap<String, Object>()) {
 
                 @Override public boolean is_authorized() {
@@ -1402,6 +1467,7 @@ public class EngineTest {
         // ARRANGE
         final Resource resource = new TestResource(
             null,
+            _response,
             new HashMap<String, Object>()) {
 
             @Override public boolean valid_content_headers() {
@@ -1423,6 +1489,7 @@ public class EngineTest {
         // ARRANGE
         final Resource resource = new TestResource(
             null,
+            _response,
             new HashMap<String, Object>()) {
 
             @Override public boolean known_content_type() {
@@ -1445,6 +1512,7 @@ public class EngineTest {
         _request.setMethod("FOO");                                 //$NON-NLS-1$
         final Resource resource = new TestResource(
             _request,
+            _response,
             new HashMap<String, Object>());
 
         // ACT
@@ -1461,6 +1529,7 @@ public class EngineTest {
         // ARRANGE
         final Resource resource = new TestResource(
             null,
+            _response,
             new HashMap<String, Object>()) {
 
                 @Override public boolean uri_too_long() {

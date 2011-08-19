@@ -30,11 +30,13 @@ public abstract class BasicResource
      * Constructor.
      *
      * @param request
-     * @param contex
+     * @param response
+     * @param context
      */
     public BasicResource(final Request request,
-                         final Map<String, Object> contex) {
-        super(request, contex);
+                         final Response response,
+                         final Map<String, Object> context) {
+        super(request, response, context);
     }
 
     /** {@inheritDoc} */

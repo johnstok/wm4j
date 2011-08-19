@@ -1,15 +1,16 @@
 # Mandatory
 
 ## Fully implement state machine:
-* [ ] Decision B2
-* [x] PUT on existing resource -> P11
-* [ ] Positive path for M7 & N5 -> N11, etc.
-* [ ] Fix delete path around M20
-* [ ] Conflict handling O14
-* [ ] Multiple representations O18
-* [ ] Responses with no entity O20
-* [ ] Redirect N11
-* [ ] New resource P11
+  * [ ] Decision B2
+  * [x] PUT on existing resource -> P11
+  * [ ] Positive path for M7 & N5 -> N11, etc.
+  * [ ] Fix delete path around M20
+  * [ ] Conflict handling O14
+  * [ ] Multiple representations O18
+  * [ ] Responses with no entity O20
+  * [ ] Redirect N11
+  * [ ] New resource P11
+  * [ ] Call finish_request
 
 ## Conneg
   * [x] header specified; resource specified -> Conneg, header
@@ -28,6 +29,8 @@
    * Servlet API
    * Simple HTTP
    * Extract common code to abstract base class.
+   
+Exceptions are a more idiomatic way to handle 4** errors - use them.
   
 Enhanced error handling.
 
@@ -73,3 +76,7 @@ Easy to test each method on a resource e.g. isWellFormed()
   * Support for performance features recommended via YSlow & PageSpeed
   * URI templating library
   * Ideas from HTML5 boilerplate lib
+  
+# Issues
+
+No way to send 202 for PUT requests - see comments in P11_new_resource.

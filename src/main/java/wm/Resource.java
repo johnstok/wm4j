@@ -23,19 +23,23 @@ import java.util.Set;
 public abstract class Resource {
 
     protected final Request             _request;
-    protected final Map<String, Object> _contex;
+    protected final Response            _response;
+    protected final Map<String, Object> _context;
 
 
     /**
      * Constructor.
      *
      * @param request
-     * @param contex
+     * @param response
+     * @param context
      */
     public Resource(final Request request,
-                    final Map<String, Object> contex) {
-        _request = request;
-        _contex = contex;
+                    final Response response,
+                    final Map<String, Object> context) {
+        _request  = request;
+        _response = response;
+        _context   = context;
     }
 
 

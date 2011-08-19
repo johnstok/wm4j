@@ -31,20 +31,21 @@ public class UnaryDispatchary<T>
 
     /** {@inheritDoc} */
     @Override
-    public Resource dispatch(final Request request) throws HttpException {
+    public Resource dispatch(final Request request,
+                             final Response response) throws HttpException {
         try {
-            Map<String, Object> context = new HashMap<String, Object>();
-            return _clazz.getConstructor(_configuration.getClass(), Request.class, Map.class)
-                         .newInstance(_configuration, request, context);
-        } catch (InstantiationException e) {
+            final Map<String, Object> context = new HashMap<String, Object>();
+            return _clazz.getConstructor(_configuration.getClass(), Request.class, Response.class, Map.class)
+                         .newInstance(_configuration, request, response, context);
+        } catch (final InstantiationException e) {
             throw new HttpException(FAILED_TO_CREATE_RESOURCE, e);
-        } catch (IllegalAccessException e) {
+        } catch (final IllegalAccessException e) {
             throw new HttpException(FAILED_TO_CREATE_RESOURCE, e);
-        } catch (InvocationTargetException e) {
+        } catch (final InvocationTargetException e) {
             throw new HttpException(FAILED_TO_CREATE_RESOURCE, e);
-        } catch (NoSuchMethodException e) {
+        } catch (final NoSuchMethodException e) {
             throw new HttpException(FAILED_TO_CREATE_RESOURCE, e);
-        } catch (RuntimeException e) {
+        } catch (final RuntimeException e) {
             throw new HttpException(FAILED_TO_CREATE_RESOURCE, e);
         }
     }

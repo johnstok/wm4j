@@ -13,6 +13,7 @@ import wm.BodyReader;
 import wm.BodyWriter;
 import wm.MediaType;
 import wm.Request;
+import wm.Response;
 
 
 /**
@@ -28,11 +29,13 @@ public class TestResource
      * Constructor.
      *
      * @param request
-     * @param contex
+     * @param response
+     * @param context
      */
     public TestResource(final Request request,
-                        final Map<String, Object> contex) {
-        super(request, contex);
+                        final Response response,
+                        final Map<String, Object> context) {
+        super(request, response, context);
     }
 
 

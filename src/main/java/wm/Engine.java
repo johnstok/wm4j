@@ -75,24 +75,44 @@ public class Engine {
 
     private void processRequestBody(final Resource resource,
                                     final Response response) throws HttpException {
-        MediaType mt = MediaType.ANY; // FIXME: Extract media type.
-        BodyReader br = resource.content_types_accepted().get(mt); // TODO: Conneg required?
+        final MediaType mt = MediaType.ANY; // FIXME: Extract media type.
+        final BodyReader br = resource.content_types_accepted().get(mt); // TODO: Conneg required?
         try {
             br.read(resource._request.get_req_body_stream());
-        } catch (IOException e) {
+        } catch (final IOException e) {
             // TODO Log exception.
             response.setStatus(Status.INTERNAL_SERVER_ERROR);
         }
-        response.setHeader(Header.LOCATION, resource._request.path());
     }
 
 
-    private void P11(final Resource resource,
+    private void P11_new_resource(
+                     final Resource resource,
                      final Response response) throws HttpException {
         if (null==response.getHeader(Header.LOCATION)) {
             O20_response_includes_an_entity(resource, response);
         } else {
+            /*
+             * The request has been fulfilled and resulted in a new resource being
+             * created. The newly created resource can be referenced by the URI(s)
+             * returned in the entity of the response, with the most specific URI for
+             * the resource given by a Location header field. The response SHOULD
+             * include an entity containing a list of resource characteristics and
+             * location(s) from which the user or user agent can choose the one most
+             * appropriate. The entity format is specified by the media type given in
+             * the Content-Type header field. The origin server MUST create the resource
+             * before returning the 201 status code. If the action cannot be carried out
+             * immediately, the server SHOULD respond with 202 (Accepted) response
+             * instead.
+             *
+             * A 201 response MAY contain an ETag response header field indicating the
+             * current value of the entity tag for the requested variant just created,
+             * see section 14.19.
+             */
             response.setStatus(Status.CREATED);
+            attachEtag(resource, response); // Use variant as per current request.
+            attachLastModified(resource, response);
+            // TODO: Provide an entity if available.
         }
     }
 
@@ -119,26 +139,8 @@ public class Engine {
             try {
                 response.setStatus(Status.OK);
 
-                // ETag 14.19
-                final ETag eTag = resource.generate_etag();
-                if (null!=eTag) { response.setHeader(E_TAG, eTag.getValue()); }
-
-                // Last-Modified 14.29
-                final Date lastModified = resource.last_modified();
-                final Date messageOriginationTime = response.getOriginationTime();
-
-                /*
-                 * An origin server MUST NOT send a Last-Modified date which
-                 * is later than the server's time of message origination.
-                 * In such cases, where the resource's last modification
-                 * would indicate some time in the future, the server MUST
-                 * replace that date with the message origination date.
-                 */
-                if (null!=lastModified) {
-                    response.setHeader(
-                        Header.LAST_MODIFIED,
-                        (lastModified.after(messageOriginationTime)) ? messageOriginationTime : lastModified);
-                }
+                attachEtag(resource, response);
+                attachLastModified(resource, response);
 
                 // TODO: Set 'Expires' header.
 
@@ -150,6 +152,47 @@ public class Engine {
             }
             response.setStatus(Status.OK);
         }
+    }
+
+
+    /**
+     * Attach the last modified date to a response.
+     *
+     * @param resource The source of the date.
+     * @param response The response to which the date will be attached.
+     */
+    private void attachLastModified(final Resource resource,
+                                    final Response response) {
+
+        final Date lastModified = resource.last_modified();
+        final Date messageOriginationTime = response.getOriginationTime();
+
+        /*
+         * An origin server MUST NOT send a Last-Modified date which
+         * is later than the server's time of message origination.
+         * In such cases, where the resource's last modification
+         * would indicate some time in the future, the server MUST
+         * replace that date with the message origination date.
+         */
+        if (null!=lastModified) {
+            response.setHeader(
+                Header.LAST_MODIFIED,
+                (lastModified.after(messageOriginationTime)) ? messageOriginationTime : lastModified);
+        }
+    }
+
+
+    /**
+     * Attach an ETag to a response.
+     *
+     * @param resource The source of the ETag.
+     * @param response The response to which the ETag will be attached.
+     */
+    private void attachEtag(final Resource resource,
+                            final Response response) {
+        // FIXME: ETags depend on variants.
+        final ETag eTag = resource.generate_etag();
+        if (null!=eTag) { response.setHeader(E_TAG, eTag.getValue()); }
     }
 
 
@@ -415,7 +458,7 @@ public class Engine {
             response.setStatus(Status.CONFLICT);
         } else {
             processRequestBody(resource, response);
-            P11(resource, response);
+            P11_new_resource(resource, response);
         }
     }
 
@@ -696,7 +739,7 @@ public class Engine {
             // TODO: Confirm Location header has been set.
             response.setStatus(Status.SEE_OTHER);
         } else {
-            P11(resource, response);
+            P11_new_resource(resource, response);
         }
     }
 
@@ -716,7 +759,7 @@ public class Engine {
         if (resource.is_conflict()) {
             response.setStatus(Status.CONFLICT);
         } else {
-            P11(resource, response);
+            P11_new_resource(resource, response);
         }
     }
 }

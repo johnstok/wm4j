@@ -44,16 +44,17 @@ public class Wm4jContainer
     @Override
     public void handle(final Request request, final Response response) {
         try {
-            Resource r =
+            final wm.Response resp = new SimpleResponse(response);
+            final Resource r =
                 _dispatcher.dispatch(
                     new SimpleRequest(
-                        request, response, new HashMap<String, String>(), "/"));
-            new Engine().process(r, new SimpleResponse(response));
-        } catch (HttpException e) {
+                        request, response, new HashMap<String, String>(), "/"), resp);
+            new Engine().process(r, resp);
+        } catch (final HttpException e) {
             // TODO Auto-generated catch block.
             e.printStackTrace();
             throw new RuntimeException(e);
-        } catch (RuntimeException e) {
+        } catch (final RuntimeException e) {
             // TODO Auto-generated catch block.
             e.printStackTrace();
             throw e;
