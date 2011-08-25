@@ -6,11 +6,14 @@
  *---------------------------------------------------------------------------*/
 package wm;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -42,6 +45,43 @@ public class EngineTest {
      *
      * ===========*/
 
+
+    private static final class SimpleBodyReader
+        implements
+            BodyReader {
+
+        private final ByteArrayOutputStream _baos;
+        private final String                _createdPath;
+        private final Resource              _resource;
+
+
+        /**
+         * Constructor.
+         *
+         * @param baos
+         * @param createdPath
+         * @param resource
+         */
+        SimpleBodyReader(final ByteArrayOutputStream baos,
+                                 final String createdPath,
+                                 final Resource resource) {
+            _baos = baos;
+            _createdPath = createdPath;
+            _resource = resource;
+        }
+
+
+        @Override
+        public void read(final InputStream inputStream) throws IOException, HttpException {
+            if (!_resource.resource_exists()) {
+                _resource._response.setHeader(Header.LOCATION, _createdPath);
+            }
+
+            Utils.copy(inputStream, _baos);
+        }
+    }
+
+
     private static final class HelloWorldWriter
         implements
             BodyWriter {
@@ -54,7 +94,7 @@ public class EngineTest {
          *
          * @param charset
          */
-        private HelloWorldWriter(final Charset charset) {
+        HelloWorldWriter(final Charset charset) {
             _charset = charset;
         }
 
@@ -1187,10 +1227,13 @@ public class EngineTest {
 
 
     @Test
-    public void putForExistingResourceGivesNoContent() {
+    public void putForExistingResourceGivesNoContent() throws Exception {
 
         // ARRANGE
+        final byte[] body = new byte[] {0};
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         _request.setMethod(Method.PUT);
+        _request.set_req_body(body);
         final Resource resource = new TestResource(
             _request,
             _response,
@@ -1203,6 +1246,11 @@ public class EngineTest {
             @Override public boolean resource_exists() {
                 return true;
             }
+
+            @Override
+            public Map<MediaType, ? extends BodyReader> content_types_accepted() {
+                return Collections.singletonMap(MediaType.ANY, new SimpleBodyReader(baos, null, this));
+            }
         };
 
         // ACT
@@ -1210,6 +1258,9 @@ public class EngineTest {
 
         // ASSERT
         Assert.assertSame(Status.NO_CONTENT, _response.getStatus());
+        Assert.assertTrue(Arrays.equals(body, baos.toByteArray()));
+        // TODO: Assert last modified attached?
+        // TODO: Assert ETag added?
     }
 
 
@@ -1282,10 +1333,14 @@ public class EngineTest {
 
 
     @Test
-    public void putForMissingResourceCreatesResource() {
+    public void putForMissingResourceCreatesResource() throws Exception {
 
         // ARRANGE
+        final byte[] body = new byte[] {0};
+        final String createdPath = "/foo";                         //$NON-NLS-1$
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         _request.setMethod(Method.PUT);
+        _request.set_req_body(body);
         final Resource resource = new TestResource(
             _request,
             _response,
@@ -1298,6 +1353,11 @@ public class EngineTest {
             @Override public boolean resource_exists() {
                 return false;
             }
+
+            @Override
+            public Map<MediaType, ? extends BodyReader> content_types_accepted() {
+                return Collections.singletonMap(MediaType.ANY, new SimpleBodyReader(baos, createdPath, this));
+            }
         };
 
         // ACT
@@ -1305,6 +1365,10 @@ public class EngineTest {
 
         // ASSERT
         Assert.assertSame(Status.CREATED, _response.getStatus());
+        Assert.assertTrue(Arrays.equals(body, baos.toByteArray()));
+        Assert.assertEquals(createdPath, _response.getHeader(Header.LOCATION));
+        // TODO: Assert last modified attached?
+        // TODO: Assert ETag added?
     }
 
 

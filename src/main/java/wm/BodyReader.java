@@ -23,5 +23,6 @@ public interface BodyReader {
      *
      * @param inputStream The input stream to read from.
      */
-    void read(InputStream inputStream) throws IOException;
+    void read(InputStream inputStream) throws IOException, HttpException;
+    // FIXME: Do we need to throw both these exceptions?
 }

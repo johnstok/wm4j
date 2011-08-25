@@ -6,6 +6,7 @@
  *---------------------------------------------------------------------------*/
 package wm.test;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetAddress;
@@ -34,6 +35,7 @@ public class TestRequest
     private String                              _method = Method.GET;
     private final HashMap<String, List<String>> _headers =
         new HashMap<String, List<String>>();
+    private byte[]                              _body;
     private final SimpleDateFormat              _dateFormatter;
 
 
@@ -55,15 +57,15 @@ public class TestRequest
 
     /** {@inheritDoc} */
     @Override
-    public byte[] get_req_body() throws IOException {
-        throw new UnsupportedOperationException("Method not implemented.");
+    public byte[] get_req_body() {
+        return _body;
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public InputStream get_req_body_stream() throws IOException {
-        throw new UnsupportedOperationException("Method not implemented.");
+    public InputStream get_req_body_stream() {
+        return new ByteArrayInputStream(_body);
     }
 
 
@@ -235,7 +237,8 @@ public class TestRequest
     /** {@inheritDoc} */
     @Override
     public Request set_req_body(final byte[] bytes) throws IOException {
-        throw new UnsupportedOperationException("Method not implemented.");
+        _body = bytes;
+        return this;
     }
 
 

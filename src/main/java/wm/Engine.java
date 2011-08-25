@@ -110,7 +110,7 @@ public class Engine {
              * see section 14.19.
              */
             response.setStatus(Status.CREATED);
-            attachEtag(resource, response); // Use variant as per current request.
+            attachEtag(resource, response); // TODO: Use variant as per current request.
             attachLastModified(resource, response);
             // TODO: Provide an entity if available.
         }
@@ -123,7 +123,28 @@ public class Engine {
         if (response.hasBody()) {
             O18_multiple_representations(resource, response);
         } else {
+            /*
+             * The server has fulfilled the request but does not need to return
+             * an entity-body, and might want to return updated
+             * meta-information. The response MAY include new or updated
+             * meta-information in the form of entity-headers, which if present
+             * SHOULD be associated with the requested variant.
+             *
+             * If the client is a user agent, it SHOULD NOT change its document
+             * view from that which caused the request to be sent. This response
+             * is primarily intended to allow input for actions to take place
+             * without causing a change to the user agent's active document
+             * view, although any new or updated meta-information SHOULD be
+             * applied to the document currently in the user agent's active
+             * view.
+             *
+             * The 204 response MUST NOT include a message-body, and thus is
+             * always terminated by the first empty line after the header
+             * fields.
+             */
             response.setStatus(Status.NO_CONTENT);
+            attachEtag(resource, response); // TODO: Use variant as per current request.
+            attachLastModified(resource, response);
         }
     }
 
@@ -759,6 +780,7 @@ public class Engine {
         if (resource.is_conflict()) {
             response.setStatus(Status.CONFLICT);
         } else {
+            processRequestBody(resource, response);
             P11_new_resource(resource, response);
         }
     }

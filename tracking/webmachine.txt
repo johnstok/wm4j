@@ -1,15 +1,15 @@
 # Mandatory
 
 ## Fully implement state machine:
-  * [ ] Decision B2
   * [x] PUT on existing resource -> P11
+  * [ ] New resource P11 -> processRequestBody
+  * [ ] Decision B2
   * [ ] Positive path for M7 & N5 -> N11, etc.
   * [ ] Fix delete path around M20
   * [ ] Conflict handling O14
   * [ ] Multiple representations O18
   * [ ] Responses with no entity O20
   * [ ] Redirect N11
-  * [ ] New resource P11
   * [ ] Call finish_request
 
 ## Conneg
@@ -30,6 +30,8 @@
    * Simple HTTP
    * Extract common code to abstract base class.
    
+!!! Who closes IO streams?
+   
 Exceptions are a more idiomatic way to handle 4** errors - use them.
   
 Enhanced error handling.
@@ -42,8 +44,20 @@ Implementation of Path object's methods.
 
 Support for multiple headers with the same key.
 
+Type safe header access
+
+Type safe param access - separate collections for query and encoded body
+
+RegexDispatcher 
+
 
 # Enhancement
+
+Remove log4j use built-in logging.
+
+Create a Java 7 FileResource.
+
+Add async versions of Request & Response using Java 7 nio.
 
 Support for request with Content-Encoding header, incl 415 response (see rfc-2616#14.11).
 
@@ -76,6 +90,7 @@ Easy to test each method on a resource e.g. isWellFormed()
   * Support for performance features recommended via YSlow & PageSpeed
   * URI templating library
   * Ideas from HTML5 boilerplate lib
+  * P£P support
   
 # Issues
 
