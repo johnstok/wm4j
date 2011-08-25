@@ -31,7 +31,7 @@ public class Engine {
     private MediaType accept(final Request request,
                              final Map<MediaType, ? extends BodyWriter> content_types_provided) {
         final List<WeightedValue> clientMediaTypes =
-            MediaTypeNegotiator.parse(request.get_req_header(Header.ACCEPT));
+            MediaTypeNegotiator.parse(request.getHeader(Header.ACCEPT));
         return new MediaTypeNegotiator(content_types_provided.keySet()).select(clientMediaTypes);
     }
 
@@ -40,7 +40,7 @@ public class Engine {
                                   final Set<Charset> charsets_provided) {
         final List<WeightedValue> clientCharsets =
             Header.parseAcceptCharset(
-                request.get_req_header(Header.ACCEPT_CHARSET));
+                request.getHeader(Header.ACCEPT_CHARSET));
         return new CharsetNegotiator(charsets_provided).select(clientCharsets);
     }
 
@@ -49,7 +49,7 @@ public class Engine {
                                   final Set<String> encodings_provided) {
         final List<WeightedValue> clientEncodings =
             Header.parseAcceptEncoding(
-                request.get_req_header(Header.ACCEPT_ENCODING));
+                request.getHeader(Header.ACCEPT_ENCODING));
         final ContentNegotiator negotiator = new ContentNegotiator(encodings_provided);
         return negotiator.select(clientEncodings);
     }
@@ -58,7 +58,7 @@ public class Engine {
     private LanguageTag acceptLanguage(final Request request,
                                        final Set<LanguageTag> languages_provided) {
         final List<WeightedValue> clientLanguages =
-            LanguageNegotiator.parse(request.get_req_header(Header.ACCEPT_LANGUAGE));
+            LanguageNegotiator.parse(request.getHeader(Header.ACCEPT_LANGUAGE));
         final LanguageNegotiator negotiator =
             new LanguageNegotiator(languages_provided);
         return negotiator.select(clientLanguages);
@@ -78,7 +78,7 @@ public class Engine {
         final MediaType mt = MediaType.ANY; // FIXME: Extract media type.
         final BodyReader br = resource.content_types_accepted().get(mt); // TODO: Conneg required?
         try {
-            br.read(resource._request.get_req_body_stream());
+            br.read(resource._request.getBodyAsStream());
         } catch (final IOException e) {
             // TODO Log exception.
             response.setStatus(Status.INTERNAL_SERVER_ERROR);
@@ -217,6 +217,7 @@ public class Engine {
     }
 
 
+    // FIXME: Remove response param - retrieve via resource instead.
     public final void process(final Resource resource,
                               final Response response) {
         try {
@@ -247,7 +248,7 @@ public class Engine {
 
     private void H07(final Resource resource,
                      final Response response) throws HttpException {
-        if ("*".equals(resource._request.get_req_header(Header.IF_MATCH))) {
+        if ("*".equals(resource._request.getHeader(Header.IF_MATCH))) {
             response.setStatus(Status.PRECONDITION_FAILED);
         } else {
             I07(resource, response);
@@ -279,7 +280,7 @@ public class Engine {
 
     private void G09(final Resource resource,
                      final Response response) throws HttpException {
-        if ("*".equals(resource._request.get_req_header(Header.IF_MATCH))) {
+        if ("*".equals(resource._request.getHeader(Header.IF_MATCH))) {
             H10(resource, response);
         } else {
             G11(resource, response);
@@ -289,7 +290,7 @@ public class Engine {
 
     private void G11(final Resource resource,
                      final Response response) throws HttpException {
-        if (resource._request.get_req_header(Header.IF_MATCH).equals(resource.generate_etag().getValue())) {
+        if (resource._request.getHeader(Header.IF_MATCH).equals(resource.generate_etag().getValue())) {
             H10(resource, response);
         } else {
             response.setStatus(Status.PRECONDITION_FAILED);
@@ -320,7 +321,7 @@ public class Engine {
 
     private void L15(final Resource resource,
                      final Response response) throws HttpException {
-        if (resource._request.get_req_header_date(Header.IF_MODIFIED_SINCE).after(new Date())) { // TODO: Compare with message origination rather than 'now'?
+        if (resource._request.getHeaderDate(Header.IF_MODIFIED_SINCE).after(new Date())) { // TODO: Compare with message origination rather than 'now'?
             M16(resource, response);
         } else {
             L17(resource, response);
@@ -330,7 +331,7 @@ public class Engine {
 
     private void L17(final Resource resource,
                      final Response response) throws HttpException {
-        if (resource._request.get_req_header_date(Header.IF_MODIFIED_SINCE).before(resource.last_modified())) {
+        if (resource._request.getHeaderDate(Header.IF_MODIFIED_SINCE).before(resource.last_modified())) {
             M16(resource, response);
         } else {
             response.setStatus(Status.NOT_MODIFIED);
@@ -350,7 +351,7 @@ public class Engine {
 
     private void I13(final Resource resource,
                      final Response response) throws HttpException {
-        if ("*".equals(resource._request.get_req_header(Header.IF_NONE_MATCH))) {
+        if ("*".equals(resource._request.getHeader(Header.IF_NONE_MATCH))) {
             J18(resource, response);
         } else {
             K13(resource, response);
@@ -360,8 +361,8 @@ public class Engine {
 
     private void J18(final Resource resource,
                      final Response response) {
-        if (Method.GET.equals(resource._request.get_req_method())
-            || Method.HEAD.equals(resource._request.get_req_method())) {
+        if (Method.GET.equals(resource._request.getMethod())
+            || Method.HEAD.equals(resource._request.getMethod())) {
             response.setStatus(Status.NOT_MODIFIED);
         } else {
             response.setStatus(Status.PRECONDITION_FAILED);
@@ -371,7 +372,7 @@ public class Engine {
 
     private void K13(final Resource resource,
                      final Response response) throws HttpException {
-        if (resource._request.get_req_header(Header.IF_NONE_MATCH).equals(resource.generate_etag().getValue())) {
+        if (resource._request.getHeader(Header.IF_NONE_MATCH).equals(resource.generate_etag().getValue())) {
             J18(resource, response);
         } else {
             L13(resource, response);
@@ -401,7 +402,7 @@ public class Engine {
 
     private void H12(final Resource resource,
                      final Response response) throws HttpException {
-        if (resource._request.get_req_header_date(Header.IF_UNMODIFIED_SINCE).before(resource.last_modified())) {
+        if (resource._request.getHeaderDate(Header.IF_UNMODIFIED_SINCE).before(resource.last_modified())) {
             response.setStatus(Status.PRECONDITION_FAILED);
         } else {
             I12(resource, response);
@@ -411,7 +412,7 @@ public class Engine {
 
     private void I07(final Resource resource,
                      final Response response) throws HttpException {
-        if (Method.PUT.equals(resource._request.get_req_method())) {
+        if (Method.PUT.equals(resource._request.getMethod())) {
             I04(resource, response);
         } else {
             K07(resource, response);
@@ -443,7 +444,7 @@ public class Engine {
 
     private void L07(final Resource resource,
                      final Response response) throws HttpException {
-        if (Method.POST==resource._request.get_req_method() && resource.allow_missing_post()) { // L7, M7
+        if (Method.POST==resource._request.getMethod() && resource.allow_missing_post()) { // L7, M7
             N11(resource, response);
         } else {
             response.setStatus(Status.NOT_FOUND);
@@ -465,7 +466,7 @@ public class Engine {
 
     private void M05(final Resource resource,
                      final Response response) throws HttpException {
-        if (Method.POST==resource._request.get_req_method() && resource.allow_missing_post()) { // M5, N5
+        if (Method.POST==resource._request.getMethod() && resource.allow_missing_post()) { // M5, N5
             N11(resource, response);
         } else {
             response.setStatus(Status.GONE);
@@ -498,7 +499,7 @@ public class Engine {
 
     private void M16(final Resource resource,
                      final Response response) throws HttpException {
-        if (Method.DELETE==resource._request.get_req_method()) {  // M16
+        if (Method.DELETE==resource._request.getMethod()) {  // M16
             // FIXME: Something fishy here - no O20 decision.
             final boolean accepted = resource.delete_resource();
             if (accepted) {
@@ -691,7 +692,7 @@ public class Engine {
 
     private void B04(final Resource resource,
                         final Response response) throws HttpException {
-        if (Method.OPTIONS==resource._request.get_req_method()) {
+        if (Method.OPTIONS==resource._request.getMethod()) {
             response.setStatus(Status.OK);
             response.setHeader(Header.CONTENT_LENGTH, "0");    //$NON-NLS-1$
             response.setHeader(
@@ -705,7 +706,7 @@ public class Engine {
 
     private void B01(final Resource resource,
                         final Response response) throws HttpException {
-        if (!Method.all().contains(resource._request.get_req_method())) {
+        if (!Method.all().contains(resource._request.getMethod())) {
             response.setStatus(Status.NOT_IMPLEMENTED);
         } else {
             C02(resource, response);
@@ -715,7 +716,7 @@ public class Engine {
 
     private void C02(final Resource resource,
                      final Response response) throws HttpException {
-        if (!resource.allowed_methods().contains(resource._request.get_req_method())) {
+        if (!resource.allowed_methods().contains(resource._request.getMethod())) {
             response.setStatus(Status.METHOD_NOT_ALLOWED);
             response.setHeader(
                 Header.ALLOW,
@@ -738,7 +739,7 @@ public class Engine {
 
     private void N16(final Resource resource,
                      final Response response) throws HttpException {
-        if (Method.POST==resource._request.get_req_method()) {
+        if (Method.POST==resource._request.getMethod()) {
             N11(resource, response);
         } else {
             O16(resource, response);
@@ -756,8 +757,7 @@ public class Engine {
             resource.process_post();
         }
 
-        if (resource._request.get_resp_redirect()) {
-            // TODO: Confirm Location header has been set.
+        if (null!=response.getHeader(Header.LOCATION)) { // TODO: Add method 'requiresRedirection()'.
             response.setStatus(Status.SEE_OTHER);
         } else {
             P11_new_resource(resource, response);
@@ -767,7 +767,7 @@ public class Engine {
 
     private void O16(final Resource resource,
                      final Response response) throws HttpException {
-        if (Method.PUT==resource._request.get_req_method()) {
+        if (Method.PUT==resource._request.getMethod()) {
             O14(resource, response);
         } else {
             O18_multiple_representations(resource, response);

@@ -34,15 +34,15 @@ public interface Request {
      *
      * @return
      */
-    String get_req_method();
+    String getMethod();
 
 
     /**
-     * The HTTP version used by the client. Most often {1,1}.
+     * The HTTP version used by the client.
      *
-     * @return
+     * @return A {@link Version} object.
      */
-    Version get_req_version();
+    Version getVersion();
 
 
     /**
@@ -50,7 +50,8 @@ public interface Request {
      *
      * @return
      */
-    InetAddress get_req_peer();
+    // FIXME: Should be InetSocketAddress.
+    InetAddress getAddress();
 
 
     /**
@@ -112,7 +113,7 @@ public interface Request {
      * @param headerName
      * @return
      */
-    String get_req_header(String headerName);
+    String getHeader(String headerName);
 
 
     /**
@@ -120,7 +121,7 @@ public interface Request {
      *
      * @return
      */
-    Map<String, List<String>> get_req_headers();
+    Map<String, List<String>> getHeaders();
 
 
     /**
@@ -129,7 +130,8 @@ public interface Request {
      * @return
      * @throws IOException
      */
-    byte[] get_req_body() throws IOException;
+    // FIXME: Remove this provide a utility to read a body into memory.
+    byte[] getBody() throws IOException;
 
 
     /**
@@ -138,25 +140,7 @@ public interface Request {
      * @return
      * @throws IOException
      */
-    InputStream get_req_body_stream() throws IOException;
-
-
-    /**
-     * Look up the named value in the incoming request cookie header.
-     *
-     * @param valueName
-     * @return
-     */
-    String get_req_cookie_value(String valueName);
-
-
-    /**
-     * The raw value of the cookie header. Note that get_cookie_value is often
-     * more useful.
-     *
-     * @return
-     */
-    String get_req_cookie();
+    InputStream getBodyAsStream() throws IOException;
 
 
     /**
@@ -165,7 +149,7 @@ public interface Request {
      *
      * @return
      */
-    String get_req_qs_value(String paramName);
+    String getQueryValue(String paramName);
 
 
     /**
@@ -176,7 +160,7 @@ public interface Request {
      * @param defaultValue
      * @return
      */
-    String get_req_qs_value(String paramName, String defaultValue);
+    String getQueryValue(String paramName, String defaultValue);
 
 
     /**
@@ -185,42 +169,7 @@ public interface Request {
      *
      * @return
      */
-    Map<String, List<String>> get_req_qs();
-
-
-    /**
-     * Look up the current value of an outgoing request header.
-     *
-     * @param headerName
-     * @return
-     */
-    String get_resp_header(final String headerName);
-
-
-    /**
-     * The last value passed to do_redirect, false otherwise -- if true, then
-     * some responses will be 303 instead of 2xx where applicable.
-     *
-     * @return
-     */
-    boolean get_resp_redirect();
-
-
-    /**
-     * The outgoing HTTP headers. Generally, get_resp_header is more useful.
-     *
-     * @return
-     */
-    Map<String, List<String>> get_resp_headers();
-
-
-    /**
-     * The outgoing response body, if one has been set. Usually,
-     * append_to_response_body is the best way to set this.
-     *
-     * @return
-     */
-    byte[] get_resp_body();
+    Map<String, List<String>> getQueryValues();
 
 
     /**
@@ -235,36 +184,6 @@ public interface Request {
     /*
      * Mutators.
      */
-
-
-    /**
-     * Given a header name and value, set an outgoing request header to that
-     * value.
-     *
-     * @param headerName
-     * @param headerValue
-     * @return
-     */
-    Request set_resp_header(String headerName, String headerValue);
-
-
-    /**
-     * Append the given value to the body of the outgoing response.
-     *
-     * @param bytes
-     * @return
-     * @throws IOException
-     */
-    Request append_to_response_body(byte[] bytes) throws IOException;
-
-
-    /**
-     * See resp_redirect; this sets that value.
-     *
-     * @param redirect
-     * @return
-     */
-    Request set_resp_redirect(boolean redirect);
 
 
     /**
@@ -284,45 +203,8 @@ public interface Request {
      * @param bytes
      * @return
      */
-    Request set_req_body(byte[] bytes) throws IOException;
-
-
-    /**
-     * Set the outgoing response body to this value.
-     *
-     * @param bytes
-     * @return
-     * @throws IOException
-     */
-    Request set_resp_body(byte[] bytes) throws IOException;
-
-
-    /**
-     * Use this streamed body to produce the outgoing response body on demand.
-     *
-     * @param stream
-     * @return
-     * @throws IOException
-     */
-    Request set_resp_body(InputStream stream) throws IOException;
-
-
-    /**
-     * Given a list of two-tuples of {headername,value}, set those outgoing response headers.
-     *
-     * @param headers
-     * @return
-     */
-    Request set_resp_headers(Map<String, String[]> headers);
-
-
-    /**
-     * Remove the named outgoing response header.
-     *
-     * @param headerName
-     * @return
-     */
-    Request remove_resp_header(String headerName);
+    // FIXME: Param should be an InputStream
+    Request setBody(byte[] bytes) throws IOException;
 
 
     /**
@@ -331,7 +213,7 @@ public interface Request {
      * @param headerName
      * @return The header as a date.
      */
-    Date get_req_header_date(String headerName);
+    Date getHeaderDate(String headerName);
 
 
     /**

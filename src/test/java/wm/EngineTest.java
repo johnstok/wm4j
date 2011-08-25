@@ -1233,7 +1233,7 @@ public class EngineTest {
         final byte[] body = new byte[] {0};
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         _request.setMethod(Method.PUT);
-        _request.set_req_body(body);
+        _request.setBody(body);
         final Resource resource = new TestResource(
             _request,
             _response,
@@ -1340,7 +1340,7 @@ public class EngineTest {
         final String createdPath = "/foo";                         //$NON-NLS-1$
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         _request.setMethod(Method.PUT);
-        _request.set_req_body(body);
+        _request.setBody(body);
         final Resource resource = new TestResource(
             _request,
             _response,

@@ -24,11 +24,12 @@ import java.nio.charset.Charset;
 import java.util.Date;
 import wm.AbstractResponse;
 import wm.BodyWriter;
+import wm.Response;
 import wm.Status;
 
 
 /**
- * TODO: Add a description for this type.
+ * Implementation of the {@link Response} API using the Simple HTTP library.
  *
  * @author Keith Webster Johnston.
  */
@@ -104,4 +105,87 @@ public class SimpleResponse
     public void setHeader(final String name, final Date value) {
         _response.setDate(name, value.getTime());
     }
+
+
+//  @Override
+//  public Request append_to_response_body(final byte[] bytes) throws IOException {
+//      _response.getOutputStream().write(bytes);
+//      return this;
+//  }
+//
+//
+//  @Override
+//  public byte[] get_resp_body() {
+//      throw new UnsupportedOperationException("Response body can't be read.");
+//  }
+//
+//
+//  @Override
+//  public String get_resp_header(final String headerName) {
+//      return _response.getValue(headerName);
+//  }
+//
+//
+//  @Override
+//  public Map<String, List<String>> get_resp_headers() {
+//      final Map<String, List<String>> headers = new HashMap<String, List<String>>();
+//      for (final String name : _response.getNames()) {
+//          headers.put(name, _response.getValues(name));
+//      }
+//      return headers;
+//  }
+//
+//
+//  @Override
+//  public boolean get_resp_redirect() {
+//      return _doRedirect;
+//  }
+//
+//
+//  @Override
+//  public Request remove_resp_header(final String headerName) {
+//      _response.remove(headerName);
+//      return this;
+//  }
+//
+//
+//  @Override
+//  public Request set_resp_body(final byte[] bytes) throws IOException {
+//      _response.reset(); // Should only reset the body.
+//      _response.getOutputStream().write(bytes);
+//      return this;
+//  }
+//
+//
+//  @Override
+//  public Request set_resp_body(final InputStream stream) throws IOException {
+//      copy(stream, _response.getOutputStream());
+//      return this;
+//  }
+//
+//
+//  @Override
+//  public Request set_resp_header(final String headerName, final String headerValue) {
+//      _response.set(headerName, headerValue);
+//      return this;
+//  }
+//
+//
+//  @Override
+//  public Request set_resp_headers(final Map<String, String[]> headers) {
+//      for (final Map.Entry<String, String[]> header : headers.entrySet()) {
+//          remove_resp_header(header.getKey());
+//          for (final String value : header.getValue()) {
+//              _response.add(header.getKey(), value);
+//          }
+//      }
+//      return this;
+//  }
+//
+//
+//  @Override
+//  public Request set_resp_redirect(final boolean redirect) {
+//      _doRedirect = redirect;
+//      return this;
+//  }
 }

@@ -1,5 +1,0 @@
-Decide on IOException
-Get parameters from request
-
-write: string byte[] inputstream reader
-read:  string byte[] inputstream reader

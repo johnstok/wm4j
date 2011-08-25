@@ -48,7 +48,7 @@ public class Wm4jContainer
             final Resource r =
                 _dispatcher.dispatch(
                     new SimpleRequest(
-                        request, response, new HashMap<String, String>(), "/"), resp);
+                        request, new HashMap<String, String>(), "/"), resp);
             new Engine().process(r, resp);
         } catch (final HttpException e) {
             // TODO Auto-generated catch block.

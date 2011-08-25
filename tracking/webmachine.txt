@@ -70,7 +70,7 @@ Range support.
   * ETag support
   * 'Compressable' resource base class.
 
-Cookies? (See RFC)
+Cookie support (See http://download.oracle.com/javase/6/docs/api/java/net/HttpCookie.html).
 
 Content-Disposition? (See RFC)
 
