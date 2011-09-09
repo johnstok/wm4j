@@ -20,11 +20,13 @@
 package wm;
 
 import java.nio.charset.Charset;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TimeZone;
 
 
 /**
- * TODO: Add a description for this type.
+ * Provides default implementations of many {@link Response} API methods.
  *
  * @author Keith Webster Johnston.
  */
@@ -32,10 +34,21 @@ public abstract class AbstractResponse
     implements
         Response {
 
+    protected final SimpleDateFormat _dateFormatter;
+
     private final Date _originationTime = new Date();
     private Charset    _charset;
     private MediaType  _mediaType;
     private String     _contentEncoding;
+
+
+    /**
+     * Constructor.
+     */
+    public AbstractResponse() {
+        _dateFormatter = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz");
+        _dateFormatter.setTimeZone(TimeZone.getTimeZone("GMT"));
+    }
 
 
     /** {@inheritDoc} */

@@ -25,6 +25,8 @@ import java.io.OutputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.TimeZone;
 
 
@@ -37,15 +39,20 @@ public abstract class AbstractRequest
     implements
         Request {
 
-    protected final SimpleDateFormat _dateFormatter;
+    protected final SimpleDateFormat    _dateFormatter;
+    private         String              _dispPath;
+    private final   Map<String, String> _atomMatches;
 
 
     /**
      * Constructor.
      */
-    public AbstractRequest() {
+    public AbstractRequest(final Map<String, String> atomMatches,
+                           final String dispPath) {
         _dateFormatter = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz");
         _dateFormatter.setTimeZone(TimeZone.getTimeZone("GMT"));
+        _dispPath = dispPath;       // FIXME: Check for NULL.
+        _atomMatches = atomMatches; // FIXME: Check for NULL.
     }
 
 
@@ -76,6 +83,49 @@ public abstract class AbstractRequest
     @Override
     public boolean hasHeader(final String headerName) {
         return null!=getHeader(headerName);
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public String getQueryValue(final String paramName) {
+        return getQueryValue(paramName, null);
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public String[] path_tokens() {
+        return _dispPath.split("/");                               //$NON-NLS-1$
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public Request set_disp_path(final String path) {
+        _dispPath = path;
+        return this;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public String path_disp() {
+        return _dispPath;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public Map<Object, String> path_info() {
+        return new HashMap<Object, String>(_atomMatches);
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public String path_info(final Object atom) {
+        return _atomMatches.get(atom);
     }
 
 

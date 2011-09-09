@@ -26,9 +26,13 @@
   * [ ] Setting of 'Vary' header following negotiations (decision G07). Think this can be hard-coded?
   
 ## Bindings
-   * Servlet API
-   * Simple HTTP
-   * Extract common code to abstract base class.
+  * Servlet API
+  * Simple HTTP
+  * Extract common code to abstract base class.
+   
+## Config
+  * [ ] Charset for parsing request path.
+  * [ ] Max worker threads.
    
 !!! Who closes IO streams?
    
