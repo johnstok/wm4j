@@ -19,7 +19,7 @@
  *---------------------------------------------------------------------------*/
 package wm.netty;
 
-import java.io.ByteArrayOutputStream;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetAddress;
@@ -27,7 +27,6 @@ import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.jboss.netty.buffer.ChannelBuffer;
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.handler.codec.http.HttpRequest;
 import org.jboss.netty.handler.codec.http.QueryStringDecoder;
@@ -69,7 +68,7 @@ public class NettyRequest
         _channel = channel; // FIXME: Check for NULL.
 
         // FIXME: Allow charset to be configured.
-        QueryStringDecoder decoder = new QueryStringDecoder(request.getUri());
+        final QueryStringDecoder decoder = new QueryStringDecoder(request.getUri());
         _path = decoder.getPath();
         _qParams = decoder.getParameters();
     }
@@ -139,7 +138,7 @@ public class NettyRequest
     /** {@inheritDoc} */
     @Override
     public String getQueryValue(final String paramName, final String defaultValue) {
-        List<String> p = _qParams.get(paramName);
+        final List<String> p = _qParams.get(paramName);
         if (null==p || 0==p.size()) { return defaultValue; }
         return p.get(0);
     }
@@ -164,11 +163,8 @@ public class NettyRequest
 
     /** {@inheritDoc} */
     @Override
-    public byte[] getBody() throws IOException {
-        ChannelBuffer buf = _request.getContent();
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        // FIXME: Consume remaining data.
-        return baos.toByteArray();
+    public byte[] getBody() {
+        return _request.getContent().copy().array();
     }
 
 
@@ -181,7 +177,8 @@ public class NettyRequest
 
     /** {@inheritDoc} */
     @Override
-    public InputStream getBodyAsStream() throws IOException {
-        throw new UnsupportedOperationException("Method not implemented.");
+    public InputStream getBodyAsStream() {
+        // FIXME: This reads the whole request body into memory - BAD.
+        return new ByteArrayInputStream(getBody());
     }
 }

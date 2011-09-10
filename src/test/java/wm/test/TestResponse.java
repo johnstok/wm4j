@@ -75,8 +75,6 @@ public class TestResponse
     }
 
 
-    /** {@inheritDoc} */
-    @Override
     public String getBodyAsString(final Charset charset) {
         return new String(_body, charset);
     }

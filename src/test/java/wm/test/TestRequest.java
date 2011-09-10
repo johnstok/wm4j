@@ -36,6 +36,14 @@ public class TestRequest
     private byte[]                              _body;
 
 
+    /**
+     * Constructor.
+     */
+    public TestRequest() {
+        super(new HashMap<String, String>(), "/");
+    }
+
+
     /** {@inheritDoc} */
     @Override
     public byte[] getBody() {
@@ -91,13 +99,6 @@ public class TestRequest
 
     /** {@inheritDoc} */
     @Override
-    public String getQueryValue(final String paramName) {
-        throw new UnsupportedOperationException("Method not implemented.");
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
     public String getQueryValue(final String paramName, final String defaultValue) {
         throw new UnsupportedOperationException("Method not implemented.");
     }
@@ -126,42 +127,7 @@ public class TestRequest
 
     /** {@inheritDoc} */
     @Override
-    public String path_disp() {
-        throw new UnsupportedOperationException("Method not implemented.");
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public Map<Object, String> path_info() {
-        throw new UnsupportedOperationException("Method not implemented.");
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public String path_info(final Object atom) {
-        throw new UnsupportedOperationException("Method not implemented.");
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
     public String path_raw() {
-        throw new UnsupportedOperationException("Method not implemented.");
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public String[] path_tokens() {
-        throw new UnsupportedOperationException("Method not implemented.");
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public Request set_disp_path(final String path) {
         throw new UnsupportedOperationException("Method not implemented.");
     }
 

@@ -8,10 +8,14 @@ package wm.simple;
 
 
 import java.io.IOException;
+import java.net.SocketAddress;
 import java.util.HashMap;
 import org.simpleframework.http.Request;
 import org.simpleframework.http.Response;
 import org.simpleframework.http.core.Container;
+import org.simpleframework.transport.connect.Connection;
+import org.simpleframework.transport.connect.SocketConnection;
+import wm.Daemon;
 import wm.Dispatcher;
 import wm.Engine;
 import wm.HttpException;
@@ -25,8 +29,9 @@ import wm.Resource;
  */
 public class Wm4jContainer
     implements
-        Container {
+        Container, Daemon {
 
+    private       Connection _connection;
     private final Dispatcher _dispatcher;
 
 
@@ -64,6 +69,25 @@ public class Wm4jContainer
             } catch (final IOException e) {
                 System.err.print("Error closing response:"+e);
             }
+        }
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void startup(final SocketAddress address) throws IOException {
+        if (null==_connection) {
+            _connection = new SocketConnection(this);
+            _connection.connect(address);
+        }
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void shutdown() throws IOException {
+        if (null!=_connection) {
+            _connection.close();
         }
     }
 }

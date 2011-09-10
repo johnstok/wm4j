@@ -20,7 +20,6 @@
 package wm.simple;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.util.Date;
 import wm.AbstractResponse;
 import wm.BodyWriter;
@@ -76,13 +75,6 @@ public class SimpleResponse
     @Override
     public String getHeader(final String name) {
         return _response.getValue(name);
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public String getBodyAsString(final Charset charset) {
-        throw new UnsupportedOperationException("Method not implemented.");
     }
 
 

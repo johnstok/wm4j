@@ -55,15 +55,6 @@ public interface Response {
     /**
      * TODO: Add a description for this method.
      *
-     * @param charset
-     * @return
-     */
-    public String getBodyAsString(Charset charset);
-
-
-    /**
-     * TODO: Add a description for this method.
-     *
      * @param value
      */
     void write(BodyWriter value) throws IOException;

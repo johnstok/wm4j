@@ -28,7 +28,7 @@
 ## Bindings
   * Servlet API
   * Simple HTTP
-  * Extract common code to abstract base class.
+  * Netty
    
 ## Config
   * [ ] Charset for parsing request path.
@@ -48,14 +48,23 @@ Implementation of Path object's methods.
 
 Support for multiple headers with the same key.
 
-Type safe header access
+Type safe header access.
 
-Type safe param access - separate collections for query and encoded body
+Type safe param access - separate collections for query and encoded body.
 
-RegexDispatcher 
+RegexDispatcher.
+
+Tests for large requests & responses.
 
 
 # Enhancement
+
+PATCH method http://greenbytes.de/tech/webdav/rfc5789.html
+
+## Headers
+   * Content Disposition - http://greenbytes.de/tech/webdav/rfc6266.html
+   * Link - http://greenbytes.de/tech/webdav/rfc5988.html
+   
 
 Remove log4j use built-in logging.
 
@@ -78,7 +87,7 @@ Cookie support (See http://download.oracle.com/javase/6/docs/api/java/net/HttpCo
 
 Content-Disposition? (See RFC)
 
-Support for 'Authorization' header.
+Support for 'Authorization' header (http://greenbytes.de/tech/webdav/rfc2617.html).
 
 Improved 503 support: 'Retry-After' and configurable entity body.
 
@@ -87,6 +96,10 @@ Easy to test each method on a resource e.g. isWellFormed()
 ## Bindings
    * Grizzly
    * Finagle
+
+   
+# Specifications
+   * http://tools.ietf.org/html/draft-gregorio-uritemplate-06
 
 
 # Ideas

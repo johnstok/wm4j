@@ -19,9 +19,10 @@
  *---------------------------------------------------------------------------*/
 package wm.netty;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.util.Date;
+import org.jboss.netty.buffer.ChannelBuffers;
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.handler.codec.http.HttpResponse;
 import org.jboss.netty.handler.codec.http.HttpResponseStatus;
@@ -42,6 +43,7 @@ public class NettyResponse
 
     private final HttpResponse _response;
     private final Channel      _channel;
+    private       boolean      _committed;
 
 
     /**
@@ -74,7 +76,11 @@ public class NettyResponse
     /** {@inheritDoc} */
     @Override
     public void setHeader(final String name, final String value) {
-        _response.setHeader(name, value);
+        if (null==value) {
+            _response.removeHeader(name);
+        } else {
+            _response.setHeader(name, value);
+        }
     }
 
 
@@ -87,16 +93,12 @@ public class NettyResponse
 
     /** {@inheritDoc} */
     @Override
-    public String getBodyAsString(final Charset charset) {
-        throw new UnsupportedOperationException("Method not implemented.");
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
     public void write(final BodyWriter value) throws IOException {
-        _channel.write(_response);
-        throw new UnsupportedOperationException("Method not implemented.");
+        // FIXME: The whole body is read into memory.
+        commit();
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        value.write(baos);
+        _channel.write(ChannelBuffers.copiedBuffer(baos.toByteArray()));
     }
 
 
@@ -111,6 +113,24 @@ public class NettyResponse
     @Override
     public void setHeader(final String name, final Date value) {
         setHeader(name, _dateFormatter.format(value));
+    }
+
+    /**
+     * TODO: Add a description for this method.
+     */
+    void commit() {
+        _committed = true;
+        _channel.write(_response);
+    }
+
+
+    /**
+     * TODO: Add a description for this method.
+     *
+     * @return
+     */
+    boolean isCommitted() {
+        return _committed;
     }
 
 
