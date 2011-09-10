@@ -42,7 +42,7 @@ import wm.Resource;
  *
  * @author Keith Webster Johnston.
  */
-public class Wm4jChannelHandler
+public class NettyDaemon
     extends
         SimpleChannelUpstreamHandler
     implements
@@ -57,7 +57,7 @@ public class Wm4jChannelHandler
      *
      * @param dispatcher
      */
-    public Wm4jChannelHandler(final Dispatcher dispatcher) {
+    public NettyDaemon(final Dispatcher dispatcher) {
         _dispatcher = dispatcher;
     }
 
@@ -112,7 +112,7 @@ public class Wm4jChannelHandler
                 pipeline.addLast("aggregator", new HttpChunkAggregator(65536));
                 pipeline.addLast("encoder", new HttpResponseEncoder());
                 pipeline.addLast("chunkedWriter", new ChunkedWriteHandler());
-                pipeline.addLast("handler", Wm4jChannelHandler.this);
+                pipeline.addLast("handler", NettyDaemon.this);
                 return pipeline;
             }});
         _c = bootstrap.bind(address);

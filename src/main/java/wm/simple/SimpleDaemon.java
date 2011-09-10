@@ -27,7 +27,7 @@ import wm.Resource;
  *
  * @author Keith Webster Johnston.
  */
-public class Wm4jContainer
+public class SimpleDaemon
     implements
         Container, Daemon {
 
@@ -40,7 +40,7 @@ public class Wm4jContainer
      *
      * @param dispatcher
      */
-    public Wm4jContainer(final Dispatcher dispatcher) {
+    public SimpleDaemon(final Dispatcher dispatcher) {
         _dispatcher = dispatcher;
     }
 
