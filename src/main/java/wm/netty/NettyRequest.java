@@ -113,7 +113,7 @@ public class NettyRequest
     /** {@inheritDoc} */
     @Override
     public String path_raw() {
-        return path();
+        return _request.getUri();
     }
 
 
