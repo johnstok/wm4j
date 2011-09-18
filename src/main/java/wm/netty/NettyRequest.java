@@ -33,8 +33,10 @@ import java.util.Map;
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.handler.codec.http.HttpRequest;
 import org.jboss.netty.handler.codec.http.QueryStringDecoder;
+import org.jboss.netty.handler.ssl.SslHandler;
 import wm.AbstractRequest;
 import wm.Request;
+import wm.Scheme;
 import wm.Version;
 
 
@@ -167,12 +169,15 @@ public class NettyRequest
     @Override
     public URL getUrl() {
         try {
-            // FIXME: Scheme is hardcoded.
-            // FIXME: Domain is hardcoded.
-            // FIXME: Port is hard-coded.
+            final InetSocketAddress address =
+                (InetSocketAddress) _channel.getLocalAddress();
+            // FIXME: Domain should be overridden by absolute URI &/| Host header.
             // FIXME: Doesn't correctly handle Mismatch between Absolute request URI & Host header.
-            // FIXME: Confirm the path is not decoded or normalised.
-            return new URL("http", "localhost", 80, _request.getUri());
+            return new URL(
+                (_channel.getPipeline().get(SslHandler.class) != null) ? Scheme.https.name() : Scheme.http.name(),
+                address.getHostName(),
+                address.getPort(),
+                _request.getUri()); // Not decoded or normalised; includes query param's.
         } catch (final MalformedURLException e) {
             // FIXME: Is there a better solution here?
             throw new RuntimeException(e);

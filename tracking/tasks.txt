@@ -35,6 +35,12 @@
   * [ ] Max worker threads.
    
 !!! Who closes IO streams?
+
+Host name determination:
+ 1. Absolute URI
+ 2. Host header
+ 3. Manually specified
+ 4. Determined from lookup via InetSocketAddress.
    
 Exceptions are a more idiomatic way to handle 4** errors - use them.
   
@@ -58,6 +64,11 @@ Tests for large requests & responses.
 
 
 # Enhancement
+
+Confidential transport
+ * http://docs.jboss.org/netty/3.2/xref/org/jboss/netty/example/http/file/HttpStaticFileServerHandler.html
+ * http://docs.jboss.org/netty/3.2/xref/org/jboss/netty/example/securechat/package-summary.html
+ * org.jboss.netty.handler.ssl.SslHandler
 
 Security header support: http://www.barracudalabs.com/wordpress/index.php/2011/07/21/google-gets-a-1-for-browser-security-3/
 

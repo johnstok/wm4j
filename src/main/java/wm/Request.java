@@ -18,8 +18,6 @@ import java.util.Map;
 /**
  * A HTTP request.
  *
- * From http://webmachine.basho.com/reqdata.html
- *
  * @author Keith Webster Johnston.
  */
 public interface Request {

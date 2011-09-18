@@ -137,10 +137,12 @@ public class SimpleRequest
     public URL getUrl() {
         final Address address = _request.getAddress();
         try {
-            // FIXME: Doesn't include the query String.
-            // FIXME: Does this correctly handle Mismatch between Absolute request URI & Host header?
-            // FIXME: Should not normalise the path.
-            return new URL(address.getScheme(), address.getDomain(), address.getPort(), address.getPath().getPath());
+            // TODO: Use _request.getTarget() and parse as a URL.
+            return new URL(
+                address.getScheme(), // FIXME: Doesn't handle null.
+                address.getDomain(), // FIXME: Doesn't handle null; Does this correctly handle Mismatch between Absolute request URI & Host header?
+                address.getPort(),   // FIXME: Doesn't handle null.
+                address.getPath().getPath()); // FIXME: Doesn't include the query String; Should not normalise the path.
         } catch (final MalformedURLException e) {
             // FIXME: Is there a better solution here?
             throw new RuntimeException(e);

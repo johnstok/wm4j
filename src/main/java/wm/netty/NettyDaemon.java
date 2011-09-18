@@ -9,7 +9,6 @@ package wm.netty;
 
 import static org.jboss.netty.handler.codec.http.HttpResponseStatus.*;
 import static org.jboss.netty.handler.codec.http.HttpVersion.*;
-import java.io.IOException;
 import java.net.SocketAddress;
 import java.util.concurrent.Executors;
 import org.jboss.netty.bootstrap.ServerBootstrap;
@@ -95,7 +94,7 @@ public class NettyDaemon
 
     /** {@inheritDoc} */
     @Override
-    public void startup(final SocketAddress address) throws IOException {
+    public void startup(final SocketAddress address) {
         final ServerBootstrap bootstrap =
             new ServerBootstrap(
                 new NioServerSocketChannelFactory(
@@ -103,8 +102,7 @@ public class NettyDaemon
                     Executors.newCachedThreadPool()));
 
         bootstrap.setPipelineFactory(new ChannelPipelineFactory() {
-
-            @Override  public ChannelPipeline getPipeline() throws Exception {
+            @Override  public ChannelPipeline getPipeline() {
                 final ChannelPipeline pipeline = new DefaultChannelPipeline();
                 pipeline.addLast("decoder", new HttpRequestDecoder());
                 pipeline.addLast("aggregator", new HttpChunkAggregator(65536));
@@ -113,13 +111,14 @@ public class NettyDaemon
                 pipeline.addLast("handler", NettyDaemon.this);
                 return pipeline;
             }});
+
         _c = bootstrap.bind(address);
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public void shutdown() throws IOException {
+    public void shutdown() {
         _c.close().awaitUninterruptibly();
     }
 }
