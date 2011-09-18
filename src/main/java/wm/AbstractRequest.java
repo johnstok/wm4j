@@ -19,13 +19,6 @@
  *---------------------------------------------------------------------------*/
 package wm;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.TimeZone;
 
 
 /**
@@ -36,40 +29,6 @@ import java.util.TimeZone;
 public abstract class AbstractRequest
     implements
         Request {
-
-    protected final SimpleDateFormat    _dateFormatter;
-
-
-    /**
-     * Constructor.
-     */
-    public AbstractRequest() {
-        _dateFormatter = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz");
-        _dateFormatter.setTimeZone(TimeZone.getTimeZone("GMT"));
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public Date getHeaderDate(final String headerName) {
-        try {
-            return _dateFormatter.parse(getHeader(headerName));
-        } catch (final ParseException e) {
-            return null;
-        }
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean isValidDate(final String headerName) {
-        try {
-            _dateFormatter.parse(getHeader(headerName));
-            return true;
-        } catch (final ParseException e) {
-            return false;
-        }
-    }
 
 
     /** {@inheritDoc} */
@@ -86,14 +45,10 @@ public abstract class AbstractRequest
     }
 
 
-    // FIXME: Move elsewhere.
-    protected void copy(final InputStream is,
-                        final OutputStream os) throws IOException {
-        final byte[] buffer = new byte[8*1024];
-        final int read = is.read(buffer);
-        while (-1!=read) {
-            os.write(buffer, 0, read);
-        }
+    /** {@inheritDoc} */
+    @Override
+    public String getHeader(final String headerName) {
+        return getHeader(headerName, null);
     }
 
 

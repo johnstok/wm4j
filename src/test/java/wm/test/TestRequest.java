@@ -12,7 +12,6 @@ import java.net.InetAddress;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,24 +38,18 @@ public class TestRequest
 
     /** {@inheritDoc} */
     @Override
-    public byte[] getBody() {
-        return _body;
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public InputStream getBodyAsStream() {
+    public InputStream getBody() {
         return new ByteArrayInputStream(_body);
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public String getHeader(final String headerName) {
+    public String getHeader(final String headerName,
+                            final String defaultValue) {
         final List<String> values = _headers.get(headerName);
         if (null==values || 0==values.size()) {
-            return null;
+            return defaultValue;
         }
         return values.get(0);
     }
@@ -65,7 +58,7 @@ public class TestRequest
     /** {@inheritDoc} */
     @Override
     public Map<String, List<String>> getHeaders() {
-        throw new UnsupportedOperationException("Method not implemented.");
+        return _headers;
     }
 
 
@@ -145,17 +138,6 @@ public class TestRequest
      */
     public void setMethod(final String method) {
         _method = method;
-    }
-
-
-    /**
-     * Mutator.
-     *
-     * @param headerName
-     * @param value
-     */
-    public void setHeader(final String headerName, final Date value) {
-        setHeader(headerName, _dateFormatter.format(value));
     }
 
 

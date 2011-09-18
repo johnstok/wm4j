@@ -1,6 +1,5 @@
 package wm.simple;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetAddress;
@@ -36,30 +35,26 @@ public class SimpleRequest
      * @param request The Simple HTTP request delegated to.
      */
     public SimpleRequest(final org.simpleframework.http.Request request) {
-        _request     = request;     // FIXME: Check for NULL.
+        _request = request;     // FIXME: Check for NULL.
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public byte[] getBody() throws IOException {
-        final ByteArrayOutputStream os = new ByteArrayOutputStream();
-        copy(_request.getInputStream(), os);
-        return os.toByteArray();
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public InputStream getBodyAsStream() throws IOException {
+    public InputStream getBody() throws IOException {
         return _request.getInputStream();
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public String getHeader(final String headerName) {
-        return _request.getValue(headerName);
+    public String getHeader(final String headerName,
+                            final String defaultValue) {
+        final String value = _request.getValue(headerName);
+        if (null==value) {
+            return defaultValue;
+        }
+        return value;
     }
 
 

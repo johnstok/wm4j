@@ -11,7 +11,6 @@ import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.URI;
 import java.net.URL;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -30,22 +29,8 @@ public interface Request {
      *
      * getURL
      *   How do we handle conflict between scheme/host/port in request line & 'Host' header & actual values ie we know server is running on port 1234. See RFC-2616, sec 5.2.
-     *
-     * getPort: int
-     *   Port upon which the server received the request
-     * getHost: String or Address?
-     *   Hostname the request was directed to.
-     * getScheme: Scheme
-     *   The scheme used for the request. How do we handle conflict between absolute UriRequest value & actual use of SSL.
-     * getPath : URI
-     *   Decoded path component of URL - which charset for decoding?
-     * getQueryValue : String
-     *   Decoded query value - which charset for decoding?
-     */
-
-
-    /*
-     * Accessors.
+     * getScheme
+     *   How do we handle conflict between absolute UriRequest value & actual use of SSL.
      */
 
     /**
@@ -118,7 +103,7 @@ public interface Request {
      *
      * @return
      */
-    // FIXME: Should be InetSocketAddress.
+    // FIXME: Should be InetSocketAddress?
     InetAddress getClientAddress();
 
 
@@ -133,45 +118,49 @@ public interface Request {
     /**
      * Look up the value of an incoming request header.
      *
-     * @param headerName
-     * @return
+     * @param headerName The name of the required header value.
+     *
+     * @return Returns the header value as a string
      */
-    // TODO: Add another version of this method that accepts a default value.
     String getHeader(String headerName);
+
+    /**
+     * Look up the value of an incoming request header.
+     *
+     * @param headerName The name of the required header value.
+     * @param defaultValue The default value to return if no such header
+     *  exists.
+     *
+     * @return Returns the header value as a string.
+     */
+    String getHeader(String headerName, String defaultValue);
 
 
     /**
-     * The incoming HTTP headers. Generally, get_req_header is more useful.
+     * Get all available header values.
      *
-     * @return
+     * @return A map containing the header values for this request.
      */
     Map<String, List<String>> getHeaders();
 
 
     /**
-     * The incoming request body, if any.
+     * The incoming request body.
      *
-     * @return
-     * @throws IOException
-     */
-    // FIXME: Remove this provide a utility to read a body into memory.
-    byte[] getBody() throws IOException;
-
-
-    /**
-     * The incoming request body in streamed form.
+     * @return Returns an input stream to read the body data.
      *
-     * @return
-     * @throws IOException
+     * @throws IOException If creation of the input stream fails.
      */
-    InputStream getBodyAsStream() throws IOException;
+    InputStream getBody() throws IOException;
 
 
     /**
      * Given the name of a key, look up the corresponding value in the query
      * string.
      *
-     * @return
+     * @param paramName The name of the required query parameter.
+     *
+     * @return Returns the decoded query value.
      */
     String getQueryValue(String paramName);
 
@@ -180,52 +169,27 @@ public interface Request {
      * Given the name of a key and a default value if not present, look up the
      * corresponding value in the query string.
      *
-     * @param paramName
-     * @param defaultValue
-     * @return
+     * @param paramName The name of the required query parameter.
+     * @param defaultValue The default value to return if no such parameter
+     *  exists.
+     *
+     * @return Returns the decoded query value.
      */
     String getQueryValue(String paramName, String defaultValue);
 
 
     /**
-     * The parsed query string, if any. Note that get_qs_value is often more
-     * useful.
+     * Get all available query values.
      *
-     * @return
+     * @return A map containing all decoded query values.
      */
     Map<String, List<String>> getQueryValues();
-
-
-    /*
-     * Mutators.
-     */
-
-
-    /**
-     * Look up the current value of an outgoing request header.
-     *
-     * @param headerName
-     * @return The header as a date.
-     */
-    // FIXME: Convert to wm.headers.DateHeader#parse(headerValue).
-    Date getHeaderDate(String headerName);
-
-
-    /**
-     * Confirm the value of the specified header is a HTTP date.
-     *
-     * @param headerName
-     *
-     * @return True if the date is valid; false otherwise.
-     */
-    // FIXME: Convert to wm.headers.DateHeader#isValid(headerValue).
-    boolean isValidDate(String headerName);
 
 
     /**
      * Does this request have at least one header with the specified name.
      *
-     * @param headerName
+     * @param headerName The name of the required header.
      *
      * @return True if the request has such a header; false otherwise.
      */

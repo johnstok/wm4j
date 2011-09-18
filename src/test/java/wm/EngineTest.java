@@ -24,6 +24,7 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import wm.headers.DateHeader;
 import wm.test.TestRequest;
 import wm.test.TestResource;
 import wm.test.TestResponse;
@@ -314,7 +315,7 @@ public class EngineTest {
     public void getWithLessRecentIfunmodifiedsinceGivesPreconditionFailed() { // H12
 
         // ARRANGE
-        _request.setHeader(Header.IF_UNMODIFIED_SINCE, new Date(0));
+        _request.setHeader(Header.IF_UNMODIFIED_SINCE, DateHeader.format(new Date(0)));
         final Resource resource = new TestResource(
             _request,
             _response,
@@ -361,7 +362,7 @@ public class EngineTest {
 
         // ARRANGE
         final Date d = new Date(Long.MAX_VALUE);
-        _request.setHeader(Header.IF_MODIFIED_SINCE, d);
+        _request.setHeader(Header.IF_MODIFIED_SINCE, DateHeader.format(d));
         final Charset UTF8 = Charset.forName("UTF-8");
         final Resource resource = new TestResource(
             _request,
@@ -400,7 +401,7 @@ public class EngineTest {
 
         // ARRANGE
         final Date d = new Date(0);
-        _request.setHeader(Header.IF_MODIFIED_SINCE, d);
+        _request.setHeader(Header.IF_MODIFIED_SINCE, DateHeader.format(d));
         final Charset UTF8 = Charset.forName("UTF-8");
         final Resource resource = new TestResource(
             _request,
@@ -439,7 +440,7 @@ public class EngineTest {
 
         // ARRANGE
         final Date d = new Date(1000);
-        _request.setHeader(Header.IF_MODIFIED_SINCE, d);
+        _request.setHeader(Header.IF_MODIFIED_SINCE, DateHeader.format(d));
         final Resource resource = new TestResource(
             _request,
             _response,
@@ -463,7 +464,7 @@ public class EngineTest {
 
         // ARRANGE
         final Date d = new Date(2000);
-        _request.setHeader(Header.IF_MODIFIED_SINCE, d);
+        _request.setHeader(Header.IF_MODIFIED_SINCE, DateHeader.format(d));
         final Resource resource = new TestResource(
             _request,
             _response,
@@ -487,7 +488,7 @@ public class EngineTest {
 
         // ARRANGE
         final Date d = new Date();
-        _request.setHeader(Header.IF_UNMODIFIED_SINCE, d);
+        _request.setHeader(Header.IF_UNMODIFIED_SINCE, DateHeader.format(d));
         final Charset UTF8 = Charset.forName("UTF-8");
         final Resource resource = new TestResource(
             _request,
@@ -526,7 +527,7 @@ public class EngineTest {
 
         // ARRANGE
         final Date d = new Date(1000); // HTTP uses millisecond precision ;-)
-        _request.setHeader(Header.IF_UNMODIFIED_SINCE, d);
+        _request.setHeader(Header.IF_UNMODIFIED_SINCE, DateHeader.format(d));
         final Charset UTF8 = Charset.forName("UTF-8");
         final Resource resource = new TestResource(
             _request,

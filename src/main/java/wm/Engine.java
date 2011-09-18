@@ -15,6 +15,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import wm.headers.DateHeader;
 import wm.negotiation.CharsetNegotiator;
 import wm.negotiation.ContentNegotiator;
 import wm.negotiation.LanguageNegotiator;
@@ -78,7 +79,7 @@ public class Engine {
         final MediaType mt = MediaType.ANY; // FIXME: Extract media type.
         final BodyReader br = resource.content_types_accepted().get(mt); // TODO: Conneg required?
         try {
-            br.read(resource._request.getBodyAsStream());
+            br.read(resource._request.getBody());
         } catch (final IOException e) {
             // TODO Log exception.
             response.setStatus(Status.INTERNAL_SERVER_ERROR);
@@ -311,7 +312,7 @@ public class Engine {
 
     private void L14(final Resource resource,
                      final Response response) throws HttpException {
-        if (resource._request.isValidDate(Header.IF_MODIFIED_SINCE)) {
+        if (DateHeader.isValidDate(resource._request.getHeader(Header.IF_MODIFIED_SINCE))) {
             L15(resource, response);
         } else {
             M16(resource, response);
@@ -321,7 +322,7 @@ public class Engine {
 
     private void L15(final Resource resource,
                      final Response response) throws HttpException {
-        if (resource._request.getHeaderDate(Header.IF_MODIFIED_SINCE).after(new Date())) { // TODO: Compare with message origination rather than 'now'?
+        if (DateHeader.parse(resource._request.getHeader(Header.IF_MODIFIED_SINCE)).after(new Date())) { // TODO: Compare with message origination rather than 'now'?
             M16(resource, response);
         } else {
             L17(resource, response);
@@ -331,7 +332,7 @@ public class Engine {
 
     private void L17(final Resource resource,
                      final Response response) throws HttpException {
-        if (resource._request.getHeaderDate(Header.IF_MODIFIED_SINCE).before(resource.last_modified())) {
+        if (DateHeader.parse(resource._request.getHeader(Header.IF_MODIFIED_SINCE)).before(resource.last_modified())) {
             M16(resource, response);
         } else {
             response.setStatus(Status.NOT_MODIFIED);
@@ -392,7 +393,7 @@ public class Engine {
 
     private void H11(final Resource resource,
                      final Response response) throws HttpException {
-        if (resource._request.isValidDate(Header.IF_UNMODIFIED_SINCE)) {
+        if (DateHeader.isValidDate(resource._request.getHeader(Header.IF_UNMODIFIED_SINCE))) {
             H12(resource, response);
         } else {
             I12(resource, response);
@@ -402,7 +403,7 @@ public class Engine {
 
     private void H12(final Resource resource,
                      final Response response) throws HttpException {
-        if (resource._request.getHeaderDate(Header.IF_UNMODIFIED_SINCE).before(resource.last_modified())) {
+        if (DateHeader.parse(resource._request.getHeader(Header.IF_UNMODIFIED_SINCE)).before(resource.last_modified())) {
             response.setStatus(Status.PRECONDITION_FAILED);
         } else {
             I12(resource, response);

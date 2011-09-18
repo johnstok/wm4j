@@ -115,8 +115,13 @@ public class NettyRequest
 
     /** {@inheritDoc} */
     @Override
-    public String getHeader(final String headerName) {
-        return _request.getHeader(headerName);
+    public String getHeader(final String headerName,
+                            final String defaultValue) {
+        final String value = _request.getHeader(headerName);
+        if (null==value) {
+            return defaultValue;
+        }
+        return value;
     }
 
 
@@ -152,16 +157,9 @@ public class NettyRequest
 
     /** {@inheritDoc} */
     @Override
-    public byte[] getBody() {
-        return _request.getContent().copy().array();
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public InputStream getBodyAsStream() {
+    public InputStream getBody() {
         // FIXME: This reads the whole request body into memory - BAD.
-        return new ByteArrayInputStream(getBody());
+        return new ByteArrayInputStream(_request.getContent().copy().array());
     }
 
 
