@@ -20,10 +20,13 @@
 package wm.netty;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,14 +59,9 @@ public class NettyRequest
      *
      * @param request     The Netty HTTP request delegated to.
      * @param channel     The Netty channel used for IO.
-     * @param atomMatches
-     * @param dispPath
      */
     public NettyRequest(final HttpRequest request,
-                        final Channel channel,
-                        final Map<String, String> atomMatches,
-                        final String dispPath) {
-        super(atomMatches, dispPath);
+                        final Channel channel) {
         _request = request; // FIXME: Check for NULL.
         _channel = channel; // FIXME: Check for NULL.
 
@@ -98,22 +96,20 @@ public class NettyRequest
 
     /** {@inheritDoc} */
     @Override
-    public InetAddress getAddress() {
+    public InetAddress getClientAddress() {
         return ((InetSocketAddress) _channel.getRemoteAddress()).getAddress();
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public String path() {
-        return _path;
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public String path_raw() {
-        return _request.getUri();
+    public URI getPath() {
+        try {
+            return new URI(_path);
+        } catch (final URISyntaxException e) {
+            // FIXME: Is there a better solution here?
+            throw new RuntimeException(e);
+        }
     }
 
 
@@ -150,13 +146,6 @@ public class NettyRequest
         return _qParams;
     }
 
-
-    /** {@inheritDoc} */
-    @Override
-    public String path_app_root() {
-        throw new UnsupportedOperationException("Method not implemented.");
-    }
-
     /*
      * BODY.
      */
@@ -170,15 +159,25 @@ public class NettyRequest
 
     /** {@inheritDoc} */
     @Override
-    public Request setBody(final byte[] bytes) throws IOException {
-        throw new UnsupportedOperationException("Method not implemented.");
+    public InputStream getBodyAsStream() {
+        // FIXME: This reads the whole request body into memory - BAD.
+        return new ByteArrayInputStream(getBody());
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public InputStream getBodyAsStream() {
-        // FIXME: This reads the whole request body into memory - BAD.
-        return new ByteArrayInputStream(getBody());
+    public URL getUrl() {
+        try {
+            // FIXME: Scheme is hardcoded.
+            // FIXME: Domain is hardcoded.
+            // FIXME: Port is hard-coded.
+            // FIXME: Doesn't correctly handle Mismatch between Absolute request URI & Host header.
+            // FIXME: Confirm the path is not decoded or normalised.
+            return new URL("http", "localhost", 80, _request.getUri());
+        } catch (final MalformedURLException e) {
+            // FIXME: Is there a better solution here?
+            throw new RuntimeException(e);
+        }
     }
 }

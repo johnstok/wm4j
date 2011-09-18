@@ -4,10 +4,15 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetAddress;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.simpleframework.http.Address;
 import wm.AbstractRequest;
 import wm.Request;
 import wm.Version;
@@ -28,14 +33,9 @@ public class SimpleRequest
     /**
      * Constructor.
      *
-     * @param request     The Simple HTTP request delegated to.
-     * @param atomMatches
-     * @param dispPath
+     * @param request The Simple HTTP request delegated to.
      */
-    public SimpleRequest(final org.simpleframework.http.Request request,
-                         final Map<String, String> atomMatches,
-                         final String dispPath) {
-        super(atomMatches, dispPath);
+    public SimpleRequest(final org.simpleframework.http.Request request) {
         _request     = request;     // FIXME: Check for NULL.
     }
 
@@ -83,7 +83,7 @@ public class SimpleRequest
 
     /** {@inheritDoc} */
     @Override
-    public InetAddress getAddress() {
+    public InetAddress getClientAddress() {
         return _request.getClientAddress().getAddress();
     }
 
@@ -127,28 +127,28 @@ public class SimpleRequest
 
     /** {@inheritDoc} */
     @Override
-    public String path() {
-        return _request.getPath().getPath();
+    public URI getPath() {
+        try {
+            return new URI(_request.getPath().getPath());
+        } catch (final URISyntaxException e) {
+            // FIXME: Is there a better solution here?
+            throw new RuntimeException(e);
+        }
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public String path_app_root() {
-        throw new UnsupportedOperationException("Method not implemented.");
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public String path_raw() {
-        return _request.getTarget();
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public Request setBody(final byte[] bytes) {
-        throw new UnsupportedOperationException("Request body is immutable.");
+    public URL getUrl() {
+        final Address address = _request.getAddress();
+        try {
+            // FIXME: Doesn't include the query String.
+            // FIXME: Does this correctly handle Mismatch between Absolute request URI & Host header?
+            // FIXME: Should not normalise the path.
+            return new URL(address.getScheme(), address.getDomain(), address.getPort(), address.getPath().getPath());
+        } catch (final MalformedURLException e) {
+            // FIXME: Is there a better solution here?
+            throw new RuntimeException(e);
+        }
     }
 }

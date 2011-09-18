@@ -7,9 +7,10 @@
 package wm.test;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetAddress;
+import java.net.URI;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -22,7 +23,7 @@ import wm.Version;
 
 
 /**
- * TODO: Add a description for this type.
+ * Test implementation of the {@link Request} API.
  *
  * @author Keith Webster Johnston.
  */
@@ -34,14 +35,6 @@ public class TestRequest
     private final HashMap<String, List<String>> _headers =
         new HashMap<String, List<String>>();
     private byte[]                              _body;
-
-
-    /**
-     * Constructor.
-     */
-    public TestRequest() {
-        super(new HashMap<String, String>(), "/");
-    }
 
 
     /** {@inheritDoc} */
@@ -85,7 +78,7 @@ public class TestRequest
 
     /** {@inheritDoc} */
     @Override
-    public InetAddress getAddress() {
+    public InetAddress getClientAddress() {
         throw new UnsupportedOperationException("Method not implemented.");
     }
 
@@ -113,28 +106,20 @@ public class TestRequest
 
     /** {@inheritDoc} */
     @Override
-    public String path() {
+    public URI getPath() {
         throw new UnsupportedOperationException("Method not implemented.");
     }
 
 
-    /** {@inheritDoc} */
-    @Override
-    public String path_app_root() {
-        throw new UnsupportedOperationException("Method not implemented.");
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public String path_raw() {
-        throw new UnsupportedOperationException("Method not implemented.");
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public Request setBody(final byte[] bytes) throws IOException {
+    /**
+     * Replace the incoming request body with this for the rest of the
+     * processing.
+     *
+     * @param bytes The new body to set.
+     *
+     * @return Returns this request.
+     */
+    public Request setBody(final byte[] bytes) {
         _body = bytes;
         return this;
     }
@@ -171,5 +156,12 @@ public class TestRequest
      */
     public void setHeader(final String headerName, final Date value) {
         setHeader(headerName, _dateFormatter.format(value));
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public URL getUrl() {
+        throw new UnsupportedOperationException("Method not implemented.");
     }
 }

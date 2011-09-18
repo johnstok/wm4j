@@ -25,8 +25,6 @@ import java.io.OutputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.TimeZone;
 
 
@@ -40,19 +38,14 @@ public abstract class AbstractRequest
         Request {
 
     protected final SimpleDateFormat    _dateFormatter;
-    private         String              _dispPath;
-    private final   Map<String, String> _atomMatches;
 
 
     /**
      * Constructor.
      */
-    public AbstractRequest(final Map<String, String> atomMatches,
-                           final String dispPath) {
+    public AbstractRequest() {
         _dateFormatter = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz");
         _dateFormatter.setTimeZone(TimeZone.getTimeZone("GMT"));
-        _dispPath = dispPath;       // FIXME: Check for NULL.
-        _atomMatches = atomMatches; // FIXME: Check for NULL.
     }
 
 
@@ -93,42 +86,6 @@ public abstract class AbstractRequest
     }
 
 
-    /** {@inheritDoc} */
-    @Override
-    public String[] path_tokens() {
-        return _dispPath.split("/");                               //$NON-NLS-1$
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public Request set_disp_path(final String path) {
-        _dispPath = path;
-        return this;
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public String path_disp() {
-        return _dispPath;
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public Map<Object, String> path_info() {
-        return new HashMap<Object, String>(_atomMatches);
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public String path_info(final Object atom) {
-        return _atomMatches.get(atom);
-    }
-
-
     // FIXME: Move elsewhere.
     protected void copy(final InputStream is,
                         final OutputStream os) throws IOException {
@@ -137,5 +94,42 @@ public abstract class AbstractRequest
         while (-1!=read) {
             os.write(buffer, 0, read);
         }
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public int getPort() {
+        return getUrl().getPort();
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public String getDomain() {
+        return getUrl().getHost();
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public Scheme getScheme() {
+        // TODO: Should throw 'Unsupported Scheme' exception.
+        return Scheme.valueOf(getUrl().getProtocol());
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public String getFragment() {
+        // FIXME: Decode the fragment.
+        return getUrl().getRef();
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean isConfidential() {
+        return getScheme().isConfidential();
     }
 }

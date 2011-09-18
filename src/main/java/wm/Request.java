@@ -9,6 +9,8 @@ package wm;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetAddress;
+import java.net.URI;
+import java.net.URL;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -23,10 +25,76 @@ import java.util.Map;
  */
 public interface Request {
 
+    /*
+     * FIXME
+     *
+     * getURL
+     *   How do we handle conflict between scheme/host/port in request line & 'Host' header & actual values ie we know server is running on port 1234. See RFC-2616, sec 5.2.
+     *
+     * getPort: int
+     *   Port upon which the server received the request
+     * getHost: String or Address?
+     *   Hostname the request was directed to.
+     * getScheme: Scheme
+     *   The scheme used for the request. How do we handle conflict between absolute UriRequest value & actual use of SSL.
+     * getPath : URI
+     *   Decoded path component of URL - which charset for decoding?
+     * getQueryValue : String
+     *   Decoded query value - which charset for decoding?
+     */
+
 
     /*
      * Accessors.
      */
+
+    /**
+     * The port specified by the request.
+     *
+     * @return The port number, as an integer.
+     */
+    int getPort();
+
+
+    /**
+     * The host name specified in the client request.
+     *
+     * @return The host name, as a string.
+     */
+    String getDomain();
+
+
+    /**
+     * Get the protocol used for this request.
+     *
+     * @return The protocol scheme.
+     */
+    Scheme getScheme();
+
+    /**
+     * Get URL fragment specified in the client request.
+     *
+     * @return Returns the decoded URL as a string.
+     */
+    String getFragment();
+
+
+    /**
+     * Does this request use a confidential protocol.
+     *
+     * @return True if a confidential protocol is in use; false otherwise.
+     */
+    boolean isConfidential();
+
+
+    /**
+     * The URL requested by the client.
+     *
+     * No decoding or normalisation/canonicalisation is performed on this value.
+     *
+     * @return The request URL as a Java URL.
+     */
+    URL getUrl();
 
 
     /**
@@ -51,60 +119,15 @@ public interface Request {
      * @return
      */
     // FIXME: Should be InetSocketAddress.
-    InetAddress getAddress();
+    InetAddress getClientAddress();
 
 
     /**
-     * The "local" path of the resource URI; the part after any prefix used in
-     * dispatch configuration. Of the three path accessors, this is the one you
-     * usually want. This is also the one that will change after create_path is
-     * called in your resource.
+     * The decoded path from the request URL.
      *
-     * @return
+     * @return The request path, as a URI.
      */
-    String path_disp();
-
-
-    /**
-     * The path part of the URI -- after the host and port, but not including
-     * any query string.
-     *
-     * @return
-     */
-    String path();
-
-
-    /**
-     * The entire path part of the URI, including any query string present.
-     *
-     * @return
-     */
-    String path_raw();
-
-
-    /**
-     * Looks up a binding as described in dispatch configuration.
-     *
-     * @param atom
-     * @return
-     */
-    String path_info(Object atom);
-
-
-    /**
-     * The dictionary of bindings as described in dispatch configuration.
-     *
-     * @return
-     */
-    Map<Object, String> path_info();
-
-
-    /**
-     * This is a list of string() terms, the disp_path components split by "/".
-     *
-     * @return
-     */
-    String[] path_tokens();
+    URI getPath();
 
 
     /**
@@ -113,6 +136,7 @@ public interface Request {
      * @param headerName
      * @return
      */
+    // TODO: Add another version of this method that accepts a default value.
     String getHeader(String headerName);
 
 
@@ -172,39 +196,9 @@ public interface Request {
     Map<String, List<String>> getQueryValues();
 
 
-    /**
-     * Indicates the "height" above the requested URI that this resource is
-     * dispatched from. Typical values are "." , ".." , "../.." and so on.
-     *
-     * @return
-     */
-    String path_app_root();
-
-
     /*
      * Mutators.
      */
-
-
-    /**
-     * The disp_path is the only path that can be changed during a request. This
-     * function will do so.
-     *
-     * @param path
-     * @return
-     */
-    Request set_disp_path(String path);
-
-
-    /**
-     * Replace the incoming request body with this for the rest of the
-     * processing.
-     *
-     * @param bytes
-     * @return
-     */
-    // FIXME: Param should be an InputStream
-    Request setBody(byte[] bytes) throws IOException;
 
 
     /**
@@ -213,6 +207,7 @@ public interface Request {
      * @param headerName
      * @return The header as a date.
      */
+    // FIXME: Convert to wm.headers.DateHeader#parse(headerValue).
     Date getHeaderDate(String headerName);
 
 
@@ -223,6 +218,7 @@ public interface Request {
      *
      * @return True if the date is valid; false otherwise.
      */
+    // FIXME: Convert to wm.headers.DateHeader#isValid(headerValue).
     boolean isValidDate(String headerName);
 
 

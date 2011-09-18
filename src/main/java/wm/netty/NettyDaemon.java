@@ -11,7 +11,6 @@ import static org.jboss.netty.handler.codec.http.HttpResponseStatus.*;
 import static org.jboss.netty.handler.codec.http.HttpVersion.*;
 import java.io.IOException;
 import java.net.SocketAddress;
-import java.util.HashMap;
 import java.util.concurrent.Executors;
 import org.jboss.netty.bootstrap.ServerBootstrap;
 import org.jboss.netty.channel.Channel;
@@ -74,8 +73,7 @@ public class NettyDaemon
             final NettyResponse resp = new NettyResponse(response, channel);
             final Resource r =
                 _dispatcher.dispatch(
-                    new NettyRequest(
-                        request, channel, new HashMap<String, String>(), "/"), resp);
+                    new NettyRequest(request, channel), resp);
             new Engine().process(r, resp);
             if (!resp.isCommitted()) {
                 resp.commit();

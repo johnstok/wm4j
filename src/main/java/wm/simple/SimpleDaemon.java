@@ -9,7 +9,6 @@ package wm.simple;
 
 import java.io.IOException;
 import java.net.SocketAddress;
-import java.util.HashMap;
 import org.simpleframework.http.Request;
 import org.simpleframework.http.Response;
 import org.simpleframework.http.core.Container;
@@ -52,8 +51,7 @@ public class SimpleDaemon
             final wm.Response resp = new SimpleResponse(response);
             final Resource r =
                 _dispatcher.dispatch(
-                    new SimpleRequest(
-                        request, new HashMap<String, String>(), "/"), resp);
+                    new SimpleRequest(request), resp);
             new Engine().process(r, resp);
         } catch (final HttpException e) {
             // TODO Auto-generated catch block.

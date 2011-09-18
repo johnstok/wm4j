@@ -59,6 +59,10 @@ Tests for large requests & responses.
 
 # Enhancement
 
+Security header support: http://www.barracudalabs.com/wordpress/index.php/2011/07/21/google-gets-a-1-for-browser-security-3/
+
+SEO header support - e.g. "X-Robots-Tag: noindex"
+
 PATCH method http://greenbytes.de/tech/webdav/rfc5789.html
 
 ## Headers

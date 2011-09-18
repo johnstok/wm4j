@@ -49,6 +49,7 @@ public interface Response {
      *
      * @param string
      */
+    // TODO: This should return a list of values.
     String getHeader(final String name);
 
 
