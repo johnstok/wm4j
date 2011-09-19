@@ -35,7 +35,7 @@
    
 !!! Who closes IO streams?
 
-Host name determination:
+ [ ] Host name determination:
  1. Absolute URI
  2. Host header
  3. Manually specified
@@ -53,16 +53,18 @@ Host name determination:
 
  [x] Type safe header access.
 
- [ ] Type safe param access - separate collections for query and encoded body.
-
  [ ] RegexDispatcher.
 
  [ ] Tests for large requests & responses.
  
  [ ] Support for 'userinfo' in request URI.
+ 
+ [ ] rfc-2616:5.1.2 Servers SHOULD respond to invalid Request-URIs with an appropriate status code.
 
 
 # Enhancement
+
+ [ ] Type safe param access - separate collections for query and encoded body.
 
  [ ] Chunked encoding; Request#isChunked() method.
  
@@ -107,6 +109,8 @@ Host name determination:
  [ ] Improved 503 support: 'Retry-After' and configurable entity body.
 
  [ ] Easy to test each method on a resource e.g. isWellFormed()
+ 
+ [ ] CONNECT support? See http://rfc2616.com/#section-5
 
 
 ## Bindings
@@ -124,7 +128,7 @@ Host name determination:
  * Support for performance features recommended via YSlow & PageSpeed
  * URI templating library
  * Ideas from HTML5 boilerplate lib
- * P£P support
+ * P3P support
   
 # Issues
 

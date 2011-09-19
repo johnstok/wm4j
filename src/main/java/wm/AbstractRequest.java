@@ -34,21 +34,24 @@ public abstract class AbstractRequest
     implements
         Request {
 
-    private final int    _port;
-    private final String _host;
-    protected final String _requestUriCharset = "UTF-8";
+    private   final int    _port;
+    private   final String _host;
+    protected final String _requestUriCharset;
 
 
     /**
      * Constructor.
      *
-     * @param port     The port on which this request was received.
-     * @param host     The host name that received this request.
+     * @param port       The port on which this request was received.
+     * @param host       The host name that received this request.
+     * @param uriCharset The character set used to parse the request URI.
      */
     public AbstractRequest(final int port,
-                           final String host) {
+                           final String host,
+                           final String uriCharset) {
         _port = port; // TODO: Must be greater than 0.
         _host = host; // TODO: Not null.
+        _requestUriCharset = uriCharset;
     }
 
 
@@ -94,11 +97,11 @@ public abstract class AbstractRequest
     @Override
     public String getPath() {
         try {
-            return URLDecoder.decode(new URI(getRequestUri()).getPath(), _requestUriCharset);
+            return URLDecoder.decode(new URI(getRequestUri()).getRawPath(), _requestUriCharset);
         } catch (final URISyntaxException e) {
             // FIXME: Is there a better solution here?
             throw new RuntimeException(e);
-        } catch (UnsupportedEncodingException e) {
+        } catch (final UnsupportedEncodingException e) {
             // FIXME: Is there a better solution here?
             throw new RuntimeException(e);
         }

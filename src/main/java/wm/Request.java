@@ -8,7 +8,7 @@ package wm;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.util.List;
 import java.util.Map;
 
@@ -20,14 +20,6 @@ import java.util.Map;
  */
 public interface Request {
 
-    /*
-     * FIXME
-     *
-     * getURL
-     *   How do we handle conflict between scheme/host/port in request line & 'Host' header & actual values ie we know server is running on port 1234. See RFC-2616, sec 5.2.
-     * getScheme
-     *   How do we handle conflict between absolute UriRequest value & actual use of SSL.
-     */
 
     /**
      * The URL requested by the client.
@@ -38,8 +30,9 @@ public interface Request {
      */
     String getRequestUri();
 
+
     /**
-     * The port specified by the request.
+     * The port via which this request was received.
      *
      * @return The port number, as an integer.
      */
@@ -47,10 +40,15 @@ public interface Request {
 
 
     /**
-     * The host name specified in the client request.
+     * The hostname via which this request was received.
+     *
+     * Virtual hosting is currently unsupported. As such the 'Host' header
+     * field and request URI 'domain' are ignored. Each of these values can be
+     * accessed directly, if necessary.
      *
      * @return The host name, as a string.
      */
+    @Specification(name="RFC-2616", section="5.2")
     String getDomain();
 
 
@@ -87,12 +85,11 @@ public interface Request {
 
 
     /**
-     * The IP address of the client.
+     * The network address of the client.
      *
-     * @return
+     * @return A network address.
      */
-    // FIXME: Should be InetSocketAddress?
-    InetAddress getClientAddress();
+    InetSocketAddress getClientAddress();
 
 
     /**

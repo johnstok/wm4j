@@ -2,7 +2,7 @@ package wm.simple;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -29,11 +29,12 @@ public class SimpleRequest
      *
      * @param request The Simple HTTP request delegated to.
      * @param port    The port upon which the request was received.
+     * @param host    The hostname upon which the request was received.
      */
     public SimpleRequest(final org.simpleframework.http.Request request,
                          final int port,
                          final String host) {
-        super(port, host);
+        super(port, host, "UTF-8");
         _request = request;     // FIXME: Check for NULL.
     }
 
@@ -77,8 +78,8 @@ public class SimpleRequest
 
     /** {@inheritDoc} */
     @Override
-    public InetAddress getClientAddress() {
-        return _request.getClientAddress().getAddress();
+    public InetSocketAddress getClientAddress() {
+        return _request.getClientAddress();
     }
 
 

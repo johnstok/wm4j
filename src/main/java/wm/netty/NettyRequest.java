@@ -21,7 +21,6 @@ package wm.netty;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.List;
@@ -54,14 +53,15 @@ public class NettyRequest
     /**
      * Constructor.
      *
-     * @param request     The Netty HTTP request delegated to.
-     * @param channel     The Netty channel used for IO.
+     * @param request The Netty HTTP request delegated to.
+     * @param channel The Netty channel used for IO.
      */
     public NettyRequest(final HttpRequest request,
                         final Channel channel) {
         super(
             ((InetSocketAddress) channel.getLocalAddress()).getPort(),
-            ((InetSocketAddress) channel.getLocalAddress()).getHostName());
+            ((InetSocketAddress) channel.getLocalAddress()).getHostName(),
+            "UTF-8");
         _request = request; // FIXME: Check for NULL.
         _channel = channel; // FIXME: Check for NULL.
 
@@ -96,8 +96,8 @@ public class NettyRequest
 
     /** {@inheritDoc} */
     @Override
-    public InetAddress getClientAddress() {
-        return ((InetSocketAddress) _channel.getRemoteAddress()).getAddress();
+    public InetSocketAddress getClientAddress() {
+        return (InetSocketAddress) _channel.getRemoteAddress();
     }
 
 
