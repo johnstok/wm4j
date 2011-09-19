@@ -73,9 +73,7 @@ public class SimpleRequest
 
     /** {@inheritDoc} */
     @Override
-    public String getMethod() {
-        return _request.getMethod();
-    }
+    public String getMethod() { return _request.getMethod(); }
 
 
     /** {@inheritDoc} */
@@ -109,9 +107,7 @@ public class SimpleRequest
 
     /** {@inheritDoc} */
     @Override
-    public Version getVersion() {
-        return _version;
-    }
+    public Version getVersion() { return _version; }
 
 
     /** {@inheritDoc} */
@@ -121,7 +117,5 @@ public class SimpleRequest
 
     /** {@inheritDoc} */
     @Override
-    public boolean isConfidential() {
-        return _request.isSecure();
-    }
+    public boolean isConfidential() { return _request.isSecure(); }
 }

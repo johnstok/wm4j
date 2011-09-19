@@ -22,12 +22,13 @@ public interface Request {
 
 
     /**
-     * The URL requested by the client.
+     * The URI requested by the client.
      *
      * No decoding or normalisation/canonicalisation is performed on this value.
      *
-     * @return The request URL as a Java URL.
+     * @return The request URI, as a string.
      */
+    // TODO: Return a URI instead?
     String getRequestUri();
 
 
@@ -49,7 +50,7 @@ public interface Request {
      * @return The host name, as a string.
      */
     @Specification(name="RFC-2616", section="5.2")
-    String getDomain();
+    String getDomain(); // TODO: Rename to getHost()?
 
 
     /**
@@ -93,10 +94,11 @@ public interface Request {
 
 
     /**
-     * The decoded path from the request URL.
+     * The decoded path from the request URI.
      *
-     * @return The request path, as a URI.
+     * @return The request path, as a string.
      */
+    // TODO: Return a URI instead?
     String getPath();
 
 

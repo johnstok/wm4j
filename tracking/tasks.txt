@@ -57,8 +57,6 @@
 
  [ ] Tests for large requests & responses.
  
- [ ] Support for 'userinfo' in request URI.
- 
  [ ] rfc-2616:5.1.2 Servers SHOULD respond to invalid Request-URIs with an appropriate status code.
 
 

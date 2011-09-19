@@ -79,16 +79,12 @@ public class NettyRequest
 
     /** {@inheritDoc} */
     @Override
-    public String getMethod() {
-        return _request.getMethod().getName();
-    }
+    public String getMethod() { return _request.getMethod().getName(); }
 
 
     /** {@inheritDoc} */
     @Override
-    public Version getVersion() {
-        return _version;
-    }
+    public Version getVersion() { return _version; }
 
 
     /** {@inheritDoc} */
@@ -137,9 +133,7 @@ public class NettyRequest
 
     /** {@inheritDoc} */
     @Override
-    public Map<String, List<String>> getQueryValues() {
-        return _qParams;
-    }
+    public Map<String, List<String>> getQueryValues() { return _qParams; }
 
     /*
      * BODY.
