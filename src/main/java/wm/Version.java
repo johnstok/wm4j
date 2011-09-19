@@ -8,12 +8,45 @@ package wm;
 
 
 /**
- * TODO: Add a description for this type.
+ * The HTTP version.
  *
  * @author Keith Webster Johnston.
  */
-public interface Version {
+public class Version {
 
-    int major();
-    int minor();
+    private final int _major;
+    private final int _minor;
+
+
+    /**
+     * Constructor.
+     *
+     * @param major The major HTTP version.
+     * @param minor The minor HTTP version.
+     */
+    public Version(final int major, final int minor) {
+        super();
+        _major = major;
+        _minor = minor;
+    }
+
+
+    /**
+     * Get the major HTTP version.
+     *
+     * @return Version number as an integer.
+     */
+    public int major() {
+        return _major;
+    }
+
+
+    /**
+     * Get the minor HTTP version.
+     *
+     * @return Version number as an integer.
+     */
+    public int minor() {
+        return _minor;
+    }
 }

@@ -22,6 +22,7 @@ public class SimpleRequest
         AbstractRequest {
 
     private final org.simpleframework.http.Request _request;
+    private final Version _version;
 
 
     /**
@@ -36,6 +37,7 @@ public class SimpleRequest
                          final String host) {
         super(port, host, "UTF-8");
         _request = request;     // FIXME: Check for NULL.
+        _version = new Version(_request.getMajor(), _request.getMinor());
     }
 
 
@@ -108,15 +110,7 @@ public class SimpleRequest
     /** {@inheritDoc} */
     @Override
     public Version getVersion() {
-        return new Version() { // TODO: Convert Version to concrete class.
-
-            /** {@inheritDoc} */
-            @Override public int major() { return _request.getMajor(); }
-
-
-            /** {@inheritDoc} */
-            @Override public int minor() { return _request.getMinor(); }
-        };
+        return _version;
     }
 
 

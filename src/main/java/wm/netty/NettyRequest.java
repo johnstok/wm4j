@@ -47,6 +47,7 @@ public class NettyRequest
     private final Channel                  _channel;
     private final String                   _path;
     private final Map<String,List<String>> _qParams;
+    private final Version                  _version;
 
 
 
@@ -69,6 +70,10 @@ public class NettyRequest
             new QueryStringDecoder(request.getUri(), _requestUriCharset);
         _path = decoder.getPath();
         _qParams = decoder.getParameters();
+        _version =
+            new Version(
+                _request.getProtocolVersion().getMajorVersion(),
+                _request.getProtocolVersion().getMinorVersion());
     }
 
 
@@ -82,15 +87,7 @@ public class NettyRequest
     /** {@inheritDoc} */
     @Override
     public Version getVersion() {
-        return new Version() {
-
-            /** {@inheritDoc} */
-            @Override public int major() { return _request.getProtocolVersion().getMajorVersion(); }
-
-
-            /** {@inheritDoc} */
-            @Override public int minor() { return _request.getProtocolVersion().getMinorVersion(); }
-        };
+        return _version;
     }
 
 

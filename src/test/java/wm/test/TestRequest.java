@@ -8,7 +8,7 @@ package wm.test;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,19 +28,21 @@ public class TestRequest
     extends
         AbstractRequest {
 
-    private String                              _method = Method.GET;
-    private final HashMap<String, List<String>> _headers =
-        new HashMap<String, List<String>>();
-    private byte[]                              _body;
-    private String                              _requestUri;
-    private boolean                             _confidential;
+    private       String                        _method = Method.GET;
+    private final HashMap<String, List<String>> _headers;
+    private       byte[]                        _body;
+    private       String                        _requestUri;
+    private       boolean                       _confidential;
+    private final Version                       _version;
 
 
     /**
      * Constructor.
      */
     public TestRequest() {
-        super(80, "localhost");
+        super(80, "localhost", "UTF-8");
+        _version = new Version(1, 1);
+        _headers = new HashMap<String, List<String>>();
     }
 
 
@@ -65,21 +67,17 @@ public class TestRequest
 
     /** {@inheritDoc} */
     @Override
-    public Map<String, List<String>> getHeaders() {
-        return _headers;
-    }
+    public Map<String, List<String>> getHeaders() { return _headers; }
 
 
     /** {@inheritDoc} */
     @Override
-    public String getMethod() {
-        return _method;
-    }
+    public String getMethod() { return _method; }
 
 
     /** {@inheritDoc} */
     @Override
-    public InetAddress getClientAddress() {
+    public InetSocketAddress getClientAddress() {
         throw new UnsupportedOperationException("Method not implemented.");
     }
 
@@ -100,9 +98,7 @@ public class TestRequest
 
     /** {@inheritDoc} */
     @Override
-    public Version getVersion() {
-        throw new UnsupportedOperationException("Method not implemented.");
-    }
+    public Version getVersion() { return _version; }
 
 
     /**
@@ -137,9 +133,7 @@ public class TestRequest
      *
      * @param method The new HTTP method to set.
      */
-    public void setMethod(final String method) {
-        _method = method;
-    }
+    public void setMethod(final String method) { _method = method; }
 
 
     /** {@inheritDoc} */
@@ -149,7 +143,5 @@ public class TestRequest
 
     /** {@inheritDoc} */
     @Override
-    public boolean isConfidential() {
-        return _confidential;
-    }
+    public boolean isConfidential() { return _confidential; }
 }
