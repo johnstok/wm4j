@@ -74,6 +74,7 @@ public interface Request {
      *
      * @return
      */
+    // FIXME: Should return Method.
     String getMethod();
 
 

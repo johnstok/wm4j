@@ -36,7 +36,7 @@ public class Version {
      *
      * @return Version number as an integer.
      */
-    public int major() {
+    public int major() { // TODO: Rename to getMajor()?
         return _major;
     }
 
@@ -46,7 +46,7 @@ public class Version {
      *
      * @return Version number as an integer.
      */
-    public int minor() {
+    public int minor() { // TODO: Rename to getMinor()?
         return _minor;
     }
 }
