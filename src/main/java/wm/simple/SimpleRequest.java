@@ -3,15 +3,10 @@ package wm.simple;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetAddress;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.simpleframework.http.Address;
 import wm.AbstractRequest;
 import wm.Request;
 import wm.Version;
@@ -33,8 +28,12 @@ public class SimpleRequest
      * Constructor.
      *
      * @param request The Simple HTTP request delegated to.
+     * @param port    The port upon which the request was received.
      */
-    public SimpleRequest(final org.simpleframework.http.Request request) {
+    public SimpleRequest(final org.simpleframework.http.Request request,
+                         final int port,
+                         final String host) {
+        super(port, host);
         _request = request;     // FIXME: Check for NULL.
     }
 
@@ -108,7 +107,7 @@ public class SimpleRequest
     /** {@inheritDoc} */
     @Override
     public Version getVersion() {
-        return new Version() {
+        return new Version() { // TODO: Convert Version to concrete class.
 
             /** {@inheritDoc} */
             @Override public int major() { return _request.getMajor(); }
@@ -122,30 +121,12 @@ public class SimpleRequest
 
     /** {@inheritDoc} */
     @Override
-    public URI getPath() {
-        try {
-            return new URI(_request.getPath().getPath());
-        } catch (final URISyntaxException e) {
-            // FIXME: Is there a better solution here?
-            throw new RuntimeException(e);
-        }
-    }
+    public String getRequestUri() { return _request.getTarget(); }
 
 
     /** {@inheritDoc} */
     @Override
-    public URL getUrl() {
-        final Address address = _request.getAddress();
-        try {
-            // TODO: Use _request.getTarget() and parse as a URL.
-            return new URL(
-                address.getScheme(), // FIXME: Doesn't handle null.
-                address.getDomain(), // FIXME: Doesn't handle null; Does this correctly handle Mismatch between Absolute request URI & Host header?
-                address.getPort(),   // FIXME: Doesn't handle null.
-                address.getPath().getPath()); // FIXME: Doesn't include the query String; Should not normalise the path.
-        } catch (final MalformedURLException e) {
-            // FIXME: Is there a better solution here?
-            throw new RuntimeException(e);
-        }
+    public boolean isConfidential() {
+        return _request.isSecure();
     }
 }

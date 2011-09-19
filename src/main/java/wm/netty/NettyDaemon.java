@@ -9,7 +9,7 @@ package wm.netty;
 
 import static org.jboss.netty.handler.codec.http.HttpResponseStatus.*;
 import static org.jboss.netty.handler.codec.http.HttpVersion.*;
-import java.net.SocketAddress;
+import java.net.InetSocketAddress;
 import java.util.concurrent.Executors;
 import org.jboss.netty.bootstrap.ServerBootstrap;
 import org.jboss.netty.channel.Channel;
@@ -94,7 +94,7 @@ public class NettyDaemon
 
     /** {@inheritDoc} */
     @Override
-    public void startup(final SocketAddress address) {
+    public void startup(final InetSocketAddress address) {
         final ServerBootstrap bootstrap =
             new ServerBootstrap(
                 new NioServerSocketChannelFactory(

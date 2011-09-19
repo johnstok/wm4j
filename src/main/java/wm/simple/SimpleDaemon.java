@@ -8,7 +8,7 @@ package wm.simple;
 
 
 import java.io.IOException;
-import java.net.SocketAddress;
+import java.net.InetSocketAddress;
 import org.simpleframework.http.Request;
 import org.simpleframework.http.Response;
 import org.simpleframework.http.core.Container;
@@ -32,6 +32,8 @@ public class SimpleDaemon
 
     private       Connection _connection;
     private final Dispatcher _dispatcher;
+    private       int        _port;
+    private       String     _host;
 
 
     /**
@@ -51,7 +53,7 @@ public class SimpleDaemon
             final wm.Response resp = new SimpleResponse(response);
             final Resource r =
                 _dispatcher.dispatch(
-                    new SimpleRequest(request), resp);
+                    new SimpleRequest(request, _port, _host), resp);
             new Engine().process(r, resp);
         } catch (final HttpException e) {
             // TODO Auto-generated catch block.
@@ -73,7 +75,9 @@ public class SimpleDaemon
 
     /** {@inheritDoc} */
     @Override
-    public void startup(final SocketAddress address) throws IOException {
+    public void startup(final InetSocketAddress address) throws IOException {
+        _port = address.getPort();
+        _host = address.getHostName();
         if (null==_connection) {
             _connection = new SocketConnection(this);
             _connection.connect(address);

@@ -9,8 +9,6 @@ package wm;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetAddress;
-import java.net.URI;
-import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
@@ -30,6 +28,15 @@ public interface Request {
      * getScheme
      *   How do we handle conflict between absolute UriRequest value & actual use of SSL.
      */
+
+    /**
+     * The URL requested by the client.
+     *
+     * No decoding or normalisation/canonicalisation is performed on this value.
+     *
+     * @return The request URL as a Java URL.
+     */
+    String getRequestUri();
 
     /**
      * The port specified by the request.
@@ -54,13 +61,6 @@ public interface Request {
      */
     Scheme getScheme();
 
-    /**
-     * Get URL fragment specified in the client request.
-     *
-     * @return Returns the decoded URL as a string.
-     */
-    String getFragment();
-
 
     /**
      * Does this request use a confidential protocol.
@@ -68,16 +68,6 @@ public interface Request {
      * @return True if a confidential protocol is in use; false otherwise.
      */
     boolean isConfidential();
-
-
-    /**
-     * The URL requested by the client.
-     *
-     * No decoding or normalisation/canonicalisation is performed on this value.
-     *
-     * @return The request URL as a Java URL.
-     */
-    URL getUrl();
 
 
     /**
@@ -110,7 +100,7 @@ public interface Request {
      *
      * @return The request path, as a URI.
      */
-    URI getPath();
+    String getPath();
 
 
     /**

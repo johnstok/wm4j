@@ -23,10 +23,6 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +32,6 @@ import org.jboss.netty.handler.codec.http.QueryStringDecoder;
 import org.jboss.netty.handler.ssl.SslHandler;
 import wm.AbstractRequest;
 import wm.Request;
-import wm.Scheme;
 import wm.Version;
 
 
@@ -64,11 +59,14 @@ public class NettyRequest
      */
     public NettyRequest(final HttpRequest request,
                         final Channel channel) {
+        super(
+            ((InetSocketAddress) channel.getLocalAddress()).getPort(),
+            ((InetSocketAddress) channel.getLocalAddress()).getHostName());
         _request = request; // FIXME: Check for NULL.
         _channel = channel; // FIXME: Check for NULL.
 
-        // FIXME: Allow charset to be configured.
-        final QueryStringDecoder decoder = new QueryStringDecoder(request.getUri());
+        final QueryStringDecoder decoder =
+            new QueryStringDecoder(request.getUri(), _requestUriCharset);
         _path = decoder.getPath();
         _qParams = decoder.getParameters();
     }
@@ -105,14 +103,7 @@ public class NettyRequest
 
     /** {@inheritDoc} */
     @Override
-    public URI getPath() {
-        try {
-            return new URI(_path);
-        } catch (final URISyntaxException e) {
-            // FIXME: Is there a better solution here?
-            throw new RuntimeException(e);
-        }
-    }
+    public String getPath() { return _path; }
 
 
     /** {@inheritDoc} */
@@ -167,20 +158,12 @@ public class NettyRequest
 
     /** {@inheritDoc} */
     @Override
-    public URL getUrl() {
-        try {
-            final InetSocketAddress address =
-                (InetSocketAddress) _channel.getLocalAddress();
-            // FIXME: Domain should be overridden by absolute URI &/| Host header.
-            // FIXME: Doesn't correctly handle Mismatch between Absolute request URI & Host header.
-            return new URL(
-                (_channel.getPipeline().get(SslHandler.class) != null) ? Scheme.https.name() : Scheme.http.name(),
-                address.getHostName(),
-                address.getPort(),
-                _request.getUri()); // Not decoded or normalised; includes query param's.
-        } catch (final MalformedURLException e) {
-            // FIXME: Is there a better solution here?
-            throw new RuntimeException(e);
-        }
+    public String getRequestUri() { return _request.getUri(); }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean isConfidential() {
+        return null!=_channel.getPipeline().get(SslHandler.class);
     }
 }

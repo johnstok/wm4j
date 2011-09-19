@@ -1,38 +1,37 @@
 # Mandatory
 
 ## Fully implement state machine:
-  * [x] PUT on existing resource -> P11
-  * [ ] New resource P11 -> processRequestBody
-  * [ ] Decision B2
-  * [ ] Positive path for M7 & N5 -> N11, etc.
-  * [ ] Fix delete path around M20
-  * [ ] Conflict handling O14
-  * [ ] Multiple representations O18
-  * [ ] Responses with no entity O20
-  * [ ] Redirect N11
-  * [ ] Call finish_request
+ * [x] PUT on existing resource -> P11
+ * [ ] New resource P11 -> processRequestBody
+ * [ ] Decision B2
+ * [ ] Positive path for M7 & N5 -> N11, etc.
+ * [ ] Fix delete path around M20
+ * [ ] Conflict handling O14
+ * [ ] Multiple representations O18
+ * [ ] Responses with no entity O20
+ * [ ] Redirect N11
+ * [ ] Call finish_request
 
 ## Conneg
-  * [x] header specified; resource specified -> Conneg, header
-  * [x] header unspecified; resource specified -> No conneg, header
-  * [x] header specified; resource unspecified -> No conneg, no header // How does WM handle this?
-  * [x] neither specified -> No conneg, no header
-  * [x] Consistent API
-  * [ ] Consistent Javadoc
-  * [ ] Consistent implementation
-  * [ ] Missing tests for parser
-  * [ ] Missing tests for negotiator
-  * [ ] Media type selection based on params (e.g. 'text/html;level=1')
-  * [ ] Setting of 'Vary' header following negotiations (decision G07). Think this can be hard-coded?
+ * [x] header specified; resource specified -> Conneg, header
+ * [x] header unspecified; resource specified -> No conneg, header
+ * [x] header specified; resource unspecified -> No conneg, no header // How does WM handle this?
+ * [x] neither specified -> No conneg, no header
+ * [x] Consistent API
+ * [ ] Consistent Javadoc
+ * [ ] Consistent implementation
+ * [ ] Missing tests for parser
+ * [ ] Missing tests for negotiator
+ * [ ] Media type selection based on params (e.g. 'text/html;level=1')
+ * [ ] Setting of 'Vary' header following negotiations (decision G07). Think this can be hard-coded?
   
 ## Bindings
-  * Servlet API
-  * Simple HTTP
-  * Netty
+ * [x] Simple HTTP
+ * [x] Netty
    
 ## Config
-  * [ ] Charset for parsing request path.
-  * [ ] Max worker threads.
+ * [ ] Charset for parsing request path.
+ * [ ] Max worker threads.
    
 !!! Who closes IO streams?
 
@@ -42,87 +41,90 @@ Host name determination:
  3. Manually specified
  4. Determined from lookup via InetSocketAddress.
    
-Exceptions are a more idiomatic way to handle 4** errors - use them.
+ [ ] Exceptions are a more idiomatic way to handle 4** errors - use them.
   
-Enhanced error handling.
+ [ ] Enhanced error handling.
 
-Improve Request,Response,Resource APIs.
+ [ ] Improve Request,Response,Resource APIs.
 
-Setting of 'Cache-Control' header.
+ [ ] Implementation of Path object's methods.
 
-Implementation of Path object's methods.
+ [ ] Support for multiple headers with the same key.
 
-Support for multiple headers with the same key.
+ [x] Type safe header access.
 
-Type safe header access.
+ [ ] Type safe param access - separate collections for query and encoded body.
 
-Type safe param access - separate collections for query and encoded body.
+ [ ] RegexDispatcher.
 
-RegexDispatcher.
-
-Tests for large requests & responses.
+ [ ] Tests for large requests & responses.
+ 
+ [ ] Support for 'userinfo' in request URI.
 
 
 # Enhancement
 
-Confidential transport
+ [ ] Chunked encoding; Request#isChunked() method.
+ 
+ [ ] Keep alive; ConnectionHeader class.
+
+ [ ] Support for wildcard request URIs: http://rfc2616.com/#section-5
+
+ [ ] Confidential transport
  * http://docs.jboss.org/netty/3.2/xref/org/jboss/netty/example/http/file/HttpStaticFileServerHandler.html
  * http://docs.jboss.org/netty/3.2/xref/org/jboss/netty/example/securechat/package-summary.html
  * org.jboss.netty.handler.ssl.SslHandler
 
-Security header support: http://www.barracudalabs.com/wordpress/index.php/2011/07/21/google-gets-a-1-for-browser-security-3/
-
-SEO header support - e.g. "X-Robots-Tag: noindex"
-
-PATCH method http://greenbytes.de/tech/webdav/rfc5789.html
+ [ ] PATCH method http://greenbytes.de/tech/webdav/rfc5789.html
 
 ## Headers
-   * Content Disposition - http://greenbytes.de/tech/webdav/rfc6266.html
-   * Link - http://greenbytes.de/tech/webdav/rfc5988.html
-   
+ * [ ] Content Disposition - http://greenbytes.de/tech/webdav/rfc6266.html
+ * [ ] Link - http://greenbytes.de/tech/webdav/rfc5988.html
+ * [ ] Setting of 'Cache-Control' header.
+ * [ ] Security header support: http://www.barracudalabs.com/wordpress/index.php/2011/07/21/google-gets-a-1-for-browser-security-3/
+ * [ ] SEO header support - e.g. "X-Robots-Tag: noindex"
+ * [ ] Support for 'Authorization' header (http://greenbytes.de/tech/webdav/rfc2617.html).
 
-Remove log4j use built-in logging.
+ [ ] Remove log4j use built-in logging.
 
-Create a Java 7 FileResource.
+ [ ] Create a Java 7 FileResource.
 
-Add async versions of Request & Response using Java 7 nio.
+ [ ] Add async versions of Request & Response using Java 7 nio.
 
-Support for request with Content-Encoding header, incl 415 response (see rfc-2616#14.11).
+ [ ] Support for request with Content-Encoding header, incl 415 response (see rfc-2616#14.11).
 
-Request/response Logging.
+ [ ] Request/response Logging.
 
-Range support.
+ [ ] Range support.
 
-# GZip compression
-  * for 'Content-Encoding' header
-  * ETag support
-  * 'Compressable' resource base class.
+## GZip compression
+ * [ ] for 'Content-Encoding' header
+ * [ ] ETag support
+ * [ ] 'Compressable' resource base class.
 
-Cookie support (See http://download.oracle.com/javase/6/docs/api/java/net/HttpCookie.html).
+ [ ] Cookie support (See http://download.oracle.com/javase/6/docs/api/java/net/HttpCookie.html).
 
-Content-Disposition? (See RFC)
+ [ ] Improved 503 support: 'Retry-After' and configurable entity body.
 
-Support for 'Authorization' header (http://greenbytes.de/tech/webdav/rfc2617.html).
+ [ ] Easy to test each method on a resource e.g. isWellFormed()
 
-Improved 503 support: 'Retry-After' and configurable entity body.
-
-Easy to test each method on a resource e.g. isWellFormed()
 
 ## Bindings
-   * Grizzly
-   * Finagle
+ * [ ] Grizzly
+ * [ ] Servlet API
+ * [ ] Finagle
 
    
 # Specifications
-   * http://tools.ietf.org/html/draft-gregorio-uritemplate-06
+ * [ ] http://tools.ietf.org/html/draft-gregorio-uritemplate-06
 
 
 # Ideas
-  * HTML5 canvas version of HTTP flow chart
-  * Support for performance features recommended via YSlow & PageSpeed
-  * URI templating library
-  * Ideas from HTML5 boilerplate lib
-  * P£P support
+ * HTML5 canvas version of HTTP flow chart
+ * Support for performance features recommended via YSlow & PageSpeed
+ * URI templating library
+ * Ideas from HTML5 boilerplate lib
+ * P£P support
   
 # Issues
 

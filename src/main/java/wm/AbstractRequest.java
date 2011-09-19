@@ -19,6 +19,10 @@
  *---------------------------------------------------------------------------*/
 package wm;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URLDecoder;
 
 
 /**
@@ -29,6 +33,23 @@ package wm;
 public abstract class AbstractRequest
     implements
         Request {
+
+    private final int    _port;
+    private final String _host;
+    protected final String _requestUriCharset = "UTF-8";
+
+
+    /**
+     * Constructor.
+     *
+     * @param port     The port on which this request was received.
+     * @param host     The host name that received this request.
+     */
+    public AbstractRequest(final int port,
+                           final String host) {
+        _port = port; // TODO: Must be greater than 0.
+        _host = host; // TODO: Not null.
+    }
 
 
     /** {@inheritDoc} */
@@ -54,37 +75,32 @@ public abstract class AbstractRequest
 
     /** {@inheritDoc} */
     @Override
-    public int getPort() {
-        return getUrl().getPort();
+    public int getPort() { return _port; }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public String getDomain() { return _host; }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public final Scheme getScheme() {
+        return (isConfidential()) ? Scheme.https : Scheme.http ;
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public String getDomain() {
-        return getUrl().getHost();
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public Scheme getScheme() {
-        // TODO: Should throw 'Unsupported Scheme' exception.
-        return Scheme.valueOf(getUrl().getProtocol());
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public String getFragment() {
-        // FIXME: Decode the fragment.
-        return getUrl().getRef();
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean isConfidential() {
-        return getScheme().isConfidential();
+    public String getPath() {
+        try {
+            return URLDecoder.decode(new URI(getRequestUri()).getPath(), _requestUriCharset);
+        } catch (final URISyntaxException e) {
+            // FIXME: Is there a better solution here?
+            throw new RuntimeException(e);
+        } catch (UnsupportedEncodingException e) {
+            // FIXME: Is there a better solution here?
+            throw new RuntimeException(e);
+        }
     }
 }

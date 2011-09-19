@@ -9,8 +9,6 @@ package wm.test;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.net.InetAddress;
-import java.net.URI;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -34,6 +32,16 @@ public class TestRequest
     private final HashMap<String, List<String>> _headers =
         new HashMap<String, List<String>>();
     private byte[]                              _body;
+    private String                              _requestUri;
+    private boolean                             _confidential;
+
+
+    /**
+     * Constructor.
+     */
+    public TestRequest() {
+        super(80, "localhost");
+    }
 
 
     /** {@inheritDoc} */
@@ -97,13 +105,6 @@ public class TestRequest
     }
 
 
-    /** {@inheritDoc} */
-    @Override
-    public URI getPath() {
-        throw new UnsupportedOperationException("Method not implemented.");
-    }
-
-
     /**
      * Replace the incoming request body with this for the rest of the
      * processing.
@@ -143,7 +144,12 @@ public class TestRequest
 
     /** {@inheritDoc} */
     @Override
-    public URL getUrl() {
-        throw new UnsupportedOperationException("Method not implemented.");
+    public String getRequestUri() { return _requestUri; }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean isConfidential() {
+        return _confidential;
     }
 }
