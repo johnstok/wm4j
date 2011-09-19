@@ -3,6 +3,7 @@ package wm.simple;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetSocketAddress;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -35,7 +36,7 @@ public class SimpleRequest
     public SimpleRequest(final org.simpleframework.http.Request request,
                          final int port,
                          final String host) {
-        super(port, host, "UTF-8");
+        super(port, host, Charset.forName("UTF-8"));               //$NON-NLS-1$
         _request = request;     // FIXME: Check for NULL.
         _version = new Version(_request.getMajor(), _request.getMinor());
     }

@@ -22,6 +22,7 @@ package wm.netty;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.net.InetSocketAddress;
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -62,7 +63,7 @@ public class NettyRequest
         super(
             ((InetSocketAddress) channel.getLocalAddress()).getPort(),
             ((InetSocketAddress) channel.getLocalAddress()).getHostName(),
-            "UTF-8");
+            Charset.forName("UTF-8"));                             //$NON-NLS-1$
         _request = request; // FIXME: Check for NULL.
         _channel = channel; // FIXME: Check for NULL.
 

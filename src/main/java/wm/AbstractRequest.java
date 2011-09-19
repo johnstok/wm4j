@@ -23,6 +23,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
+import java.nio.charset.Charset;
 
 
 /**
@@ -36,7 +37,7 @@ public abstract class AbstractRequest
 
     private   final int    _port;
     private   final String _host;
-    protected final String _requestUriCharset;
+    protected final Charset _requestUriCharset;
 
 
     /**
@@ -48,7 +49,7 @@ public abstract class AbstractRequest
      */
     public AbstractRequest(final int port,
                            final String host,
-                           final String uriCharset) {
+                           final Charset uriCharset) {
         _port = port; // TODO: Must be greater than 0.
         _host = host; // TODO: Not null.
         _requestUriCharset = uriCharset;
@@ -97,7 +98,9 @@ public abstract class AbstractRequest
     @Override
     public String getPath() {
         try {
-            return URLDecoder.decode(new URI(getRequestUri()).getRawPath(), _requestUriCharset);
+            return URLDecoder.decode(
+                new URI(getRequestUri()).getRawPath(),
+                _requestUriCharset.name());
         } catch (final URISyntaxException e) {
             // FIXME: Is there a better solution here?
             throw new RuntimeException(e);

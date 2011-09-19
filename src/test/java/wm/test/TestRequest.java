@@ -9,6 +9,7 @@ package wm.test;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.net.InetSocketAddress;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -40,7 +41,10 @@ public class TestRequest
      * Constructor.
      */
     public TestRequest() {
-        super(80, "localhost", "UTF-8");
+        super(
+            80,
+            "localhost",                                           //$NON-NLS-1$
+            Charset.forName("UTF-8"));                             //$NON-NLS-1$
         _version = new Version(1, 1);
         _headers = new HashMap<String, List<String>>();
     }
