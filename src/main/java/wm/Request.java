@@ -97,6 +97,9 @@ public interface Request {
      * The decoded path from the request URI.
      *
      * @return The request path, as a string.
+     *
+     * @throws ClientHttpException If the request URI is malformed.
+     * @throws ServerHttpException If the required URI encoding is unsupported.
      */
     // TODO: Return a URI instead?
     String getPath();

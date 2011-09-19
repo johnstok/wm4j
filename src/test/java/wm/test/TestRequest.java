@@ -95,7 +95,8 @@ public class TestRequest
 
     /** {@inheritDoc} */
     @Override
-    public String getQueryValue(final String paramName, final String defaultValue) {
+    public String getQueryValue(final String paramName,
+                                final String defaultValue) {
         throw new UnsupportedOperationException("Method not implemented.");
     }
 

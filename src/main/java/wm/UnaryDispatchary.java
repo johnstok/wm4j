@@ -9,9 +9,6 @@ public class UnaryDispatchary<T>
     implements
         Dispatcher {
 
-    private static final String FAILED_TO_CREATE_RESOURCE =
-        "Failed to create resource.";                              //$NON-NLS-1$
-
 
     private final Class<? extends Resource> _clazz;
     private final T                         _configuration;
@@ -38,15 +35,15 @@ public class UnaryDispatchary<T>
             return _clazz.getConstructor(_configuration.getClass(), Request.class, Response.class, Map.class)
                          .newInstance(_configuration, request, response, context);
         } catch (final InstantiationException e) {
-            throw new HttpException(FAILED_TO_CREATE_RESOURCE, e);
+            throw new ServerHttpException(Status.INTERNAL_SERVER_ERROR, e);
         } catch (final IllegalAccessException e) {
-            throw new HttpException(FAILED_TO_CREATE_RESOURCE, e);
+            throw new ServerHttpException(Status.INTERNAL_SERVER_ERROR, e);
         } catch (final InvocationTargetException e) {
-            throw new HttpException(FAILED_TO_CREATE_RESOURCE, e);
+            throw new ServerHttpException(Status.INTERNAL_SERVER_ERROR, e);
         } catch (final NoSuchMethodException e) {
-            throw new HttpException(FAILED_TO_CREATE_RESOURCE, e);
+            throw new ServerHttpException(Status.INTERNAL_SERVER_ERROR, e);
         } catch (final RuntimeException e) {
-            throw new HttpException(FAILED_TO_CREATE_RESOURCE, e);
+            throw new ServerHttpException(Status.INTERNAL_SERVER_ERROR, e);
         }
     }
 }

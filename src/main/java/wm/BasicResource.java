@@ -182,7 +182,7 @@ public abstract class BasicResource
     /** {@inheritDoc} */
     @Override
     public void process_post() throws HttpException {
-        throw new HttpException("Unsupported HTTP method: POST.");
+        throw new ServerHttpException(Status.NOT_IMPLEMENTED);
     }
 
     /** {@inheritDoc} */

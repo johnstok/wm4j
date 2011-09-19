@@ -8,44 +8,44 @@ package wm;
 
 
 /**
- * TODO: Add a description for this type.
+ * Models a HTTP error.
  *
  * @author Keith Webster Johnston.
  */
-public class HttpException extends Exception {
+public abstract class HttpException extends RuntimeException {
 
-    /**
-     * Constructor.
-     */
-    public HttpException() {
-        super();
-    }
+    private final Status _status;
+
 
     /**
      * Constructor.
      *
-     * @param arg0
-     * @param arg1
+     * @param status The HTTP status for this error.
+     * @param t      The cause of this exception.
      */
-    public HttpException(final String arg0, final Throwable arg1) {
-        super(arg0, arg1);
+    public HttpException(final Status status, final Throwable t) {
+        super(status.toString(), t);
+        _status = status;
     }
+
 
     /**
      * Constructor.
      *
-     * @param arg0
+     * @param status The HTTP status for this error.
      */
-    public HttpException(final String arg0) {
-        super(arg0);
+    public HttpException(final Status status) {
+        super(status.toString());
+        _status = status;
     }
 
+
     /**
-     * Constructor.
+     * Accessor.
      *
-     * @param arg0
+     * @return Returns the status for this error.
      */
-    public HttpException(final Throwable arg0) {
-        super(arg0);
+    public Status getStatus() {
+        return _status;
     }
 }

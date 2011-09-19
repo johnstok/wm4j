@@ -97,16 +97,15 @@ public abstract class AbstractRequest
     /** {@inheritDoc} */
     @Override
     public String getPath() {
+        // TODO: Should we parse & decode eagerly to avoid throwing an exception here?
         try {
             return URLDecoder.decode(
                 new URI(getRequestUri()).getRawPath(),
                 _requestUriCharset.name());
         } catch (final URISyntaxException e) {
-            // FIXME: Is there a better solution here?
-            throw new RuntimeException(e);
+            throw new ClientHttpException(Status.BAD_REQUEST, e);
         } catch (final UnsupportedEncodingException e) {
-            // FIXME: Is there a better solution here?
-            throw new RuntimeException(e);
+            throw new ServerHttpException(Status.INTERNAL_SERVER_ERROR, e);
         }
     }
 }

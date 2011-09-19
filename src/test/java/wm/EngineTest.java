@@ -763,11 +763,12 @@ public class EngineTest {
             _response,
             new HashMap<String, Object>()) {
 
-            @Override public URI moved_permanently() throws HttpException {
+            @Override public URI moved_permanently() {
                 try {
                     return new URI(TARGET_URI);
                 } catch (final URISyntaxException e) {
-                    throw new HttpException("Error constructing URI.", e);
+                    throw new ServerHttpException(
+                        Status.INTERNAL_SERVER_ERROR, e);
                 }
             }
 
@@ -798,11 +799,12 @@ public class EngineTest {
             _response,
             new HashMap<String, Object>()) {
 
-            @Override public URI moved_temporarily() throws HttpException {
+            @Override public URI moved_temporarily() {
                 try {
                     return new URI(TARGET_URI);
                 } catch (final URISyntaxException e) {
-                    throw new HttpException("Error constructing URI.", e);
+                    throw new ServerHttpException(
+                        Status.INTERNAL_SERVER_ERROR, e);
                 }
             }
 
@@ -1279,11 +1281,12 @@ public class EngineTest {
                 return Collections.singleton(Method.PUT);
             }
 
-            @Override public URI moved_permanently() throws HttpException {
+            @Override public URI moved_permanently() {
                 try {
                     return new URI(TARGET_URI);
                 } catch (final URISyntaxException e) {
-                    throw new HttpException("Error constructing URI.", e);
+                    throw new ServerHttpException(
+                        Status.INTERNAL_SERVER_ERROR, e);
                 }
             }
 
