@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public class UnaryDispatchary<T>
+public class UnaryDispatcher<T>
     implements
         Dispatcher {
 
@@ -19,7 +19,7 @@ public class UnaryDispatchary<T>
      *
      * @param clazz The resource class that will handle requests.
      */
-    public UnaryDispatchary(final Class<? extends Resource> clazz,
+    public UnaryDispatcher(final Class<? extends Resource> clazz,
                             final T configuration) {
         _clazz = clazz; // FIXME: Check for NULL. Other checks too?
         _configuration = configuration; // FIXME: Check for NULL. Other checks too?
