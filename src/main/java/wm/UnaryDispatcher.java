@@ -5,6 +5,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 
+/**
+ * {@link Dispatcher} implementation that selects a single resource type.
+ *
+ * @param <T> The type of configuration object passed to the resource.
+ *
+ * @author Keith Webster Johnston.
+ */
 public class UnaryDispatcher<T>
     implements
         Dispatcher {
@@ -20,7 +27,7 @@ public class UnaryDispatcher<T>
      * @param clazz The resource class that will handle requests.
      */
     public UnaryDispatcher(final Class<? extends Resource> clazz,
-                            final T configuration) {
+                           final T configuration) {
         _clazz = clazz; // FIXME: Check for NULL. Other checks too?
         _configuration = configuration; // FIXME: Check for NULL. Other checks too?
     }

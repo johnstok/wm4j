@@ -32,7 +32,7 @@ public class TestRequest
     private       String                        _method = Method.GET;
     private final HashMap<String, List<String>> _headers;
     private       byte[]                        _body;
-    private       String                        _requestUri;
+    private final String                        _requestUri = "/";
     private       boolean                       _confidential;
     private final Version                       _version;
 

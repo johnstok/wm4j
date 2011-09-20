@@ -53,7 +53,7 @@
 
  [x] Type safe header access.
 
- [ ] RegexDispatcher.
+ [x] RegexDispatcher.
 
  [ ] Tests for large requests & responses.
  

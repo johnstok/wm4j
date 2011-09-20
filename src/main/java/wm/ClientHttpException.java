@@ -42,7 +42,7 @@ public class ClientHttpException extends HttpException {
      *
      * @param status The HTTP status for this error.
      */
-    private ClientHttpException(final Status status) {
+    public ClientHttpException(final Status status) {
         super(status);
     }
 }
