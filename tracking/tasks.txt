@@ -59,7 +59,7 @@
  
  [ ] rfc-2616:5.1.2 Servers SHOULD respond to invalid Request-URIs with an appropriate status code.
  
- [ ] Rename engine methods to include test.
+ [x] Rename engine methods to include test.
  
  [ ] Confirm we respect rfc-2616:19.6.1.1 for domain names.
 

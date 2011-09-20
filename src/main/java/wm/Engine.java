@@ -224,7 +224,7 @@ public class Engine {
         try {
             response.setHeader(Header.SERVER, "wm4j/1.0.0");
             response.setHeader(Header.DATE, response.getOriginationTime());
-            B12(resource, response);
+            B12_service_available(resource, response);
         } catch (final HttpException e) {
             // TODO handle committed responses.
             response.setStatus(Status.INTERNAL_SERVER_ERROR);
@@ -236,23 +236,23 @@ public class Engine {
     }
 
 
-    private void G07(final Resource resource,
+    private void G07_resource_exists(final Resource resource,
                      final Response response) throws HttpException {
         // TODO: Set variances.
         if (resource.resource_exists()) {
             G07a(resource, response);
         } else {
-            H07(resource, response);
+            H07_if_match_is_wildcard(resource, response);
         }
     }
 
 
-    private void H07(final Resource resource,
+    private void H07_if_match_is_wildcard(final Resource resource,
                      final Response response) throws HttpException {
         if ("*".equals(resource._request.getHeader(Header.IF_MATCH))) {
             response.setStatus(Status.PRECONDITION_FAILED);
         } else {
-            I07(resource, response);
+            I07_is_PUT_method(resource, response);
         }
     }
 
@@ -264,103 +264,103 @@ public class Engine {
             response.setStatus(Status.TEMPORARY_REDIRECT);
             response.setHeader(Header.LOCATION, tempUri.toString()); // TODO: Confirm serialisation of URIs
         } else {
-            GO8(resource,response);
+            G08_if_match_is_wildcard(resource,response);
         }
     }
 
 
-    private void GO8(final Resource resource,
+    private void G08_if_match_is_wildcard(final Resource resource,
                      final Response response) throws HttpException {
         if (resource._request.hasHeader(Header.IF_MATCH)) {
-            G09(resource, response);
+            G09_if_match_header_exists(resource, response);
         } else {
-            H10(resource, response);
+            H10_if_unmodified_since_exists(resource, response);
         }
     }
 
 
-    private void G09(final Resource resource,
+    private void G09_if_match_header_exists(final Resource resource,
                      final Response response) throws HttpException {
         if ("*".equals(resource._request.getHeader(Header.IF_MATCH))) {
-            H10(resource, response);
+            H10_if_unmodified_since_exists(resource, response);
         } else {
-            G11(resource, response);
+            G11_etag_in_if_match(resource, response);
         }
     }
 
 
-    private void G11(final Resource resource,
+    private void G11_etag_in_if_match(final Resource resource,
                      final Response response) throws HttpException {
         if (resource._request.getHeader(Header.IF_MATCH).equals(resource.generate_etag().getValue())) {
-            H10(resource, response);
+            H10_if_unmodified_since_exists(resource, response);
         } else {
             response.setStatus(Status.PRECONDITION_FAILED);
         }
     }
 
 
-    private void L13(final Resource resource,
+    private void L13_if_modified_since_exists(final Resource resource,
                      final Response response) throws HttpException {
         if (resource._request.hasHeader(Header.IF_MODIFIED_SINCE)) {
-            L14(resource, response);
+            L14_if_modified_since_is_valid(resource, response);
         } else {
-            M16(resource, response);
+            M16_is_DELETE_method(resource, response);
         }
 
     }
 
 
-    private void L14(final Resource resource,
+    private void L14_if_modified_since_is_valid(final Resource resource,
                      final Response response) throws HttpException {
         if (DateHeader.isValidDate(resource._request.getHeader(Header.IF_MODIFIED_SINCE))) {
-            L15(resource, response);
+            L15_if_modified_since_after_now(resource, response);
         } else {
-            M16(resource, response);
+            M16_is_DELETE_method(resource, response);
         }
     }
 
 
-    private void L15(final Resource resource,
+    private void L15_if_modified_since_after_now(final Resource resource,
                      final Response response) throws HttpException {
         if (DateHeader.parse(resource._request.getHeader(Header.IF_MODIFIED_SINCE)).after(new Date())) { // TODO: Compare with message origination rather than 'now'?
-            M16(resource, response);
+            M16_is_DELETE_method(resource, response);
         } else {
-            L17(resource, response);
+            L17_last_modified_after_if_modified_since(resource, response);
         }
     }
 
 
-    private void L17(final Resource resource,
+    private void L17_last_modified_after_if_modified_since(final Resource resource,
                      final Response response) throws HttpException {
         if (DateHeader.parse(resource._request.getHeader(Header.IF_MODIFIED_SINCE)).before(resource.last_modified())) {
-            M16(resource, response);
+            M16_is_DELETE_method(resource, response);
         } else {
             response.setStatus(Status.NOT_MODIFIED);
         }
     }
 
 
-    private void I12(final Resource resource,
+    private void I12_if_none_match_exists(final Resource resource,
                      final Response response) throws HttpException {
         if (resource._request.hasHeader(Header.IF_NONE_MATCH)) {
-            I13(resource, response);
+            I13_if_none_match_is_wildcard(resource, response);
         } else {
-            L13(resource, response);
+            L13_if_modified_since_exists(resource, response);
         }
     }
 
 
-    private void I13(final Resource resource,
+    private void I13_if_none_match_is_wildcard(final Resource resource,
                      final Response response) throws HttpException {
         if ("*".equals(resource._request.getHeader(Header.IF_NONE_MATCH))) {
-            J18(resource, response);
+            J18_GET_or_HEAD(resource, response);
         } else {
-            K13(resource, response);
+            K13_etag_in_if_none_match(resource, response);
         }
     }
 
 
-    private void J18(final Resource resource,
+    private void J18_GET_or_HEAD(final Resource resource,
                      final Response response) {
         if (Method.GET.equals(resource._request.getMethod())
             || Method.HEAD.equals(resource._request.getMethod())) {
@@ -371,111 +371,111 @@ public class Engine {
     }
 
 
-    private void K13(final Resource resource,
+    private void K13_etag_in_if_none_match(final Resource resource,
                      final Response response) throws HttpException {
         if (resource._request.getHeader(Header.IF_NONE_MATCH).equals(resource.generate_etag().getValue())) {
-            J18(resource, response);
+            J18_GET_or_HEAD(resource, response);
         } else {
-            L13(resource, response);
+            L13_if_modified_since_exists(resource, response);
         }
     }
 
 
-    private void H10(final Resource resource,
+    private void H10_if_unmodified_since_exists(final Resource resource,
                      final Response response) throws HttpException {
         if (resource._request.hasHeader(Header.IF_UNMODIFIED_SINCE)) {
-            H11(resource, response);
+            H11_if_unmodified_since_is_valid(resource, response);
         } else {
-            I12(resource, response);
+            I12_if_none_match_exists(resource, response);
         }
     }
 
 
-    private void H11(final Resource resource,
+    private void H11_if_unmodified_since_is_valid(final Resource resource,
                      final Response response) throws HttpException {
         if (DateHeader.isValidDate(resource._request.getHeader(Header.IF_UNMODIFIED_SINCE))) {
-            H12(resource, response);
+            H12_last_modified_after_if_unmodified_since(resource, response);
         } else {
-            I12(resource, response);
+            I12_if_none_match_exists(resource, response);
         }
     }
 
 
-    private void H12(final Resource resource,
+    private void H12_last_modified_after_if_unmodified_since(final Resource resource,
                      final Response response) throws HttpException {
         if (DateHeader.parse(resource._request.getHeader(Header.IF_UNMODIFIED_SINCE)).before(resource.last_modified())) {
             response.setStatus(Status.PRECONDITION_FAILED);
         } else {
-            I12(resource, response);
+            I12_if_none_match_exists(resource, response);
         }
     }
 
 
-    private void I07(final Resource resource,
+    private void I07_is_PUT_method(final Resource resource,
                      final Response response) throws HttpException {
         if (Method.PUT.equals(resource._request.getMethod())) {
-            I04(resource, response);
+            I04_apply_request_to_another_uri(resource, response);
         } else {
-            K07(resource, response);
+            K07_previously_existed(resource, response);
         }
     }
 
 
-    private void K07(final Resource resource,
+    private void K07_previously_existed(final Resource resource,
                      final Response response) throws HttpException {
         if (resource.previously_existed()) {
-            K05(resource, response);
+            K05_moved_permanently(resource, response);
         } else {
-            L07(resource, response);
+            L07_is_POST_method(resource, response);
         }
     }
 
 
-    private void K05(final Resource resource,
+    private void K05_moved_permanently(final Resource resource,
                      final Response response) throws HttpException {
         final URI permUri = resource.moved_permanently();
         if (null!=permUri) {
             response.setStatus(Status.MOVED_PERMANENTLY);
             response.setHeader(Header.LOCATION, permUri.toString()); // TODO: Confirm serialisation of URIs
         } else {
-            L05(resource, response);
+            L05_moved_temporarily(resource, response);
         }
     }
 
 
-    private void L07(final Resource resource,
+    private void L07_is_POST_method(final Resource resource,
                      final Response response) throws HttpException {
         if (Method.POST==resource._request.getMethod() && resource.allow_missing_post()) { // L7, M7
-            N11(resource, response);
+            N11_redirect(resource, response);
         } else {
             response.setStatus(Status.NOT_FOUND);
         }
     }
 
 
-    private void L05(final Resource resource,
+    private void L05_moved_temporarily(final Resource resource,
                      final Response response) throws HttpException {
         final URI tempUri = resource.moved_temporarily();
         if (null!=tempUri) {
             response.setStatus(Status.TEMPORARY_REDIRECT);
             response.setHeader(Header.LOCATION, tempUri.toString()); // TODO: Confirm serialisation of URIs
         } else {
-                M05(resource, response);
+                M05_is_POST_method(resource, response);
         }
     }
 
 
-    private void M05(final Resource resource,
+    private void M05_is_POST_method(final Resource resource,
                      final Response response) throws HttpException {
         if (Method.POST==resource._request.getMethod() && resource.allow_missing_post()) { // M5, N5
-            N11(resource, response);
+            N11_redirect(resource, response);
         } else {
             response.setStatus(Status.GONE);
         }
     }
 
 
-    private void P03(final Resource resource,
+    private void P03_conflict(final Resource resource,
                      final Response response) throws HttpException {
         if (resource.is_conflict()) {
             response.setStatus(Status.CONFLICT);
@@ -486,19 +486,19 @@ public class Engine {
     }
 
 
-    private void I04(final Resource resource,
+    private void I04_apply_request_to_another_uri(final Resource resource,
                      final Response response) throws HttpException {
         final URI putUri = resource.moved_permanently();
         if (null!=putUri) {
             response.setStatus(Status.MOVED_PERMANENTLY);
             response.setHeader(Header.LOCATION, putUri.toString()); // TODO: Confirm serialisation of URIs
         } else {
-            P03(resource, response);
+            P03_conflict(resource, response);
         }
     }
 
 
-    private void M16(final Resource resource,
+    private void M16_is_DELETE_method(final Resource resource,
                      final Response response) throws HttpException {
         if (Method.DELETE==resource._request.getMethod()) {  // M16
             // FIXME: Something fishy here - no O20 decision.
@@ -512,24 +512,24 @@ public class Engine {
                 }
             }
         } else {
-            N16(resource, response);
+            N16_is_POST_method(resource, response);
         }
     }
 
 
-    private void F06(final Resource resource,
+    private void F06_accept_encoding_header_exists(final Resource resource,
                      final Response response) throws HttpException {
         final String enc = first(resource.encodings_provided());
         if (resource._request.hasHeader(Header.ACCEPT_ENCODING) && null!=enc) {
-            F07(resource, response);
+            F07_acceptable_encoding_available(resource, response);
         } else {
             response.setContentEncoding(enc);
-            G07(resource, response);
+            G07_resource_exists(resource, response);
         }
     }
 
 
-    private void F07(final Resource resource,
+    private void F07_acceptable_encoding_available(final Resource resource,
                      final Response response) throws HttpException {
         final String encoding =
             acceptEncoding(resource._request, resource.encodings_provided());
@@ -537,24 +537,24 @@ public class Engine {
             response.setStatus(Status.NOT_ACCEPTABLE);
         } else {
             response.setContentEncoding(encoding);
-            G07(resource, response);
+            G07_resource_exists(resource, response);
         }
     }
 
 
-    private void E05(final Resource resource,
+    private void E05_accept_charset_header_exists(final Resource resource,
                      final Response response) throws HttpException {
         final Charset cs = first(resource.charsets_provided());
         if (resource._request.hasHeader(Header.ACCEPT_CHARSET) && null!=cs) {
-            E06(resource, response);
+            E06_acceptable_charset_available(resource, response);
         } else {
             response.setCharset(cs);
-            F06(resource, response);
+            F06_accept_encoding_header_exists(resource, response);
         }
     }
 
 
-    private void E06(final Resource resource,
+    private void E06_acceptable_charset_available(final Resource resource,
                      final Response response) throws HttpException {
         final Charset charset =
             acceptCharset(resource._request, resource.charsets_provided());
@@ -562,26 +562,26 @@ public class Engine {
             response.setStatus(Status.NOT_ACCEPTABLE);
         } else {
             response.setCharset(charset);
-            F06(resource, response);
+            F06_accept_encoding_header_exists(resource, response);
         }
     }
 
 
-    private void D04(final Resource resource,
+    private void D04_accept_language_header_exists(final Resource resource,
                      final Response response) throws HttpException {
         final LanguageTag lt = first(resource.languages_provided());
         if (resource._request.hasHeader(Header.ACCEPT_LANGUAGE) && null!=lt) {
-            D05(resource, response);
+            D05_acceptable_language_available(resource, response);
         } else {
             if (null!=lt) {
                 response.setHeader(Header.CONTENT_LANGUAGE, lt.toString());
             }
-            E05(resource, response);
+            E05_accept_charset_header_exists(resource, response);
         }
     }
 
 
-    private void D05(final Resource resource,
+    private void D05_acceptable_language_available(final Resource resource,
                      final Response response) throws HttpException {
         final LanguageTag language =
             acceptLanguage(resource._request, resource.languages_provided());
@@ -589,26 +589,26 @@ public class Engine {
             response.setStatus(Status.NOT_ACCEPTABLE);
         } else {
             response.setHeader(Header.CONTENT_LANGUAGE, language.toString());
-            E05(resource, response);
+            E05_accept_charset_header_exists(resource, response);
         }
     }
 
 
-    private void C03(final Resource resource,
+    private void C03_accept_header_present(final Resource resource,
                      final Response response) throws HttpException {
         if (resource._request.hasHeader(Header.ACCEPT)) {
-            C04(resource, response);
+            C04_acceptable_media_type_available(resource, response);
         } else {
             final MediaType mt = first(resource.content_types_provided().keySet());
             if (null!=mt) {
                 response.setMediaType(mt);
             }
-            D04(resource, response);
+            D04_accept_language_header_exists(resource, response);
         }
     }
 
 
-    private void C04(final Resource resource,
+    private void C04_acceptable_media_type_available(final Resource resource,
                      final Response response) throws HttpException {
         final MediaType mediaType =
             accept(resource._request, resource.content_types_provided());
@@ -616,82 +616,82 @@ public class Engine {
             response.setStatus(Status.NOT_ACCEPTABLE);
         } else {
             response.setMediaType(mediaType);
-            D04(resource, response);
+            D04_accept_language_header_exists(resource, response);
         }
     }
 
 
-    private void B11(final Resource resource,
+    private void B11_uri_too_long(final Resource resource,
                      final Response response) throws HttpException {
         if (resource.uri_too_long()) {
             response.setStatus(Status.REQUEST_URI_TOO_LONG);
         } else {
-            B10(resource, response);
+            B10_malformed_request(resource, response);
         }
     }
 
 
-    private void B10(final Resource resource,
+    private void B10_malformed_request(final Resource resource,
                      final Response response) throws HttpException {
         if (resource.malformed_request()) {
             response.setStatus(Status.BAD_REQUEST);
         } else {
-            B09(resource, response);
+            B09_authorized(resource, response);
         }
     }
 
 
-    private void B09(final Resource resource,
+    private void B09_authorized(final Resource resource,
                      final Response response) throws HttpException {
         if (!resource.is_authorized()) {
             response.setStatus(Status.UNAUTHORIZED);
         } else {
-            B08(resource, response);
+            B08_forbidden(resource, response);
         }
     }
 
 
-    private void B08(final Resource resource,
+    private void B08_forbidden(final Resource resource,
                      final Response response) throws HttpException {
         if (resource.forbidden()) {
             response.setStatus(Status.FORBIDDEN);
         } else {
-            B07(resource, response);
+            B07_unsupported_content_header(resource, response);
         }
     }
 
 
-    private void B07(final Resource resource,
+    private void B07_unsupported_content_header(final Resource resource,
                         final Response response) throws HttpException {
         if (!resource.valid_content_headers()) {
             response.setStatus(Status.NOT_IMPLEMENTED);
         } else {
-            B06(resource, response);
+            B06_unknown_content_type(resource, response);
         }
     }
 
 
-    private void B06(final Resource resource,
+    private void B06_unknown_content_type(final Resource resource,
                         final Response response) throws HttpException {
         if (!resource.known_content_type()) {
             response.setStatus(Status.UNSUPPORTED_MEDIA_TYPE);
         } else {
-            B05(resource, response);
+            B05_request_entity_too_large(resource, response);
         }
     }
 
 
-    private void B05(final Resource resource,
+    private void B05_request_entity_too_large(final Resource resource,
                         final Response response) throws HttpException {
         if (!resource.valid_entity_length()) {
             response.setStatus(Status.REQUEST_ENTITY_TOO_LARGE);
         } else {
-            B04(resource, response);
+            B04_options(resource, response);
         }
     }
 
 
-    private void B04(final Resource resource,
+    private void B04_options(final Resource resource,
                         final Response response) throws HttpException {
         if (Method.OPTIONS==resource._request.getMethod()) {
             response.setStatus(Status.OK);
@@ -700,22 +700,22 @@ public class Engine {
                 Header.ALLOW,
                 Utils.join(resource.allowed_methods(), ',').toString());
         } else {
-            B01(resource, response);
+            B01_known_method(resource, response);
         }
     }
 
 
-    private void B01(final Resource resource,
+    private void B01_known_method(final Resource resource,
                         final Response response) throws HttpException {
         if (!Method.all().contains(resource._request.getMethod())) {
             response.setStatus(Status.NOT_IMPLEMENTED);
         } else {
-            C02(resource, response);
+            C02_method_allowed_on_resource(resource, response);
         }
     }
 
 
-    private void C02(final Resource resource,
+    private void C02_method_allowed_on_resource(final Resource resource,
                      final Response response) throws HttpException {
         if (!resource.allowed_methods().contains(resource._request.getMethod())) {
             response.setStatus(Status.METHOD_NOT_ALLOWED);
@@ -723,32 +723,32 @@ public class Engine {
                 Header.ALLOW,
                 Utils.join(resource.allowed_methods(), ',').toString());
         } else {
-            C03(resource, response);
+            C03_accept_header_present(resource, response);
         }
     }
 
 
-    private void B12(final Resource resource,
+    private void B12_service_available(final Resource resource,
                      final Response response) throws HttpException {
         if (!resource.service_available()) {
             response.setStatus(Status.SERVICE_UNAVAILABLE);
         } else {
-            B11(resource, response);
+            B11_uri_too_long(resource, response);
         }
     }
 
 
-    private void N16(final Resource resource,
+    private void N16_is_POST_method(final Resource resource,
                      final Response response) throws HttpException {
         if (Method.POST==resource._request.getMethod()) {
-            N11(resource, response);
+            N11_redirect(resource, response);
         } else {
-            O16(resource, response);
+            O16_is_PUT_method(resource, response);
         }
     }
 
 
-    private void N11(final Resource resource,
+    private void N11_redirect(final Resource resource,
                      final Response response) throws HttpException {
         final boolean postIsCreate = resource.post_is_create();
         if (postIsCreate) {                                           // M7, N5
@@ -766,17 +766,17 @@ public class Engine {
     }
 
 
-    private void O16(final Resource resource,
+    private void O16_is_PUT_method(final Resource resource,
                      final Response response) throws HttpException {
         if (Method.PUT==resource._request.getMethod()) {
-            O14(resource, response);
+            O14_conflict(resource, response);
         } else {
             O18_multiple_representations(resource, response);
         }
     }
 
 
-    private void O14(final Resource resource,
+    private void O14_conflict(final Resource resource,
                      final Response response) throws HttpException {
         if (resource.is_conflict()) {
             response.setStatus(Status.CONFLICT);
