@@ -1,8 +1,6 @@
 package wm;
 
 import java.lang.reflect.InvocationTargetException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -42,19 +40,15 @@ public class RegexDispatcher<T>
     @Override
     public Resource dispatch(final Request request,
                              final Response response) throws HttpException {
-            try {
-                String encodedPath = new URI(request.getRequestUri()).getRawPath();
 
-                Class<? extends Resource> clazz = selectResourceBinding(encodedPath);
-                if (null==clazz) {
-                    throw new ClientHttpException(Status.NOT_FOUND);
-                }
+            String encodedPath = request.getRequestUri().getRawPath();
 
-                return constructResource(request, response, clazz);
-
-            } catch (URISyntaxException e) {
-                throw new ClientHttpException(Status.BAD_REQUEST, e);
+            Class<? extends Resource> clazz = selectResourceBinding(encodedPath);
+            if (null==clazz) {
+                throw new ClientHttpException(Status.NOT_FOUND);
             }
+
+            return constructResource(request, response, clazz);
     }
 
 

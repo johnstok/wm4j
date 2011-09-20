@@ -46,7 +46,6 @@ public class NettyRequest
 
     private final HttpRequest              _request;
     private final Channel                  _channel;
-    private final String                   _path;
     private final Map<String,List<String>> _qParams;
     private final Version                  _version;
 
@@ -63,13 +62,13 @@ public class NettyRequest
         super(
             ((InetSocketAddress) channel.getLocalAddress()).getPort(),
             ((InetSocketAddress) channel.getLocalAddress()).getHostName(),
+            request.getUri(),
             Charset.forName("UTF-8"));                             //$NON-NLS-1$
         _request = request; // FIXME: Check for NULL.
         _channel = channel; // FIXME: Check for NULL.
 
         final QueryStringDecoder decoder =
             new QueryStringDecoder(request.getUri(), _requestUriCharset);
-        _path = decoder.getPath();
         _qParams = decoder.getParameters();
         _version =
             new Version(
@@ -93,11 +92,6 @@ public class NettyRequest
     public InetSocketAddress getClientAddress() {
         return (InetSocketAddress) _channel.getRemoteAddress();
     }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public String getPath() { return _path; }
 
 
     /** {@inheritDoc} */
@@ -146,11 +140,6 @@ public class NettyRequest
         // FIXME: This reads the whole request body into memory - BAD.
         return new ByteArrayInputStream(_request.getContent().copy().array());
     }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public String getRequestUri() { return _request.getUri(); }
 
 
     /** {@inheritDoc} */

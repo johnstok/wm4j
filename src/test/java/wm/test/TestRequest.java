@@ -32,7 +32,6 @@ public class TestRequest
     private       String                        _method = Method.GET;
     private final HashMap<String, List<String>> _headers;
     private       byte[]                        _body;
-    private final String                        _requestUri = "/";
     private       boolean                       _confidential;
     private final Version                       _version;
 
@@ -44,6 +43,7 @@ public class TestRequest
         super(
             80,
             "localhost",                                           //$NON-NLS-1$
+            "/",
             Charset.forName("UTF-8"));                             //$NON-NLS-1$
         _version = new Version(1, 1);
         _headers = new HashMap<String, List<String>>();
@@ -139,11 +139,6 @@ public class TestRequest
      * @param method The new HTTP method to set.
      */
     public void setMethod(final String method) { _method = method; }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public String getRequestUri() { return _requestUri; }
 
 
     /** {@inheritDoc} */

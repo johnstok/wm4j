@@ -47,13 +47,17 @@
 
  [ ] Improve Request,Response,Resource APIs.
 
- [ ] Implementation of Path object's methods.
+ [ ] Add a `Path getPath(Charset cs)` method? Path class can split then decode each path element. Also support parsing of matrix param's.
+ 
+ [ ] Change query methods to `Query getQuery(Charset cs)`
 
  [ ] Support for multiple headers with the same key.
 
  [x] Type safe header access.
 
  [x] RegexDispatcher.
+ 
+ [ ] Make dispatcher matches available in the request. Add a `getDispatchValue(int i)` which delegates to `m.group(1)`.
 
  [ ] Tests for large requests & responses.
  
@@ -62,6 +66,10 @@
  [x] Rename engine methods to include test.
  
  [ ] Confirm we respect rfc-2616:19.6.1.1 for domain names.
+ 
+ [x] Parse request URI on request create and validate.
+
+ [ ] Test that request URI is not opaque.
 
 
 # Enhancement

@@ -36,7 +36,7 @@ public class SimpleRequest
     public SimpleRequest(final org.simpleframework.http.Request request,
                          final int port,
                          final String host) {
-        super(port, host, Charset.forName("UTF-8"));               //$NON-NLS-1$
+        super(port, host, request.getTarget(), Charset.forName("UTF-8"));               //$NON-NLS-1$
         _request = request;     // FIXME: Check for NULL.
         _version = new Version(_request.getMajor(), _request.getMinor());
     }
@@ -109,11 +109,6 @@ public class SimpleRequest
     /** {@inheritDoc} */
     @Override
     public Version getVersion() { return _version; }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public String getRequestUri() { return _request.getTarget(); }
 
 
     /** {@inheritDoc} */

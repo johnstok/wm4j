@@ -35,9 +35,10 @@ public abstract class AbstractRequest
     implements
         Request {
 
-    private   final int    _port;
-    private   final String _host;
+    private   final int     _port;
+    private   final String  _host;
     protected final Charset _requestUriCharset;
+    private   final URI     _requestUri;
 
 
     /**
@@ -49,9 +50,15 @@ public abstract class AbstractRequest
      */
     public AbstractRequest(final int port,
                            final String host,
+                           final String requestUri,
                            final Charset uriCharset) {
         _port = port; // TODO: Must be greater than 0.
         _host = host; // TODO: Not null.
+        try {
+            _requestUri = new URI(requestUri);
+        } catch (URISyntaxException e) {
+            throw new ClientHttpException(Status.BAD_REQUEST);
+        }
         _requestUriCharset = uriCharset;
     }
 
@@ -96,14 +103,16 @@ public abstract class AbstractRequest
 
     /** {@inheritDoc} */
     @Override
-    public String getPath() {
-        // TODO: Should we parse & decode eagerly to avoid throwing an exception here?
+    public URI getRequestUri() { return _requestUri; }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public final String getPath() {
+        // TODO: We should allow the user to specify the charset.
         try {
             return URLDecoder.decode(
-                new URI(getRequestUri()).getRawPath(),
-                _requestUriCharset.name());
-        } catch (final URISyntaxException e) {
-            throw new ClientHttpException(Status.BAD_REQUEST, e);
+                getRequestUri().getRawPath(), _requestUriCharset.name());
         } catch (final UnsupportedEncodingException e) {
             throw new ServerHttpException(Status.INTERNAL_SERVER_ERROR, e);
         }

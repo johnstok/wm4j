@@ -9,6 +9,7 @@ package wm;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetSocketAddress;
+import java.net.URI;
 import java.util.List;
 import java.util.Map;
 
@@ -26,10 +27,9 @@ public interface Request {
      *
      * No decoding or normalisation/canonicalisation is performed on this value.
      *
-     * @return The request URI, as a string.
+     * @return The request URI, as a Java URI.
      */
-    // TODO: Return a URI instead?
-    String getRequestUri();
+    URI getRequestUri();
 
 
     /**
