@@ -11,7 +11,9 @@ import java.util.regex.Pattern;
 /**
  * {@link Dispatcher} implementation that selects a resource type by regex.
  *
- * This implementation matches patterns based on the order that hey were bound.
+ * This implementation matches patterns based on the order that they were bound.
+ * Regular expressions match against the encoded, non-normalised path from the
+ * request URI.
  *
  * @param <T> The type of configuration object passed to the resource.
  *
