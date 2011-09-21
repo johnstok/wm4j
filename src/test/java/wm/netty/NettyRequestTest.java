@@ -22,6 +22,7 @@ package wm.netty;
 import static org.junit.Assert.*;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
+import java.nio.charset.Charset;
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelConfig;
 import org.jboss.netty.channel.ChannelFactory;
@@ -34,6 +35,7 @@ import org.jboss.netty.handler.codec.http.HttpVersion;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import wm.Path;
 import wm.Request;
 import wm.Scheme;
 import wm.Version;
@@ -164,10 +166,10 @@ public class NettyRequestTest {
                 new FakeChannel());
 
         // ACT
-        final String m = r.getPath();
+        final Path p = r.getPath(Charset.forName("UTF-8"));
 
         // ASSERT
-        assertEquals("/", m);
+        assertEquals(0, p.getSize());
     }
 
 

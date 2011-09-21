@@ -42,12 +42,14 @@ public class Path {
      * @param encodingCharset The character set to use for decoding.
      */
     public Path(final String rawPath, final Charset encodingCharset) {
-        String[] segments = rawPath.split("/");
-        for (String s : segments) {
-            String segment = decode(s, encodingCharset);
+        if (null==rawPath) { return; }
+
+        final String[] segments = rawPath.split("/");
+        for (final String s : segments) {
+            final String segment = decode(s, encodingCharset);
             if (segment.length()>0 && !".".equals(segment)) {
                 if ("..".equals(segment) && _segments.size()>0) {
-                    int lastIndex = _segments.size()-1;
+                    final int lastIndex = _segments.size()-1;
                     if (!"..".equals(_segments.get(lastIndex))) {
                         _segments.remove(_segments.size()-1);
                     } else {
@@ -87,7 +89,7 @@ public class Path {
     private String decode(final String segment, final Charset encodingCharset) {
         try {
             return URLDecoder.decode(segment, encodingCharset.name());
-        } catch (UnsupportedEncodingException e) {
+        } catch (final UnsupportedEncodingException e) {
             throw new ClientHttpException(Status.BAD_REQUEST, e);
         }
     }

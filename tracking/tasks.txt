@@ -47,7 +47,7 @@
 
  [ ] Improve Request,Response,Resource APIs.
 
- [.] Add a `Path getPath(Charset cs)` method? Path class can split then decode each path element.
+ [x] Add a `Path getPath(Charset cs)` method? Path class can split then decode each path element.
  
  [ ] Also support for parsing of matrix param's in Paths.
  

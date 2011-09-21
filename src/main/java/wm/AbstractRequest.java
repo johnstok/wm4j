@@ -19,10 +19,8 @@
  *---------------------------------------------------------------------------*/
 package wm;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URLDecoder;
 import java.nio.charset.Charset;
 
 
@@ -56,7 +54,7 @@ public abstract class AbstractRequest
         _host = host; // TODO: Not null.
         try {
             _requestUri = new URI(requestUri);
-        } catch (URISyntaxException e) {
+        } catch (final URISyntaxException e) {
             throw new ClientHttpException(Status.BAD_REQUEST);
         }
         _requestUriCharset = uriCharset;
@@ -108,13 +106,7 @@ public abstract class AbstractRequest
 
     /** {@inheritDoc} */
     @Override
-    public final String getPath() {
-        // TODO: We should allow the user to specify the charset.
-        try {
-            return URLDecoder.decode(
-                getRequestUri().getRawPath(), _requestUriCharset.name());
-        } catch (final UnsupportedEncodingException e) {
-            throw new ServerHttpException(Status.INTERNAL_SERVER_ERROR, e);
-        }
+    public final Path getPath(final Charset charset) {
+        return new Path(getRequestUri().getRawPath(), charset);
     }
 }

@@ -32,14 +32,97 @@ import org.junit.Test;
  */
 public class PathTest {
 
+    /*
+absolute URIs always begin with a scheme name followed by a colon
+
+Get examples from RFC 2396:
+URI-reference
+absoluteURI
+relativeURI
+port
+host
+abs_path
+rel_path
+authority
+
+Enumerate character sets from RFC 2396:
+reserved
+unsafe
+
+Path tests:
+ * spaces - trailing, within
+ * control chars
+
+RFC 2396
+
+ * RESERVED   = ;/?:@&=+$, // characters that are allowed within a URI, but which may not be allowed within a particular component of the generic URI syntax
+ * MARK       = -_.!~*'()       // punctuation
+ * UNRESERVED = MARK + ALPHANUM // allowed in a URI and do not have a reserved purpose; can be escaped without changing the semantics of the URI
+ * ESCAPED    = ^UNRESERVED     // data must be escaped if it does not have a representation using an unreserved character
+ * EXCLUDED   = CONTROL + SPACE + DELIMS + UNWISE // excluded characters must be escaped in order to be properly represented within a URI
+ * CONTROL    = #00-#1F + #7F   // they are non-printable and because they are likely to be misinterpreted
+ * SPACE      = <SPACE>         // significant spaces may disappear and insignificant spaces may be introduced when URI are transcribed or typeset
+ * DELIMS     = <>#%"           // often used as the delimiters in or around URI
+ * UNWISE     = {}|\^[]`        // gateways and other transport agents are known to sometimes modify such characters
+
+RFC 2396; sec 3.3
+segment       = *pchar *( ";" param ) // Within a path segment, the characters "/", ";", "=", and "?" are reserved.
+pchar         = unreserved | escaped | ":" | "@" | "&" | "=" | "+" | "$" | ","
+
+   Each path segment may include a
+   sequence of parameters, indicated by the semicolon ";" character.
+   The parameters are not significant to the parsing of relative
+   references.
+
+
+JAVA URI
+
+ * PUNCT      = ,;:$&+=
+ * RESERVED   = ?/[]@ + PUNCT
+ * UNRESERVED = _-!.~'()* + ALPHANUM
+ * ESCAPED    = %xx
+
+Java URLEncoder
+
+ * SAFE       = .-*_ + ALPHANUM
+
+See also: http://tools.ietf.org/html/rfc3986#section-3.3
+     */
+
+    @Test
+    public void nullPathHasSizeZero() {
+
+        // ARRANGE
+        final Path p = new Path(null, Charset.forName("UTF-8"));
+
+        // ACT
+        final int size = p.getSize();
+
+        // ASSERT
+        assertEquals(0, size);
+    }
+
+    @Test
+    public void zlsPathHasSizeZero() {
+
+        // ARRANGE
+        final Path p = new Path("", Charset.forName("UTF-8"));
+
+        // ACT
+        final int size = p.getSize();
+
+        // ASSERT
+        assertEquals(0, size);
+    }
+
     @Test
     public void rootPathHasSizeZero() {
 
         // ARRANGE
-        Path p = new Path("/", Charset.forName("UTF-8"));
+        final Path p = new Path("/", Charset.forName("UTF-8"));
 
         // ACT
-        int size = p.getSize();
+        final int size = p.getSize();
 
         // ASSERT
         assertEquals(0, size);
@@ -49,10 +132,10 @@ public class PathTest {
     public void encodedSegmentsDecoded() {
 
         // ARRANGE
-        Path p = new Path("/%C2%A3/%C2%A3/%C2%A3", Charset.forName("UTF-8"));
+        final Path p = new Path("/%C2%A3/%C2%A3/%C2%A3", Charset.forName("UTF-8"));
 
         // ACT
-        int size = p.getSize();
+        final int size = p.getSize();
 
         // ASSERT
         assertEquals(3, size);
@@ -65,10 +148,10 @@ public class PathTest {
     public void encodedSegmentDecoded() {
 
         // ARRANGE
-        Path p = new Path("/foo%2Fbar%2Fbaz", Charset.forName("UTF-8"));
+        final Path p = new Path("/foo%2Fbar%2Fbaz", Charset.forName("UTF-8"));
 
         // ACT
-        int size = p.getSize();
+        final int size = p.getSize();
 
         // ASSERT
         assertEquals(1, size);
@@ -79,10 +162,10 @@ public class PathTest {
     public void singlePeriodNormalised() {
 
         // ARRANGE
-        Path p = new Path("/foo/./bar", Charset.forName("UTF-8"));
+        final Path p = new Path("/foo/./bar", Charset.forName("UTF-8"));
 
         // ACT
-        int size = p.getSize();
+        final int size = p.getSize();
 
         // ASSERT
         assertEquals(2, size);
@@ -94,10 +177,10 @@ public class PathTest {
     public void doublePeriodNormalised() {
 
         // ARRANGE
-        Path p = new Path("/foo/../bar", Charset.forName("UTF-8"));
+        final Path p = new Path("/foo/../bar", Charset.forName("UTF-8"));
 
         // ACT
-        int size = p.getSize();
+        final int size = p.getSize();
 
         // ASSERT
         assertEquals(1, size);
@@ -108,10 +191,10 @@ public class PathTest {
     public void normalisationSupportsEncodedPeriods() {
 
         // ARRANGE
-        Path p = new Path("/foo/%2E%2E/bar/%2E/baz", Charset.forName("UTF-8"));
+        final Path p = new Path("/foo/%2E%2E/bar/%2E/baz", Charset.forName("UTF-8"));
 
         // ACT
-        int size = p.getSize();
+        final int size = p.getSize();
 
         // ASSERT
         assertEquals(2, size);
@@ -123,10 +206,10 @@ public class PathTest {
     public void multipleDoublePeriodNormalised() {
 
         // ARRANGE
-        Path p = new Path("/foo/../bar/../baz", Charset.forName("UTF-8"));
+        final Path p = new Path("/foo/../bar/../baz", Charset.forName("UTF-8"));
 
         // ACT
-        int size = p.getSize();
+        final int size = p.getSize();
 
         // ASSERT
         assertEquals(1, size);
@@ -137,10 +220,10 @@ public class PathTest {
     public void leadingDoublePeriodKept() {
 
         // ARRANGE
-        Path p = new Path("/../foo", Charset.forName("UTF-8"));
+        final Path p = new Path("/../foo", Charset.forName("UTF-8"));
 
         // ACT
-        int size = p.getSize();
+        final int size = p.getSize();
 
         // ASSERT
         assertEquals(2, size);
@@ -152,10 +235,10 @@ public class PathTest {
     public void multipleLeadingDoublePeriodKept() {
 
         // ARRANGE
-        Path p = new Path("/../../foo", Charset.forName("UTF-8"));
+        final Path p = new Path("/../../foo", Charset.forName("UTF-8"));
 
         // ACT
-        int size = p.getSize();
+        final int size = p.getSize();
 
         // ASSERT
         assertEquals(3, size);
@@ -168,10 +251,10 @@ public class PathTest {
     public void consecutiveDoublePeriodNormalised() {
 
         // ARRANGE
-        Path p = new Path("/foo/bar/../../baz", Charset.forName("UTF-8"));
+        final Path p = new Path("/foo/bar/../../baz", Charset.forName("UTF-8"));
 
         // ACT
-        int size = p.getSize();
+        final int size = p.getSize();
 
         // ASSERT
         assertEquals(1, size);
@@ -182,10 +265,10 @@ public class PathTest {
     public void unencodedNormalisedSimplePath() {
 
         // ARRANGE
-        Path p = new Path("/foo", Charset.forName("UTF-8"));
+        final Path p = new Path("/foo", Charset.forName("UTF-8"));
 
         // ACT
-        int size = p.getSize();
+        final int size = p.getSize();
 
         // ASSERT
         assertEquals(1, size);
@@ -196,10 +279,10 @@ public class PathTest {
     public void unencodedNormalisedLongPath() {
 
         // ARRANGE
-        Path p = new Path("/foo/bar/baz", Charset.forName("UTF-8"));
+        final Path p = new Path("/foo/bar/baz", Charset.forName("UTF-8"));
 
         // ACT
-        int size = p.getSize();
+        final int size = p.getSize();
 
         // ASSERT
         assertEquals(3, size);
@@ -212,10 +295,10 @@ public class PathTest {
     public void emptySegmentsDiscarded() {
 
         // ARRANGE
-        Path p = new Path("/foo//baz", Charset.forName("UTF-8"));
+        final Path p = new Path("/foo//baz", Charset.forName("UTF-8"));
 
         // ACT
-        int size = p.getSize();
+        final int size = p.getSize();
 
         // ASSERT
         assertEquals(2, size);

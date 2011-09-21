@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetSocketAddress;
 import java.net.URI;
+import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Map;
 
@@ -95,15 +96,15 @@ public interface Request {
 
 
     /**
-     * The decoded path from the request URI.
+     * Get the decoded, normalised path from the request URI.
      *
-     * @return The request path, as a string.
+     * @param charset The character set used to decode the path.
      *
-     * @throws ClientHttpException If the request URI is malformed.
-     * @throws ServerHttpException If the required URI encoding is unsupported.
+     * @return The request path.
+     *
+     * @throws ServerHttpException If the specified URI encoding is unsupported.
      */
-    // TODO: Return a URI instead?
-    String getPath();
+    Path getPath(Charset charset);
 
 
     /**
