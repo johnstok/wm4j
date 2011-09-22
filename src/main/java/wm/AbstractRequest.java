@@ -60,6 +60,12 @@ public abstract class AbstractRequest
         _requestUriCharset = uriCharset;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public boolean hasQueryValue(final String paramName) {
+        return null!=getQueryValue(paramName);
+    }
+
 
     /** {@inheritDoc} */
     @Override

@@ -35,47 +35,46 @@
    
 !!! Who closes IO streams?
 
- [ ] Host name determination:
- 1. Absolute URI
- 2. Host header
- 3. Manually specified
- 4. Determined from lookup via InetSocketAddress.
+ [x] Host name determination: Manually specified.
    
  [ ] Exceptions are a more idiomatic way to handle 4** errors - use them.
   
  [ ] Enhanced error handling.
 
- [ ] Improve Request,Response,Resource APIs.
+ [x] Improve Request API.
+ 
+ [ ] Improve Response API.
+ 
+ [ ] Improve Resource API.
 
  [x] Add a `Path getPath(Charset cs)` method? Path class can split then decode each path element.
  
- [ ] Also support for parsing of matrix param's in Paths.
- 
  [ ] Change query methods to `Query getQuery(Charset cs)`
 
- [ ] Support for multiple headers with the same key.
+ [x] Support for multiple headers with the same key.
 
  [x] Type safe header access.
 
  [x] RegexDispatcher.
  
  [ ] Make dispatcher matches available in the request. Add a `getDispatchValue(int i)` which delegates to `m.group(1)`.
-
- [ ] Tests for large requests & responses.
  
- [ ] rfc-2616:5.1.2 Servers SHOULD respond to invalid Request-URIs with an appropriate status code.
+ [x] rfc-2616:5.1.2 Servers SHOULD respond to invalid Request-URIs with an appropriate status code.
  
  [x] Rename engine methods to include test.
  
- [ ] Confirm we respect rfc-2616:19.6.1.1 for domain names.
- 
  [x] Parse request URI on request create and validate.
-
- [ ] Test that request URI is not opaque.
 
 
 # Enhancement
+ [ ] Confirm we respect rfc-2616:19.6.1.1 for domain names.
 
+ [ ] Tests for large requests & responses.
+ 
+ [ ] Test that request URI is not opaque.
+
+ [ ] Also support for parsing of matrix param's in Paths.
+ 
  [ ] Type safe param access - separate collections for query and encoded body.
 
  [ ] Chunked encoding; Request#isChunked() method.

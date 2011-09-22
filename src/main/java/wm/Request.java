@@ -51,7 +51,7 @@ public interface Request {
      * @return The host name, as a string.
      */
     @Specification(name="RFC-2616", section="5.2")
-    String getDomain(); // TODO: Rename to getHost()?
+    String getDomain(); // TODO: Rename to getHost()? Return an InetSocketAddress?
 
 
     /**
@@ -186,4 +186,14 @@ public interface Request {
      * @return True if the request has such a header; false otherwise.
      */
     boolean hasHeader(String headerName);
+
+
+    /**
+     * Does this request have at least one query param with the specified name.
+     *
+     * @param paramName The name of the required query param.
+     *
+     * @return True if the request has such a param; false otherwise.
+     */
+    boolean hasQueryValue(String paramName);
 }
