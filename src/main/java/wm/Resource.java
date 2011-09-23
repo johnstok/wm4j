@@ -9,6 +9,7 @@ package wm;
 import java.net.URI;
 import java.nio.charset.Charset;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -110,7 +111,7 @@ public abstract class Resource {
      *
      * @return
      */
-    abstract URI create_path();
+    abstract URI createPath();
 
 
     /**
@@ -268,102 +269,107 @@ public abstract class Resource {
      */
     abstract boolean multiple_choices() throws HttpException;
 
+//-- TODO ^
 
     /**
-     * If the OPTIONS method is supported and is used, the return value of this
-     * function is expected to be a list of pairs representing header names and
-     * values that should appear in the response.
+     * Get the headers for response to an OPTIONS request.
      *
-     * @return
+     * @return A collection of headers, as a map.
      */
-    abstract Map<String,Object> options();
+    abstract Map<String,List<String>> getOptionsResponseHeaders();
 
 
     /**
-     * If POST requests should be treated as a request to put content into a
-     * (potentially new) resource as opposed to being a generic submission for
-     * processing, then this function should return true. If it does return
-     * true, then create_path will be called and the rest of the request will be
-     * treated much like a PUT to the Path entry returned by that call.
+     * Determine if POSTs to this resource create / update content.
      *
-     * @return
-     */
-    abstract boolean post_is_create();
-
-
-    /**
-     * Did the resource exist prior to this request.
+     * If true is returned the request will be treated similarly to a PUT,
+     * inserting content into a (potentially new) resource (as opposed to being
+     * a generic submission for processing). The {@link #createPath()} method
+     * will be called to determine the path at which content should be
+     * created/updated.
      *
-     * @return
-     * @throws HttpException
+     * @return True if the request should be treated as a PUT; false otherwise.
      */
-    abstract boolean previously_existed() throws HttpException;
+    abstract boolean isPostCreate();
 
 
     /**
-     * If post_is_create returns false, then this will be called to process any
-     * POST requests. If it succeeds, it should return true.
+     * Determine if the resource existed prior to this request.
      *
-     * @return
-     * @throws HttpException
+     * @return True if the resource previously existed; false otherwise.
      */
-    abstract void process_post() throws HttpException;
+    abstract boolean existedPreviously();
 
 
     /**
+     * Perform this resources POST action.
+     *
+     * This method is only called when postIsCreate returns false.
+     */
+    abstract void processPost();
+
+
+    /**
+     * Determine if this resource exists.
+     *
      * Returning non-true values will result in 404 Not Found.
      *
-     * @return
-     * @throws HttpException
+     * @return True if the resource exists, false otherwise.
      */
-    abstract boolean resource_exists() throws HttpException;
+    abstract boolean exists();
 
 
     /**
-     * Returning true will result in a 503 Service Unavailable.
+     * Determine if this resource is available to serve requests.
      *
-     * @return
-     * @throws HttpException
+     * Returning false will result in a 503 Service Unavailable.
+     *
+     * @return True if the service is available, false otherwise.
      */
-    abstract boolean service_available() throws HttpException;
+    abstract boolean isServiceAvailable();
 
 
     /**
+     * Determine if the request URI is under the maximum size.
+     *
      * Returning true will result in 414 Request URI Too Long.
      *
-     * @return
-     * @throws HttpException
+     * @return True if the URI length is under the maximum; false otherwise.
      */
-    abstract boolean uri_too_long() throws HttpException;
+    abstract boolean isUriTooLong();
 
 
     /**
+     * Determine if an unsupported header is included in the request.
+     *
      * Returning false will result in 501 Not Implemented.
      *
-     * @return
-     * @throws HttpException
+     * @return True if all headers are supported; false otherwise.
      */
-    abstract boolean valid_content_headers() throws HttpException;
+    abstract boolean hasValidContentHeaders();
 
 
     /**
+     * Determine if the entity length is under the maximum size.
+     *
+     * Normally this method will check the value of the Content-Length header.
      * Returning false will result in 413 Request Entity Too Large.
      *
-     * @return
-     * @throws HttpException
+     * @return True if the entity length is under the maximum; false otherwise.
      */
-    abstract boolean valid_entity_length() throws HttpException;
+    abstract boolean isEntityLengthValid();
 
 
     /**
+     * List the headers upon which this resource's representation can vary.
+     *
      * If this function is implemented, it should return a list of strings with
      * header names that should be included in a given response's Vary header.
      * The standard conneg headers (Accept, Accept-Encoding, Accept-Charset,
-     * Accept-Language) do not need to be specified here as Webmachine will add
-     * the correct elements of those automatically depending on resource
-     * behavior.
+     * Accept-Language) do not need to be specified here as they will be added
+     * automatically depending on resource behaviour.
      *
-     * @return
+     * @return An array of {@link Header}s.
      */
-    abstract Header[] variances();
+    abstract Header[] getVariances();
 }

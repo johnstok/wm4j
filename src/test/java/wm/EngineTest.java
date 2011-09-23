@@ -74,7 +74,7 @@ public class EngineTest {
 
         @Override
         public void read(final InputStream inputStream) throws IOException, HttpException {
-            if (!_resource.resource_exists()) {
+            if (!_resource.exists()) {
                 _resource._response.setHeader(Header.LOCATION, _createdPath);
             }
 
@@ -199,7 +199,7 @@ public class EngineTest {
             _response,
             new HashMap<String, Object>()) {
 
-            @Override public boolean valid_entity_length() {
+            @Override public boolean isEntityLengthValid() {
                 return false;
             }
         };
@@ -715,7 +715,7 @@ public class EngineTest {
             _response,
             new HashMap<String, Object>()) {
 
-            @Override public boolean resource_exists() {
+            @Override public boolean exists() {
                 return false;
             }
         };
@@ -737,11 +737,11 @@ public class EngineTest {
             _response,
             new HashMap<String, Object>()) {
 
-            @Override public boolean previously_existed() {
+            @Override public boolean existedPreviously() {
                 return true;
             }
 
-            @Override public boolean resource_exists() {
+            @Override public boolean exists() {
                 return false;
             }
         };
@@ -772,11 +772,11 @@ public class EngineTest {
                 }
             }
 
-            @Override public boolean previously_existed() {
+            @Override public boolean existedPreviously() {
                 return true;
             }
 
-            @Override public boolean resource_exists() {
+            @Override public boolean exists() {
                 return false;
             }
         };
@@ -808,11 +808,11 @@ public class EngineTest {
                 }
             }
 
-            @Override public boolean previously_existed() {
+            @Override public boolean existedPreviously() {
                 return true;
             }
 
-            @Override public boolean resource_exists() {
+            @Override public boolean exists() {
                 return false;
             }
         };
@@ -837,7 +837,7 @@ public class EngineTest {
 
             /** {@inheritDoc} */
             @Override
-            public boolean resource_exists() {
+            public boolean exists() {
                 return false;
             }
         };
@@ -1201,11 +1201,11 @@ public class EngineTest {
                     return Collections.singleton(Method.POST);
                 }
 
-                @Override public boolean post_is_create() {
+                @Override public boolean isPostCreate() {
                     return false;
                 }
 
-                @Override public void process_post() {
+                @Override public void processPost() {
                     // No Op.
                 }
 
@@ -1246,7 +1246,7 @@ public class EngineTest {
                 return Collections.singleton(Method.PUT);
             }
 
-            @Override public boolean resource_exists() {
+            @Override public boolean exists() {
                 return true;
             }
 
@@ -1290,7 +1290,7 @@ public class EngineTest {
                 }
             }
 
-            @Override public boolean resource_exists() {
+            @Override public boolean exists() {
                 return false;
             }
         };
@@ -1323,7 +1323,7 @@ public class EngineTest {
                     return true;
                 }
 
-                @Override public boolean resource_exists() {
+                @Override public boolean exists() {
                     return false;
                 }
         };
@@ -1354,7 +1354,7 @@ public class EngineTest {
                 return Collections.singleton(Method.PUT);
             }
 
-            @Override public boolean resource_exists() {
+            @Override public boolean exists() {
                 return false;
             }
 
@@ -1385,7 +1385,7 @@ public class EngineTest {
             _response,
             new HashMap<String, Object>()) {
 
-                @Override public boolean service_available() {
+                @Override public boolean isServiceAvailable() {
                     return false;
                 }
         };
@@ -1538,7 +1538,7 @@ public class EngineTest {
             _response,
             new HashMap<String, Object>()) {
 
-            @Override public boolean valid_content_headers() {
+            @Override public boolean hasValidContentHeaders() {
                 return false;
             }
         };
@@ -1600,7 +1600,7 @@ public class EngineTest {
             _response,
             new HashMap<String, Object>()) {
 
-                @Override public boolean uri_too_long() {
+                @Override public boolean isUriTooLong() {
                     return true;
                 }
         };

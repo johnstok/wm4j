@@ -239,7 +239,7 @@ public class Engine {
     private void G07_resource_exists(final Resource resource,
                      final Response response) throws HttpException {
         // TODO: Set variances.
-        if (resource.resource_exists()) {
+        if (resource.exists()) {
             G07a(resource, response);
         } else {
             H07_if_match_is_wildcard(resource, response);
@@ -423,7 +423,7 @@ public class Engine {
 
     private void K07_previously_existed(final Resource resource,
                      final Response response) throws HttpException {
-        if (resource.previously_existed()) {
+        if (resource.existedPreviously()) {
             K05_moved_permanently(resource, response);
         } else {
             L07_is_POST_method(resource, response);
@@ -623,7 +623,7 @@ public class Engine {
 
     private void B11_uri_too_long(final Resource resource,
                      final Response response) throws HttpException {
-        if (resource.uri_too_long()) {
+        if (resource.isUriTooLong()) {
             response.setStatus(Status.REQUEST_URI_TOO_LONG);
         } else {
             B10_malformed_request(resource, response);
@@ -663,7 +663,7 @@ public class Engine {
 
     private void B07_unsupported_content_header(final Resource resource,
                         final Response response) throws HttpException {
-        if (!resource.valid_content_headers()) {
+        if (!resource.hasValidContentHeaders()) {
             response.setStatus(Status.NOT_IMPLEMENTED);
         } else {
             B06_unknown_content_type(resource, response);
@@ -683,7 +683,7 @@ public class Engine {
 
     private void B05_request_entity_too_large(final Resource resource,
                         final Response response) throws HttpException {
-        if (!resource.valid_entity_length()) {
+        if (!resource.isEntityLengthValid()) {
             response.setStatus(Status.REQUEST_ENTITY_TOO_LARGE);
         } else {
             B04_options(resource, response);
@@ -730,7 +730,7 @@ public class Engine {
 
     private void B12_service_available(final Resource resource,
                      final Response response) throws HttpException {
-        if (!resource.service_available()) {
+        if (!resource.isServiceAvailable()) {
             response.setStatus(Status.SERVICE_UNAVAILABLE);
         } else {
             B11_uri_too_long(resource, response);
@@ -750,12 +750,12 @@ public class Engine {
 
     private void N11_redirect(final Resource resource,
                      final Response response) throws HttpException {
-        final boolean postIsCreate = resource.post_is_create();
+        final boolean postIsCreate = resource.isPostCreate();
         if (postIsCreate) {                                           // M7, N5
-            final URI createUri = resource.create_path();
+            final URI createUri = resource.createPath();
             // FIXME: Dunno, see original source...
         } else {
-            resource.process_post();
+            resource.processPost();
         }
 
         if (null!=response.getHeader(Header.LOCATION)) { // TODO: Add method 'requiresRedirection()'.

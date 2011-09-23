@@ -43,7 +43,7 @@
 
  [x] Improve Request API.
  
- [ ] Improve Response API.
+ [.] Improve Response API.
  
  [ ] Improve Resource API.
 

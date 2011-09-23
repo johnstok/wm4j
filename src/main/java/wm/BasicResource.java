@@ -61,7 +61,7 @@ public abstract class BasicResource
 
     /** {@inheritDoc} */
     @Override
-    public URI create_path() {
+    public URI createPath() {
         return null;
     }
 
@@ -163,61 +163,61 @@ public abstract class BasicResource
 
     /** {@inheritDoc} */
     @Override
-    public Map<String, Object> options() {
+    public Map<String, Object> getOptionsResponseHeaders() {
         return new HashMap<String, Object>();
     }
 
     /** {@inheritDoc} */
     @Override
-    public boolean post_is_create() {
+    public boolean isPostCreate() {
         return false;
     }
 
     /** {@inheritDoc} */
     @Override
-    public boolean previously_existed() throws HttpException {
+    public boolean existedPreviously() throws HttpException {
         return false;
     }
 
     /** {@inheritDoc} */
     @Override
-    public void process_post() throws HttpException {
+    public void processPost() throws HttpException {
         throw new ServerHttpException(Status.NOT_IMPLEMENTED);
     }
 
     /** {@inheritDoc} */
     @Override
-    public boolean resource_exists() throws HttpException {
+    public boolean exists() throws HttpException {
         return true;
     }
 
     /** {@inheritDoc} */
     @Override
-    public boolean service_available() throws HttpException {
+    public boolean isServiceAvailable() throws HttpException {
         return true;
     }
 
     /** {@inheritDoc} */
     @Override
-    public boolean uri_too_long() throws HttpException {
+    public boolean isUriTooLong() throws HttpException {
         return false;
     }
 
     /** {@inheritDoc} */
     @Override
-    public boolean valid_content_headers() throws HttpException {
+    public boolean hasValidContentHeaders() throws HttpException {
         return true;
     }
 
     /** {@inheritDoc} */
     @Override
-    public boolean valid_entity_length() throws HttpException {
+    public boolean isEntityLengthValid() throws HttpException {
         return true;
     }
 
     /** {@inheritDoc} */
     @Override
-    public Header[] variances() {
+    public Header[] getVariances() {
         return new Header[] {};
     }
 }
