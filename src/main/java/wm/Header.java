@@ -110,6 +110,10 @@ public final class Header {
     public static final String CONTENT_LANGUAGE =
         "Content-Language";                                        //$NON-NLS-1$
 
+    /** WWW_AUTHENTICATE : String. */
+    public static final String WWW_AUTHENTICATE =
+        "WWW-Authenticate";                                        //$NON-NLS-1$
+
 
     /**
      * Parse an 'Accept-Charset' header into a list of weighted values.

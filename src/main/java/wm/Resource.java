@@ -15,201 +15,247 @@ import java.util.Set;
 
 
 /**
- * HTTP API for a resource.
- *
- * From http://webmachine.basho.com/resources.html
+ * API for a HTTP resource.
  *
  * @author Keith Webster Johnston.
  */
-public abstract class Resource {
-
-    protected final Request             _request;
-    protected final Response            _response;
-    protected final Map<String, Object> _context;
+public interface Resource {
 
 
     /**
-     * Constructor.
+     * Determine if the resource accepts POST requests to nonexistent resources.
      *
-     * @param request
-     * @param response
-     * @param context
+     * @return True if such requests are allowed; false otherwise.
      */
-    public Resource(final Request request,
-                    final Response response,
-                    final Map<String, Object> context) {
-        _request  = request;
-        _response = response;
-        _context   = context;
-    }
+    boolean allowsPostToMissing();
 
 
     /**
-     * If the resource accepts POST requests to nonexistent resources, then this
-     * should return true.
+     * Get the methods supported by this resource.
      *
-     * @return
-     * @throws HttpException
-     */
-    abstract boolean allow_missing_post() throws HttpException;
-
-
-    /**
      * If a Method not in this list is requested, then a 405 Method Not Allowed
-     * will be sent. Note that these are all-caps and are atoms. (single-quoted)
+     * will be sent.
      *
      * @return
      */
     // FIXME: Should be strongly typed.
-    abstract Set<String> allowed_methods();
+    @Specification(name="rfc-2616", section="10.4.6")
+    Set<String> getAllowedMethods();
 
 
     /**
-     * If this is anything other than the atom no_charset, it must be a list of
-     * pairs where each pair is of the form Charset, Converter where Charset is
-     * a string naming a charset and Converter is a callable function in the
-     * resource which will be called on the produced body in a GET and ensure
-     * that it is in Charset.
+     * Get the character sets supported by this resource.
      *
-     * @return
+     * @return NULL if negotiation of character set is not supported;
+     *  otherwise a set of supported character sets.
      */
-    abstract Set<Charset> charsets_provided();
+    @Specifications({
+        @Specification(name="rfc-2616", section="14.2"),
+        @Specification(name="rfc-2616", section="3.4"),
+        @Specification(name="rfc-2616", section="14.17"),
+        @Specification(name="rfc-2616", section="12")
+    })
+    Set<Charset> getCharsetsProvided();
 
 
     /**
-     * This is used similarly to content_types_provided, except that it is for
-     * incoming resource representations -- for example, PUT requests. Handler
-     * functions usually want to use wrq:req_body(ReqData) to access the
-     * incoming request body.
+     * Determine the content types supported for request bodies.
      *
-     * @return
+     * @return A map of media type => body reader.
      */
-    public abstract Map<MediaType, ? extends BodyReader> content_types_accepted();
+    public Map<MediaType, ? extends BodyReader> getContentTypesAccepted();
 
+//-- TODO ^
 
     /**
-     * This should return a list of pairs where each pair is of the form
-     * {Mediatype, Handler} where Mediatype is a string of content-type format
-     * and the Handler is an atom naming the function which can provide a
-     * resource representation in that media type. Content negotiation is driven
-     * by this return value. For example, if a client request includes an Accept
-     * header with a value that does not appear as a first element in any of the
-     * return tuples, then a 406 Not Acceptable will be sent.
+     * Determine the media-types this resource supports in response entities.
      *
-     * @return
+     * Returning NULL indicates language negotiation is not supported.
+     *
+     * @return A set of {@link MediaType}s.
      */
-    public abstract Map<MediaType, ? extends BodyWriter> content_types_provided();
+    @Specifications({
+        @Specification(name="rfc-2616", section="14.1"),
+        @Specification(name="rfc-2616", section="3.7"),
+        @Specification(name="rfc-2616", section="14.17"),
+        @Specification(name="rfc-2616", section="12")
+    })
+    public Set<MediaType> getContentTypesProvided();
+    // TODO: Document what happens if an empty set is returned.
 
 
     /**
-     * This will be called on a POST request if post_is_create returns true. It
-     * is an error for this function to not produce a Path if post_is_create
-     * returns true. The Path returned should be a valid URI part following the
-     * dispatcher prefix. That Path will replace the previous one in the return
-     * value of wrq:disp_path(ReqData) for all subsequent resource function
-     * calls in the course of this request.
+     * Retrieve the body writer for the specified media type.
      *
-     * @return
+     * @param The media-type for the response's entity.
+     *
+     * @return A valid BodyWriter.
      */
-    abstract URI createPath();
+    public BodyWriter getWriter(MediaType mediaType);
+    // FIXME: Should pass all conneg'ed param's here.
 
 
     /**
-     * This is only called after a successful delete_resource call, and should
-     * return false if the deletion was accepted but cannot yet be guaranteed to
-     * have finished.
+     * Determine the URI for a new resource created via a POST request.
      *
-     * @return
-     * @throws HttpException
+     * This will be called on a POST request if {@link #isPostCreate()} returns
+     * true. It is an error for this method to not produce a Path if
+     * {@link #isPostCreate()} returns true.
+     *
+     * @return A valid path this resource was created by a POST request; false
+     *  otherwise.
      */
-    abstract boolean delete_completed() throws HttpException;
+    URI getCreatePath();
 
 
     /**
-     * This is called when a DELETE request should be enacted, and should return
-     * true if the deletion succeeded.
+     * Determine if deletion of this resource has completed.
      *
-     * @return
-     * @throws HttpException
+     * @return True if deletion is complete; false if the deletion was accepted
+     * but cannot yet be guaranteed to have finished.
      */
-    abstract boolean delete_resource() throws HttpException;
+    boolean isDeleted();
 
 
     /**
-     * This must be a list of pairs where in each pair Encoding is a string
-     * naming a valid content encoding and Encoder is a callable function in the
-     * resource which will be called on the produced body in a GET and ensure
-     * that it is so encoded. One useful setting is to have the function check
-     * on method, and on GET requests return [{"identity", fun(X) -> X end},
-     * {"gzip", fun(X) -> zlib:gzip(X) end}] as this is all that is needed to
-     * support gzip content encoding.
+     * Delete this resource.
      *
-     * @return
+     * @return True if the resource was started successfully; false if the
+     *  delete failed.
+     */
+    @Specification(name="rfc-2616", section="9.7")
+    boolean delete();
+
+
+    /**
+     * Get the content encodings supported by this resource.
+     *
+     * The content encoding is used to encoded the response body. The 'identity'
+     * encoding is always supported.
+     *
+     * @return NULL if negotiation of content encoding is not supported;
+     *  otherwise a set of supported encodings.
      */
     // FIXME: Should be strongly typed.
-    abstract Set<String> encodings_provided();
+    @Specifications({
+        @Specification(name="rfc-2616", section="14.3"),
+        @Specification(name="rfc-2616", section="3.5"),
+        @Specification(name="rfc-2616", section="14.11"),
+        @Specification(name="rfc-2616", section="12")
+    })
+    Set<String> getEncodings();
 
 
     /**
+     * Get the date cached representations of this resource will expire.
+     *
      * If this method returns non-NULL, it will be used as the value of the
-     * Expires header (TODO:confirm).
+     * Expires header.
      *
-     * @return
+     * @return A date if cached representations can be cached; NULL otherwise.
      */
-    abstract Date expires();
+    @Specifications({
+        @Specification(name="rfc-2616", section="14.21"),
+        @Specification(name="rfc-2616", section="13.2"),
+        @Specification(name="rfc-2616", section="14.9")
+    })
+    Date getExpiryDate();
 
 
     /**
-     * This function, if exported, is called just before the final response is
-     * constructed and sent.
-     */
-    abstract void finish_request();
-
-
-    /**
-     * Returning true will result in a 403 Forbidden.
+     * Wind up processing of a request.
      *
-     * @return
-     * @throws HttpException
+     * This method will be called by the HTTP engine once the full response has
+     * been transmitted.
      */
-    abstract boolean forbidden() throws HttpException;
+    void finishRequest();
 
 
     /**
-     * If this returns a value, it will be used as the value of the ETag header
-     * and for comparison in conditional requests.
+     * Determine if access to this resource is forbidden.
      *
-     * @return
-     */
-    abstract ETag generate_etag();
-
-
-    /**
-     * If this returns anything other than true, the response will be 401
-     * Unauthorized. The AuthHead return value will be used as the value in the
-     * WWW-Authenticate header.
+     * Returning true will result in a 403 Forbidden response. A resource is
+     * forbidden if the request was valid but the resource is refusing to
+     * fulfill it. If the client is unauthorized {@link #authorize()} should be
+     * used instead.
      *
-     * @return
-     * @throws HttpException
+     * @return True if access to the resource is forbidden; false otherwise.
      */
-    abstract boolean is_authorized() throws HttpException;
+    @Specification(name="rfc-2616", section="10.4.4")
+    boolean isForbidden();
 
 
     /**
-     * If this returns true, the client will receive a 409 Conflict.
+     * Generate an ETag for this resource.
      *
-     * @return
+     * An entity tag MUST be unique across all versions of all entities
+     * associated with a particular resource. As such, the value of the base
+     * parameter should always be included in a returned value. If this method
+     * returns non-NULL,  it will be used as the value of the ETag response
+     * header and for comparison in conditional requests.
+     *
+     * @param base A base ETag value calculated from the dimensions by which
+     *  representations of this resource vary. Dimensions are determined from
+     *  the values of all headers mentioned in the response 'Vary'  header
+     *  including those calculated during server-driven content
+     *  negotiation and those specified via the {@link #getVariances()} method.
+     *
+     * @return An ETag if one is available; null otherwise.
      */
-    abstract boolean is_conflict();
+    @Specifications({
+        @Specification(name="rfc-2616", section="13.3.3"),
+        @Specification(name="rfc-2616", section="14.19"),
+        @Specification(name="rfc-2616", section="14.24"),
+        @Specification(name="rfc-2616", section="14.26"),
+        @Specification(name="rfc-2616", section="14.27")
+    })
+    ETag generateEtag(String base);
 
 
     /**
+     * Authorize the client to access the resource.
+     *
+     * If a non-NULL value is returned the response will be 401 Unauthorized.
+     *
+     * @return NULL if the client is authorized; the value of the
+     *  WWW-Authenticate response header challenge if the client is
+     *  unauthorized.
+     */
+    @Specifications({
+        @Specification(name="rfc-2616", section="10.4.2"),
+        @Specification(name="rfc-2616", section="10.8"),
+        @Specification(name="rfc-2617")
+    })
+    String authorize();
+
+
+    /**
+     * Has the execution of the request caused a conflict in the state of the
+     * current resource.
+     *
+     * Conflicts are most likely to occur in response to a PUT request. For
+     * example, if versioning were being used and the entity being PUT included
+     * changes to a resource which conflict with those made by an earlier
+     * (third-party) request. If this returns true, the client will receive a
+     * 409 Conflict.
+     *
+     * @return True if the resource is in conflict; false otherwise.
+     */
+    @Specification(name="rfc-2616", section="10.4.10")
+    boolean isInConflict();
+
+
+    /**
+     * Determine if the resources understands the specified Media Type.
+     *
      * Returning false will result in 415 Unsupported Media Type.
      *
-     * @return
-     * @throws HttpException
+     * @param mediaType The media-type to check.
+     *
+     * @return True if the media-type is known; false otherwise.
      */
-    abstract boolean known_content_type() throws HttpException;
+    @Specification(name="rfc-2616", section="10.4.16")
+    boolean isContentTypeKnown(MediaType mediaType);
 
 
     /**
@@ -219,64 +265,82 @@ public abstract class Resource {
      *
      * @return A set of available languages.
      */
-    abstract Set<LanguageTag> languages_provided();
+    @Specifications({
+        @Specification(name="rfc-2616", section="14.4"),
+        @Specification(name="rfc-2616", section="3.10"),
+        @Specification(name="rfc-2616", section="14.12"),
+        @Specification(name="rfc-2616", section="12")
+    })
+    Set<LanguageTag> getLanguages();
 
 
     /**
-     * The date this resource was last modified.
+     * Get the date this resource was last modified.
      *
-     * @return
+     * @return Last date the resource was modified.
      */
-    abstract Date last_modified();
+    // TODO: Specification?
+    Date getLastModifiedDate();
 
 
     /**
+     * Determine if the resource was unable to understand the request.
+     *
      * Returning true will result in 400 Bad Request.
      *
-     * @return
-     * @throws HttpException
+     * @return True if the request was malformed; false otherwise.
      */
-    abstract boolean malformed_request() throws HttpException;
+    @Specification(name="rfc-2616", section="10.4.1")
+    boolean isMalformed();
 
 
     /**
-     * Returns non-NULL if the resource has been permanently moved to another
-     * URI.
+     * Determine if this resource is permanently available at an another URI.
      *
-     * @return
-     * @throws HttpException
+     * @return Returns the alternative URI if so; returns NULL otherwise.
      */
-    abstract URI moved_permanently() throws HttpException;
+    @Specification(name="rfc-2616", section="10.3.2")
+    URI movedPermanentlyTo();
 
 
     /**
-     * Returns non-NULL if the resource has been temporarily moved to another
-     * URI.
+     * Determine if this resource is temporarily available at another URI.
      *
-     * @return
-     * @throws HttpException
+     * @return Returns the alternative URI if so; returns NULL otherwise.
      */
-    abstract URI moved_temporarily() throws HttpException;
+    @Specification(name="rfc-2616", section="10.3.8")
+    URI movedTemporarilyTo();
 
 
     /**
-     * If this returns true, then it is assumed that multiple representations of
+     * Does this resource have multiple representations available to the client?
+     *
+     * This method can be used to implement agent-driven content negotiation. If
+     * this returns true, then it is assumed that multiple representations of
      * the response are possible and a single one cannot be automatically
      * chosen, so a 300 Multiple Choices will be sent instead of a 200.
      *
-     * @return
-     * @throws HttpException
+     * FIXME: Describe how the response body is generated!
+     *
+     * References:
+     *  - http://www.amundsen.com/blog/archives/1085
+     *
+     * @return True if multiple representations are available, false otherwise.
      */
-    abstract boolean multiple_choices() throws HttpException;
+    @Specifications({
+        @Specification(name="rfc-2616", section="10.3.1"),
+        @Specification(name="rfc-2616", section="12.2")
+    })
+    boolean hasMultipleChoices();
 
-//-- TODO ^
 
     /**
      * Get the headers for response to an OPTIONS request.
      *
      * @return A collection of headers, as a map.
      */
-    abstract Map<String,List<String>> getOptionsResponseHeaders();
+    @Specification(name="rfc-2616", section="9.2")
+    Map<String,List<String>> getOptionsResponseHeaders();
 
 
     /**
@@ -284,13 +348,13 @@ public abstract class Resource {
      *
      * If true is returned the request will be treated similarly to a PUT,
      * inserting content into a (potentially new) resource (as opposed to being
-     * a generic submission for processing). The {@link #createPath()} method
+     * a generic submission for processing). The {@link #getCreatePath()} method
      * will be called to determine the path at which content should be
      * created/updated.
      *
      * @return True if the request should be treated as a PUT; false otherwise.
      */
-    abstract boolean isPostCreate();
+    boolean isPostCreate();
 
 
     /**
@@ -298,7 +362,7 @@ public abstract class Resource {
      *
      * @return True if the resource previously existed; false otherwise.
      */
-    abstract boolean existedPreviously();
+    boolean existedPreviously();
 
 
     /**
@@ -306,7 +370,7 @@ public abstract class Resource {
      *
      * This method is only called when postIsCreate returns false.
      */
-    abstract void processPost();
+    void processPost();
 
 
     /**
@@ -316,7 +380,7 @@ public abstract class Resource {
      *
      * @return True if the resource exists, false otherwise.
      */
-    abstract boolean exists();
+    boolean exists();
 
 
     /**
@@ -326,7 +390,7 @@ public abstract class Resource {
      *
      * @return True if the service is available, false otherwise.
      */
-    abstract boolean isServiceAvailable();
+    boolean isServiceAvailable();
 
 
     /**
@@ -336,7 +400,7 @@ public abstract class Resource {
      *
      * @return True if the URI length is under the maximum; false otherwise.
      */
-    abstract boolean isUriTooLong();
+    boolean isUriTooLong();
 
 
     /**
@@ -346,7 +410,7 @@ public abstract class Resource {
      *
      * @return True if all headers are supported; false otherwise.
      */
-    abstract boolean hasValidContentHeaders();
+    boolean hasValidContentHeaders();
 
 
     /**
@@ -357,7 +421,7 @@ public abstract class Resource {
      *
      * @return True if the entity length is under the maximum; false otherwise.
      */
-    abstract boolean isEntityLengthValid();
+    boolean isEntityLengthValid();
 
 
     /**
@@ -371,5 +435,5 @@ public abstract class Resource {
      *
      * @return An array of {@link Header}s.
      */
-    abstract Header[] getVariances();
+    Header[] getVariances();
 }

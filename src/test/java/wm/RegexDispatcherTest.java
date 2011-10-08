@@ -21,14 +21,14 @@ package wm;
 
 import static org.junit.Assert.*;
 import java.util.Map;
-import org.junit.After;
-import org.junit.Before;
+import java.util.Set;
 import org.junit.Test;
 import wm.test.TestRequest;
+import wm.test.TestResource;
 
 
 /**
- * TODO: Add a description for this type.
+ * Tests for the {@link RegexDispatcher} class.
  *
  * @author Keith Webster Johnston.
  */
@@ -40,70 +40,36 @@ public class RegexDispatcherTest {
      *
      * @author Keith Webster Johnston.
      */
-    public static class TestResource extends BasicResource {
+    public static class TestResource2
+        extends
+            BasicResource<Map<String, Object>> {
 
         /**
          * Constructor.
          *
-         * @param request
-         * @param response
          * @param context
          */
-        public TestResource(final Object configuration,
-                            final Request request,
-                            final Response response,
-                            final Map<String, Object> context) {
-            super(request, response, context);
+        public TestResource2(final Map<String, Object> context) {
+            super(context);
         }
 
         /** {@inheritDoc} */
         @Override
-        public Map<MediaType, ? extends BodyReader> content_types_accepted() {
+        public Map<MediaType, ? extends BodyReader> getContentTypesAccepted() {
             throw new UnsupportedOperationException("Method not implemented.");
         }
 
         /** {@inheritDoc} */
         @Override
-        public Map<MediaType, ? extends BodyWriter> content_types_provided() {
-            throw new UnsupportedOperationException("Method not implemented.");
-        }
-
-    }
-
-
-    /**
-     * TODO: Add a description for this type.
-     *
-     * @author Keith Webster Johnston.
-     */
-    public static class TestResource2 extends BasicResource {
-
-        /**
-         * Constructor.
-         *
-         * @param request
-         * @param response
-         * @param context
-         */
-        public TestResource2(final Object configuration,
-                             final Request request,
-                             final Response response,
-                             final Map<String, Object> context) {
-            super(request, response, context);
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public Map<MediaType, ? extends BodyReader> content_types_accepted() {
+        public Set<MediaType> getContentTypesProvided() {
             throw new UnsupportedOperationException("Method not implemented.");
         }
 
         /** {@inheritDoc} */
         @Override
-        public Map<MediaType, ? extends BodyWriter> content_types_provided() {
+        public BodyWriter getWriter(final MediaType mediaType) {
             throw new UnsupportedOperationException("Method not implemented.");
         }
-
     }
 
 
@@ -111,11 +77,11 @@ public class RegexDispatcherTest {
     public void matchReturnsResource() throws Exception {
 
         // ARRANGE
-        RegexDispatcher<Object> d = new RegexDispatcher<Object>(new Object());
+        final RegexDispatcher<Object> d = new RegexDispatcher<Object>(new Object());
         d.bind(".*", TestResource.class);
 
         // ACT
-        Resource r = d.dispatch(new TestRequest(), null);
+        final Resource r = d.dispatch(new TestRequest(), null);
 
         // ASSERT
         assertTrue(r instanceof TestResource);
@@ -126,12 +92,12 @@ public class RegexDispatcherTest {
     public void firstMatchReturnsResource() throws Exception {
 
         // ARRANGE
-        RegexDispatcher<Object> d = new RegexDispatcher<Object>(new Object());
+        final RegexDispatcher<Object> d = new RegexDispatcher<Object>(new Object());
         d.bind("/",  TestResource.class);
         d.bind(".*", TestResource2.class);
 
         // ACT
-        Resource r = d.dispatch(new TestRequest(), null);
+        final Resource r = d.dispatch(new TestRequest(), null);
 
         // ASSERT
         assertTrue("Incorrect dispatch.", r instanceof TestResource);
@@ -142,34 +108,16 @@ public class RegexDispatcherTest {
     public void noMatchThrowsNotFound() throws Exception {
 
         // ARRANGE
-        RegexDispatcher<Object> d = new RegexDispatcher<Object>(new Object());
+        final RegexDispatcher<Object> d = new RegexDispatcher<Object>(new Object());
         d.bind("/test", TestResource.class);
 
         // ACT
         try {
-            Resource r = d.dispatch(new TestRequest(), null);
+            final Resource r = d.dispatch(new TestRequest(), null);
 
         // ASSERT
-        } catch (ClientHttpException e) {
+        } catch (final ClientHttpException e) {
             assertEquals(Status.NOT_FOUND, e.getStatus());
         }
     }
-
-    /**
-     * TODO: Add a description for this method.
-     *
-     * @throws java.lang.Exception
-     */
-    @Before
-    public void setUp() throws Exception {}
-
-
-    /**
-     * TODO: Add a description for this method.
-     *
-     * @throws java.lang.Exception
-     */
-    @After
-    public void tearDown() throws Exception {}
-
 }

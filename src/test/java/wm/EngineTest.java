@@ -37,6 +37,7 @@ import wm.test.TestResponse;
  */
 public class EngineTest {
 
+
     /* MISSING TESTS
      * =============
      *
@@ -47,6 +48,31 @@ public class EngineTest {
      * ===========*/
 
 
+    public class ByteArrayBodyWriter
+        implements
+            BodyWriter {
+
+        private final byte[] _body;
+
+
+        /**
+         * Constructor.
+         *
+         * @param body The body to write.
+         */
+        public ByteArrayBodyWriter(final byte[] body) {
+            _body = body;
+        }
+
+
+        /** {@inheritDoc} */
+        @Override
+        public void write(final OutputStream outputStream) throws IOException {
+            outputStream.write(_body);
+        }
+    }
+
+
     private static final class SimpleBodyReader
         implements
             BodyReader {
@@ -54,6 +80,7 @@ public class EngineTest {
         private final ByteArrayOutputStream _baos;
         private final String                _createdPath;
         private final Resource              _resource;
+        private final Response              _response;
 
 
         /**
@@ -62,20 +89,23 @@ public class EngineTest {
          * @param baos
          * @param createdPath
          * @param resource
+         * @param response
          */
         SimpleBodyReader(final ByteArrayOutputStream baos,
-                                 final String createdPath,
-                                 final Resource resource) {
+                         final String createdPath,
+                         final Resource resource,
+                         final Response response) {
             _baos = baos;
             _createdPath = createdPath;
             _resource = resource;
+            _response = response;
         }
 
 
         @Override
         public void read(final InputStream inputStream) throws IOException, HttpException {
             if (!_resource.exists()) {
-                _resource._response.setHeader(Header.LOCATION, _createdPath);
+                _response.setHeader(Header.LOCATION, _createdPath);
             }
 
             Utils.copy(inputStream, _baos);
@@ -120,21 +150,19 @@ public class EngineTest {
         // ARRANGE
         _request.setMethod(Method.DELETE);
         final Resource resource = new TestResource(
-            _request,
-            _response,
             new HashMap<String, Object>()) {
 
-            @Override public Set<String> allowed_methods() {
+            @Override public Set<String> getAllowedMethods() {
                 return Collections.singleton(Method.DELETE);
             }
 
-            @Override public boolean delete_resource() {
+            @Override public boolean delete() {
                 return true;
             }
         };
 
         // ACT
-        _engine.process(resource, _response);
+        _engine.process(resource, _request, _response);
 
         // ASSERT
         Assert.assertSame(Status.NO_CONTENT, _response.getStatus());
@@ -147,25 +175,23 @@ public class EngineTest {
         // ARRANGE
         _request.setMethod(Method.DELETE);
         final Resource resource = new TestResource(
-            _request,
-            _response,
             new HashMap<String, Object>()) {
 
-            @Override public Set<String> allowed_methods() {
+            @Override public Set<String> getAllowedMethods() {
                 return Collections.singleton(Method.DELETE);
             }
 
-            @Override public boolean delete_completed() {
+            @Override public boolean isDeleted() {
                 return false;
             }
 
-            @Override public boolean delete_resource() {
+            @Override public boolean delete() {
                 return true;
             }
         };
 
         // ACT
-        _engine.process(resource, _response);
+        _engine.process(resource, _request, _response);
 
         // ASSERT
         Assert.assertSame(Status.ACCEPTED, _response.getStatus());
@@ -178,12 +204,10 @@ public class EngineTest {
         // ARRANGE
         _request.setMethod(Method.DELETE);
         final Resource resource = new TestResource(
-            _request,
-            _response,
             new HashMap<String, Object>());
 
         // ACT
-        _engine.process(resource, _response);
+        _engine.process(resource, _request, _response);
 
         // ASSERT
         Assert.assertSame(Status.METHOD_NOT_ALLOWED, _response.getStatus());
@@ -195,8 +219,6 @@ public class EngineTest {
 
         // ARRANGE
         final Resource resource = new TestResource(
-            null,
-            _response,
             new HashMap<String, Object>()) {
 
             @Override public boolean isEntityLengthValid() {
@@ -205,7 +227,7 @@ public class EngineTest {
         };
 
         // ACT
-        _engine.process(resource, _response);
+        _engine.process(resource, _request, _response);
 
         // ASSERT
         Assert.assertSame(Status.REQUEST_ENTITY_TOO_LARGE, _response.getStatus());
@@ -217,17 +239,15 @@ public class EngineTest {
 
         // ARRANGE
         final Resource resource = new TestResource(
-            null,
-            _response,
             new HashMap<String, Object>()) {
 
-            @Override public boolean forbidden() {
+            @Override public boolean isForbidden() {
                 return true;
             }
         };
 
         // ACT
-        _engine.process(resource, _response);
+        _engine.process(resource, _request, _response);
 
         // ASSERT
         Assert.assertSame(Status.FORBIDDEN, _response.getStatus());
@@ -241,17 +261,15 @@ public class EngineTest {
         _request.setHeader(Header.IF_NONE_MATCH, "*");
         _request.setMethod(Method.DELETE);
         final Resource resource = new TestResource(
-            _request,
-            _response,
             new HashMap<String, Object>()) {
 
-            @Override public Set<String> allowed_methods() {
+            @Override public Set<String> getAllowedMethods() {
                 return Collections.singleton(Method.DELETE);
             }
         };
 
         // ACT
-        _engine.process(resource, _response);
+        _engine.process(resource, _request, _response);
 
         // ASSERT
         Assert.assertSame(Status.PRECONDITION_FAILED, _response.getStatus());
@@ -266,21 +284,19 @@ public class EngineTest {
         _request.setHeader(Header.IF_NONE_MATCH, "foo");
         _request.setMethod(Method.DELETE);
         final Resource resource = new TestResource(
-            _request,
-            _response,
             new HashMap<String, Object>()) {
 
-            @Override public Set<String> allowed_methods() {
+            @Override public Set<String> getAllowedMethods() {
                 return Collections.singleton(Method.DELETE);
             }
 
             /** {@inheritDoc} */
             @Override
-            public ETag generate_etag() { return new ETag("foo"); }
+            public ETag generateEtag(final String base) { return new ETag("foo"); }
         };
 
         // ACT
-        _engine.process(resource, _response);
+        _engine.process(resource, _request, _response);
 
         // ASSERT
         Assert.assertSame(Status.PRECONDITION_FAILED, _response.getStatus());
@@ -294,17 +310,15 @@ public class EngineTest {
         // ARRANGE
         _request.setHeader(Header.IF_NONE_MATCH, "foo");
         final Resource resource = new TestResource(
-            _request,
-            _response,
             new HashMap<String, Object>()) {
 
             /** {@inheritDoc} */
             @Override
-            public ETag generate_etag() { return new ETag("foo"); }
+            public ETag generateEtag(final String base) { return new ETag("foo"); }
         };
 
         // ACT
-        _engine.process(resource, _response);
+        _engine.process(resource, _request, _response);
 
         // ASSERT
         Assert.assertSame(Status.NOT_MODIFIED, _response.getStatus());
@@ -317,17 +331,15 @@ public class EngineTest {
         // ARRANGE
         _request.setHeader(Header.IF_UNMODIFIED_SINCE, DateHeader.format(new Date(0)));
         final Resource resource = new TestResource(
-            _request,
-            _response,
             new HashMap<String, Object>()) {
 
             /** {@inheritDoc} */
             @Override
-            public Date last_modified() { return new Date(); }
+            public Date getLastModifiedDate() { return new Date(); }
         };
 
         // ACT
-        _engine.process(resource, _response);
+        _engine.process(resource, _request, _response);
 
         // ASSERT
         Assert.assertSame(Status.PRECONDITION_FAILED, _response.getStatus());
@@ -340,17 +352,15 @@ public class EngineTest {
         // ARRANGE
         _request.setHeader(Header.IF_MATCH, "foo");
         final Resource resource = new TestResource(
-            _request,
-            _response,
             new HashMap<String, Object>()) {
 
             /** {@inheritDoc} */
             @Override
-            public ETag generate_etag() { return new ETag("bar"); }
+            public ETag generateEtag(final String base) { return new ETag("bar"); }
         };
 
         // ACT
-        _engine.process(resource, _response);
+        _engine.process(resource, _request, _response);
 
         // ASSERT
         Assert.assertSame(Status.PRECONDITION_FAILED, _response.getStatus());
@@ -365,28 +375,26 @@ public class EngineTest {
         _request.setHeader(Header.IF_MODIFIED_SINCE, DateHeader.format(d));
         final Charset UTF8 = Charset.forName("UTF-8");
         final Resource resource = new TestResource(
-            _request,
-            _response,
             new HashMap<String, Object>()) {
 
             /** {@inheritDoc} */
             @Override
-            public Date last_modified() { return new Date(0); }
+            public Date getLastModifiedDate() { return new Date(0); }
 
+            /** {@inheritDoc} */
             @Override
-            public Map<MediaType, BodyWriter> content_types_provided() {
+            public BodyWriter getWriter(final MediaType mediaType) {
                 final BodyWriter bw = new BodyWriter() {
                     @Override public void write(final OutputStream outputStream) throws IOException {
                         outputStream.write("Hello, world!".getBytes(UTF8));
                     }
                 };
-
-                return Collections.singletonMap(MediaType.ANY,  bw);
+                return bw;
             }
         };
 
         // ACT
-        _engine.process(resource, _response);
+        _engine.process(resource, _request, _response);
 
         // ASSERT
         Assert.assertSame(Status.OK, _response.getStatus());
@@ -404,28 +412,26 @@ public class EngineTest {
         _request.setHeader(Header.IF_MODIFIED_SINCE, DateHeader.format(d));
         final Charset UTF8 = Charset.forName("UTF-8");
         final Resource resource = new TestResource(
-            _request,
-            _response,
             new HashMap<String, Object>()) {
 
             /** {@inheritDoc} */
             @Override
-            public Date last_modified() { return new Date(2000); }
+            public Date getLastModifiedDate() { return new Date(2000); }
 
+            /** {@inheritDoc} */
             @Override
-            public Map<MediaType, BodyWriter> content_types_provided() {
+            public BodyWriter getWriter(final MediaType mediaType) {
                 final BodyWriter bw = new BodyWriter() {
                     @Override public void write(final OutputStream outputStream) throws IOException {
                         outputStream.write("Hello, world!".getBytes(UTF8));
                     }
                 };
-
-                return Collections.singletonMap(MediaType.ANY,  bw);
+                return bw;
             }
         };
 
         // ACT
-        _engine.process(resource, _response);
+        _engine.process(resource, _request, _response);
 
         // ASSERT
         Assert.assertSame(Status.OK, _response.getStatus());
@@ -442,17 +448,15 @@ public class EngineTest {
         final Date d = new Date(1000);
         _request.setHeader(Header.IF_MODIFIED_SINCE, DateHeader.format(d));
         final Resource resource = new TestResource(
-            _request,
-            _response,
             new HashMap<String, Object>()) {
 
             /** {@inheritDoc} */
             @Override
-            public Date last_modified() { return d; }
+            public Date getLastModifiedDate() { return d; }
         };
 
         // ACT
-        _engine.process(resource, _response);
+        _engine.process(resource, _request, _response);
 
         // ASSERT
         Assert.assertSame(Status.NOT_MODIFIED, _response.getStatus());
@@ -466,17 +470,15 @@ public class EngineTest {
         final Date d = new Date(2000);
         _request.setHeader(Header.IF_MODIFIED_SINCE, DateHeader.format(d));
         final Resource resource = new TestResource(
-            _request,
-            _response,
             new HashMap<String, Object>()) {
 
             /** {@inheritDoc} */
             @Override
-            public Date last_modified() { return new Date(0); }
+            public Date getLastModifiedDate() { return new Date(0); }
         };
 
         // ACT
-        _engine.process(resource, _response);
+        _engine.process(resource, _request, _response);
 
         // ASSERT
         Assert.assertSame(Status.NOT_MODIFIED, _response.getStatus());
@@ -491,28 +493,26 @@ public class EngineTest {
         _request.setHeader(Header.IF_UNMODIFIED_SINCE, DateHeader.format(d));
         final Charset UTF8 = Charset.forName("UTF-8");
         final Resource resource = new TestResource(
-            _request,
-            _response,
             new HashMap<String, Object>()) {
 
             /** {@inheritDoc} */
             @Override
-            public Date last_modified() { return new Date(0); }
+            public Date getLastModifiedDate() { return new Date(0); }
 
+            /** {@inheritDoc} */
             @Override
-            public Map<MediaType, BodyWriter> content_types_provided() {
+            public BodyWriter getWriter(final MediaType mediaType) {
                 final BodyWriter bw = new BodyWriter() {
                     @Override public void write(final OutputStream outputStream) throws IOException {
                         outputStream.write("Hello, world!".getBytes(UTF8));
                     }
                 };
-
-                return Collections.singletonMap(MediaType.ANY,  bw);
+                return bw;
             }
         };
 
         // ACT
-        _engine.process(resource, _response);
+        _engine.process(resource, _request, _response);
 
         // ASSERT
         Assert.assertSame(Status.OK, _response.getStatus());
@@ -530,28 +530,26 @@ public class EngineTest {
         _request.setHeader(Header.IF_UNMODIFIED_SINCE, DateHeader.format(d));
         final Charset UTF8 = Charset.forName("UTF-8");
         final Resource resource = new TestResource(
-            _request,
-            _response,
             new HashMap<String, Object>()) {
 
             /** {@inheritDoc} */
             @Override
-            public Date last_modified() { return d; }
+            public Date getLastModifiedDate() { return d; }
 
+            /** {@inheritDoc} */
             @Override
-            public Map<MediaType, BodyWriter> content_types_provided() {
+            public BodyWriter getWriter(final MediaType mediaType) {
                 final BodyWriter bw = new BodyWriter() {
                     @Override public void write(final OutputStream outputStream) throws IOException {
                         outputStream.write("Hello, world!".getBytes(UTF8));
                     }
                 };
-
-                return Collections.singletonMap(MediaType.ANY,  bw);
+                return bw;
             }
         };
 
         // ACT
-        _engine.process(resource, _response);
+        _engine.process(resource, _request, _response);
 
         // ASSERT
         Assert.assertSame(Status.OK, _response.getStatus());
@@ -568,24 +566,22 @@ public class EngineTest {
         _request.setHeader(Header.IF_MODIFIED_SINCE, "foo");
         final Charset UTF8 = Charset.forName("UTF-8");
         final Resource resource = new TestResource(
-            _request,
-            _response,
             new HashMap<String, Object>()) {
 
+            /** {@inheritDoc} */
             @Override
-            public Map<MediaType, BodyWriter> content_types_provided() {
+            public BodyWriter getWriter(final MediaType mediaType) {
                 final BodyWriter bw = new BodyWriter() {
                     @Override public void write(final OutputStream outputStream) throws IOException {
                         outputStream.write("Hello, world!".getBytes(UTF8));
                     }
                 };
-
-                return Collections.singletonMap(MediaType.ANY,  bw);
+                return bw;
             }
         };
 
         // ACT
-        _engine.process(resource, _response);
+        _engine.process(resource, _request, _response);
 
         // ASSERT
         Assert.assertSame(Status.OK, _response.getStatus());
@@ -602,24 +598,22 @@ public class EngineTest {
         _request.setHeader(Header.IF_UNMODIFIED_SINCE, "foo");
         final Charset UTF8 = Charset.forName("UTF-8");
         final Resource resource = new TestResource(
-            _request,
-            _response,
             new HashMap<String, Object>()) {
 
+            /** {@inheritDoc} */
             @Override
-            public Map<MediaType, BodyWriter> content_types_provided() {
+            public BodyWriter getWriter(final MediaType mediaType) {
                 final BodyWriter bw = new BodyWriter() {
                     @Override public void write(final OutputStream outputStream) throws IOException {
                         outputStream.write("Hello, world!".getBytes(UTF8));
                     }
                 };
-
-                return Collections.singletonMap(MediaType.ANY,  bw);
+                return bw;
             }
         };
 
         // ACT
-        _engine.process(resource, _response);
+        _engine.process(resource, _request, _response);
 
         // ASSERT
         Assert.assertSame(Status.OK, _response.getStatus());
@@ -636,28 +630,26 @@ public class EngineTest {
         _request.setHeader(Header.IF_MATCH, "foo");
         final Charset UTF8 = Charset.forName("UTF-8");
         final Resource resource = new TestResource(
-            _request,
-            _response,
             new HashMap<String, Object>()) {
 
             /** {@inheritDoc} */
             @Override
-            public ETag generate_etag() { return new ETag("foo"); }
+            public ETag generateEtag(final String base) { return new ETag("foo"); }
 
+            /** {@inheritDoc} */
             @Override
-            public Map<MediaType, BodyWriter> content_types_provided() {
+            public BodyWriter getWriter(final MediaType mediaType) {
                 final BodyWriter bw = new BodyWriter() {
                     @Override public void write(final OutputStream outputStream) throws IOException {
                         outputStream.write("Hello, world!".getBytes(UTF8));
                     }
                 };
-
-                return Collections.singletonMap(MediaType.ANY,  bw);
+                return bw;
             }
         };
 
         // ACT
-        _engine.process(resource, _response);
+        _engine.process(resource, _request, _response);
 
         // ASSERT
         Assert.assertSame(Status.OK, _response.getStatus());
@@ -674,28 +666,26 @@ public class EngineTest {
         _request.setHeader(Header.IF_MATCH, "*");
         final Charset UTF8 = Charset.forName("UTF-8");
         final Resource resource = new TestResource(
-            _request,
-            _response,
             new HashMap<String, Object>()) {
 
             /** {@inheritDoc} */
             @Override
-            public ETag generate_etag() { return new ETag("bar"); }
+            public ETag generateEtag(final String base) { return new ETag("bar"); }
 
+            /** {@inheritDoc} */
             @Override
-            public Map<MediaType, BodyWriter> content_types_provided() {
+            public BodyWriter getWriter(final MediaType mediaType) {
                 final BodyWriter bw = new BodyWriter() {
                     @Override public void write(final OutputStream outputStream) throws IOException {
                         outputStream.write("Hello, world!".getBytes(UTF8));
                     }
                 };
-
-                return Collections.singletonMap(MediaType.ANY,  bw);
+                return bw;
             }
         };
 
         // ACT
-        _engine.process(resource, _response);
+        _engine.process(resource, _request, _response);
 
         // ASSERT
         Assert.assertSame(Status.OK, _response.getStatus());
@@ -711,8 +701,6 @@ public class EngineTest {
         // ARRANGE
         _request.setHeader(Header.IF_MATCH, "*");
         final Resource resource = new TestResource(
-            _request,
-            _response,
             new HashMap<String, Object>()) {
 
             @Override public boolean exists() {
@@ -721,7 +709,7 @@ public class EngineTest {
         };
 
         // ACT
-        _engine.process(resource, _response);
+        _engine.process(resource, _request, _response);
 
         // ASSERT
         Assert.assertSame(Status.PRECONDITION_FAILED, _response.getStatus());
@@ -733,8 +721,6 @@ public class EngineTest {
 
         // ARRANGE
         final Resource resource = new TestResource(
-            _request,
-            _response,
             new HashMap<String, Object>()) {
 
             @Override public boolean existedPreviously() {
@@ -747,7 +733,7 @@ public class EngineTest {
         };
 
         // ACT
-        _engine.process(resource, _response);
+        _engine.process(resource, _request, _response);
 
         // ASSERT
         Assert.assertSame(Status.GONE, _response.getStatus());
@@ -759,11 +745,9 @@ public class EngineTest {
 
         // ARRANGE
         final Resource resource = new TestResource(
-            _request,
-            _response,
             new HashMap<String, Object>()) {
 
-            @Override public URI moved_permanently() {
+            @Override public URI movedPermanentlyTo() {
                 try {
                     return new URI(TARGET_URI);
                 } catch (final URISyntaxException e) {
@@ -782,7 +766,7 @@ public class EngineTest {
         };
 
         // ACT
-        _engine.process(resource, _response);
+        _engine.process(resource, _request, _response);
 
         // ASSERT
         Assert.assertSame(Status.MOVED_PERMANENTLY, _response.getStatus());
@@ -795,11 +779,9 @@ public class EngineTest {
 
         // ARRANGE
         final Resource resource = new TestResource(
-            _request,
-            _response,
             new HashMap<String, Object>()) {
 
-            @Override public URI moved_temporarily() {
+            @Override public URI movedTemporarilyTo() {
                 try {
                     return new URI(TARGET_URI);
                 } catch (final URISyntaxException e) {
@@ -818,7 +800,7 @@ public class EngineTest {
         };
 
         // ACT
-        _engine.process(resource, _response);
+        _engine.process(resource, _request, _response);
 
         // ASSERT
         Assert.assertSame(Status.TEMPORARY_REDIRECT, _response.getStatus());
@@ -831,8 +813,6 @@ public class EngineTest {
 
         // ARRANGE
         final Resource resource = new TestResource(
-            _request,
-            _response,
             new HashMap<String, Object>()) {
 
             /** {@inheritDoc} */
@@ -843,7 +823,7 @@ public class EngineTest {
         };
 
         // ACT
-        _engine.process(resource, _response);
+        _engine.process(resource, _request, _response);
 
         // ASSERT
         Assert.assertSame(Status.NOT_FOUND, _response.getStatus());
@@ -856,24 +836,22 @@ public class EngineTest {
         // ACT
         final Resource resource =
             new TestResource(
-                _request,
-                _response,
                 new HashMap<String, Object>()) {
 
                 @Override
-                public Map<MediaType, HelloWorldWriter> content_types_provided() {
-                    return Collections.singletonMap(MediaType.ANY,  new HelloWorldWriter(UTF_8));
+                public BodyWriter getWriter(final MediaType mediaType) {
+                    return new HelloWorldWriter(UTF_8);
                 }
         };
 
         // ACT
-        _engine.process(resource, _response);
+        _engine.process(resource, _request, _response);
 
         // ASSERT
         Assert.assertSame(Status.OK, _response.getStatus());
         Assert.assertNull(_response.getHeader(Header.CONTENT_LANGUAGE));
         Assert.assertNull(_response.getHeader(Header.CONTENT_ENCODING));
-        Assert.assertEquals(MediaType.ANY.toString(), _response.getHeader(Header.CONTENT_TYPE));
+        Assert.assertNull(_response.getHeader(Header.CONTENT_TYPE));
         Assert.assertEquals(
             "Hello, world!",
             _response.getBodyAsString(UTF_8));
@@ -886,33 +864,36 @@ public class EngineTest {
         // ACT
         final Resource resource =
             new TestResource(
-                _request,
-                _response,
                 new HashMap<String, Object>()) {
 
                 @Override
-                public Map<MediaType, HelloWorldWriter> content_types_provided() {
-                    return Collections.singletonMap(MediaType.JSON,  new HelloWorldWriter(UTF_8));
+                public Set<MediaType> getContentTypesProvided() {
+                    return Collections.singleton(MediaType.JSON);
                 }
 
                 @Override
-                public Set<LanguageTag> languages_provided() {
+                public Set<LanguageTag> getLanguages() {
                     return Collections.singleton(new LanguageTag("da"));
                 }
 
                 @Override
-                public Set<String> encodings_provided() {
+                public Set<String> getEncodings() {
                     return Collections.singleton(ContentEncoding.GZIP);
                 }
 
                 @Override
-                public Set<Charset> charsets_provided() {
+                public Set<Charset> getCharsetsProvided() {
                     return Collections.singleton(UTF_16);
+                }
+
+                @Override
+                public BodyWriter getWriter(final MediaType mediaType) {
+                    return new HelloWorldWriter(UTF_8);
                 }
         };
 
         // ACT
-        _engine.process(resource, _response);
+        _engine.process(resource, _request, _response);
 
         // ASSERT
         Assert.assertSame(Status.OK, _response.getStatus());
@@ -932,23 +913,26 @@ public class EngineTest {
         _request.setHeader(Header.ACCEPT_LANGUAGE, "en");
         final Resource resource =
             new TestResource(
-                _request,
-                _response,
                 new HashMap<String, Object>()) {
 
                 @Override
-                public Map<MediaType, HelloWorldWriter> content_types_provided() {
-                    return Collections.singletonMap(MediaType.ANY,  new HelloWorldWriter(UTF_8));
+                public Set<MediaType> getContentTypesProvided() {
+                    return Collections.singleton(MediaType.ANY);
                 }
 
                 @Override
-                public Set<LanguageTag> languages_provided() {
+                public BodyWriter getWriter(final MediaType mediaType) {
+                    return new HelloWorldWriter(UTF_8);
+                }
+
+                @Override
+                public Set<LanguageTag> getLanguages() {
                     return Collections.singleton(new LanguageTag("en"));
                 }
         };
 
         // ACT
-        _engine.process(resource, _response);
+        _engine.process(resource, _request, _response);
 
         // ASSERT
         Assert.assertSame(Status.OK, _response.getStatus());
@@ -965,18 +949,21 @@ public class EngineTest {
         _request.setHeader(Header.ACCEPT_LANGUAGE, "en");
         final Resource resource =
             new TestResource(
-                _request,
-                _response,
                 new HashMap<String, Object>()) {
 
             @Override
-            public Map<MediaType, HelloWorldWriter> content_types_provided() {
-                return Collections.singletonMap(MediaType.ANY,  new HelloWorldWriter(UTF_8));
+            public Set<MediaType> getContentTypesProvided() {
+                return Collections.singleton(MediaType.ANY);
+            }
+
+            @Override
+            public BodyWriter getWriter(final MediaType mediaType) {
+                return new HelloWorldWriter(UTF_8);
             }
         };
 
         // ACT
-        _engine.process(resource, _response);
+        _engine.process(resource, _request, _response);
 
         // ASSERT
         Assert.assertSame(Status.OK, _response.getStatus());
@@ -994,23 +981,26 @@ public class EngineTest {
         _request.setHeader(Header.ACCEPT_ENCODING, ContentEncoding.GZIP);
         final Resource resource =
             new TestResource(
-                _request,
-                _response,
                 new HashMap<String, Object>()) {
 
                 @Override
-                public Map<MediaType, HelloWorldWriter> content_types_provided() {
-                    return Collections.singletonMap(MediaType.ANY,  new HelloWorldWriter(UTF_8));
+                public Set<MediaType> getContentTypesProvided() {
+                    return Collections.singleton(MediaType.ANY);
                 }
 
                 @Override
-                public Set<String> encodings_provided() {
+                public BodyWriter getWriter(final MediaType mediaType) {
+                    return new HelloWorldWriter(UTF_8);
+                }
+
+                @Override
+                public Set<String> getEncodings() {
                     return Collections.singleton(ContentEncoding.GZIP);
                 }
         };
 
         // ACT
-        _engine.process(resource, _response);
+        _engine.process(resource, _request, _response);
 
         // ASSERT
         Assert.assertSame(Status.OK, _response.getStatus());
@@ -1028,18 +1018,21 @@ public class EngineTest {
         _request.setHeader(Header.ACCEPT_ENCODING, ContentEncoding.GZIP);
         final Resource resource =
             new TestResource(
-                _request,
-                _response,
                 new HashMap<String, Object>()) {
 
             @Override
-            public Map<MediaType, HelloWorldWriter> content_types_provided() {
-                return Collections.singletonMap(MediaType.ANY,  new HelloWorldWriter(UTF_8));
+            public Set<MediaType> getContentTypesProvided() {
+                return Collections.singleton(MediaType.ANY);
+            }
+
+            @Override
+            public BodyWriter getWriter(final MediaType mediaType) {
+                return new HelloWorldWriter(UTF_8);
             }
         };
 
         // ACT
-        _engine.process(resource, _response);
+        _engine.process(resource, _request, _response);
 
         // ASSERT
         Assert.assertSame(Status.OK, _response.getStatus());
@@ -1057,18 +1050,21 @@ public class EngineTest {
         _request.setHeader(Header.ACCEPT, MediaType.HTML.toString());
         final Resource resource =
             new TestResource(
-                _request,
-                _response,
                 new HashMap<String, Object>()) {
 
                 @Override
-                public Map<MediaType, HelloWorldWriter> content_types_provided() {
-                    return Collections.singletonMap(MediaType.HTML, new HelloWorldWriter(UTF_8));
+                public Set<MediaType> getContentTypesProvided() {
+                    return Collections.singleton(MediaType.HTML);
+                }
+
+                @Override
+                public BodyWriter getWriter(final MediaType mediaType) {
+                    return new HelloWorldWriter(UTF_8);
                 }
         };
 
         // ACT
-        _engine.process(resource, _response);
+        _engine.process(resource, _request, _response);
 
         // ASSERT
         Assert.assertSame(Status.OK, _response.getStatus());
@@ -1086,23 +1082,26 @@ public class EngineTest {
         _request.setHeader(Header.ACCEPT_CHARSET, "utf-8");
         final Resource resource =
             new TestResource(
-                _request,
-                _response,
                 new HashMap<String, Object>()) {
 
                 @Override
-                public Map<MediaType, HelloWorldWriter> content_types_provided() {
-                    return Collections.singletonMap(MediaType.HTML, new HelloWorldWriter(UTF_8));
+                public Set<MediaType> getContentTypesProvided() {
+                    return Collections.singleton(MediaType.HTML);
                 }
 
                 @Override
-                public Set<Charset> charsets_provided() {
+                public BodyWriter getWriter(final MediaType mediaType) {
+                    return new HelloWorldWriter(UTF_8);
+                }
+
+                @Override
+                public Set<Charset> getCharsetsProvided() {
                     return Collections.singleton(UTF_8);
                 }
         };
 
         // ACT
-        _engine.process(resource, _response);
+        _engine.process(resource, _request, _response);
 
         // ASSERT
         Assert.assertSame(Status.OK, _response.getStatus());
@@ -1120,18 +1119,21 @@ public class EngineTest {
         _request.setHeader(Header.ACCEPT_CHARSET, "utf-8");
         final Resource resource =
             new TestResource(
-                _request,
-                _response,
                 new HashMap<String, Object>()) {
 
             @Override
-            public Map<MediaType, HelloWorldWriter> content_types_provided() {
-                return Collections.singletonMap(MediaType.HTML, new HelloWorldWriter(UTF_8));
+            public Set<MediaType> getContentTypesProvided() {
+                return Collections.singleton(MediaType.HTML);
+            }
+
+            @Override
+            public BodyWriter getWriter(final MediaType mediaType) {
+                return new HelloWorldWriter(UTF_8);
             }
         };
 
         // ACT
-        _engine.process(resource, _response);
+        _engine.process(resource, _request, _response);
 
         // ASSERT
         Assert.assertSame(Status.OK, _response.getStatus());
@@ -1147,17 +1149,15 @@ public class EngineTest {
 
         // ARRANGE
         final Resource resource = new TestResource(
-            null,
-            _response,
             new HashMap<String, Object>()) {
 
-                @Override public boolean malformed_request() {
+                @Override public boolean isMalformed() {
                     return true;
                 }
         };
 
         // ACT
-        _engine.process(resource, _response);
+        _engine.process(resource, _request, _response);
 
         // ASSERT
         Assert.assertSame(Status.BAD_REQUEST, _response.getStatus());
@@ -1170,18 +1170,16 @@ public class EngineTest {
         // ARRANGE
         _request.setMethod(Method.OPTIONS);
         final Resource resource = new TestResource(
-            _request,
-            _response,
             new HashMap<String, Object>());
 
         // ACT
-        _engine.process(resource, _response);
+        _engine.process(resource, _request, _response);
 
         // ASSERT
         Assert.assertSame(Status.OK, _response.getStatus());
         Assert.assertEquals("0", _response.getHeader(Header.CONTENT_LENGTH));
         Assert.assertEquals(
-            Utils.join(resource.allowed_methods(), ',').toString(),
+            Utils.join(resource.getAllowedMethods(), ',').toString(),
             _response.getHeader(Header.ALLOW));
     }
 
@@ -1193,11 +1191,9 @@ public class EngineTest {
         _request.setMethod(Method.POST);
         _response.setBody(new byte[] {0});
         final Resource resource = new TestResource(
-            _request,
-            _response,
             new HashMap<String, Object>()) {
 
-                @Override public Set<String> allowed_methods() {
+                @Override public Set<String> getAllowedMethods() {
                     return Collections.singleton(Method.POST);
                 }
 
@@ -1211,18 +1207,13 @@ public class EngineTest {
 
                 /** {@inheritDoc} */
                 @Override
-                public Map<MediaType, BodyWriter> content_types_provided() {
-                    return Collections.<MediaType, BodyWriter>singletonMap(MediaType.ANY, new BodyWriter() {
-                        @Override
-                        public void write(final OutputStream outputStream) {
-                            // NO OP.
-                        }
-                    });
+                public BodyWriter getWriter(final MediaType mediaType) {
+                    return new ByteArrayBodyWriter(new byte[] {0});
                 }
         };
 
         // ACT
-        _engine.process(resource, _response);
+        _engine.process(resource, _request, _response);
 
         // ASSERT
         Assert.assertSame(Status.OK, _response.getStatus());
@@ -1238,11 +1229,9 @@ public class EngineTest {
         _request.setMethod(Method.PUT);
         _request.setBody(body);
         final Resource resource = new TestResource(
-            _request,
-            _response,
             new HashMap<String, Object>()) {
 
-            @Override public Set<String> allowed_methods() {
+            @Override public Set<String> getAllowedMethods() {
                 return Collections.singleton(Method.PUT);
             }
 
@@ -1251,13 +1240,13 @@ public class EngineTest {
             }
 
             @Override
-            public Map<MediaType, ? extends BodyReader> content_types_accepted() {
-                return Collections.singletonMap(MediaType.ANY, new SimpleBodyReader(baos, null, this));
+            public Map<MediaType, ? extends BodyReader> getContentTypesAccepted() {
+                return Collections.singletonMap(MediaType.ANY, new SimpleBodyReader(baos, null, this, _response));
             }
         };
 
         // ACT
-        _engine.process(resource, _response);
+        _engine.process(resource, _request, _response);
 
         // ASSERT
         Assert.assertSame(Status.NO_CONTENT, _response.getStatus());
@@ -1273,15 +1262,13 @@ public class EngineTest {
         // ARRANGE
         _request.setMethod(Method.PUT);
         final Resource resource = new TestResource(
-            _request,
-            _response,
             new HashMap<String, Object>()) {
 
-            @Override public Set<String> allowed_methods() {
+            @Override public Set<String> getAllowedMethods() {
                 return Collections.singleton(Method.PUT);
             }
 
-            @Override public URI moved_permanently() {
+            @Override public URI movedPermanentlyTo() {
                 try {
                     return new URI(TARGET_URI);
                 } catch (final URISyntaxException e) {
@@ -1296,7 +1283,7 @@ public class EngineTest {
         };
 
         // ACT
-        _engine.process(resource, _response);
+        _engine.process(resource, _request, _response);
 
         // ASSERT
         Assert.assertSame(Status.MOVED_PERMANENTLY, _response.getStatus());
@@ -1310,16 +1297,14 @@ public class EngineTest {
         // ARRANGE
         _request.setMethod(Method.PUT);
         final Resource resource = new TestResource(
-            _request,
-            _response,
             new HashMap<String, Object>()) {
 
-                @Override public Set<String> allowed_methods() {
+                @Override public Set<String> getAllowedMethods() {
                     return Collections.singleton(Method.PUT);
                 }
 
                 @Override
-                public boolean is_conflict() {
+                public boolean isInConflict() {
                     return true;
                 }
 
@@ -1329,7 +1314,7 @@ public class EngineTest {
         };
 
         // ACT
-        _engine.process(resource, _response);
+        _engine.process(resource, _request, _response);
 
         // ASSERT
         Assert.assertSame(Status.CONFLICT, _response.getStatus());
@@ -1346,11 +1331,9 @@ public class EngineTest {
         _request.setMethod(Method.PUT);
         _request.setBody(body);
         final Resource resource = new TestResource(
-            _request,
-            _response,
             new HashMap<String, Object>()) {
 
-            @Override public Set<String> allowed_methods() {
+            @Override public Set<String> getAllowedMethods() {
                 return Collections.singleton(Method.PUT);
             }
 
@@ -1359,13 +1342,13 @@ public class EngineTest {
             }
 
             @Override
-            public Map<MediaType, ? extends BodyReader> content_types_accepted() {
-                return Collections.singletonMap(MediaType.ANY, new SimpleBodyReader(baos, createdPath, this));
+            public Map<MediaType, ? extends BodyReader> getContentTypesAccepted() {
+                return Collections.singletonMap(MediaType.ANY, new SimpleBodyReader(baos, createdPath, this, _response));
             }
         };
 
         // ACT
-        _engine.process(resource, _response);
+        _engine.process(resource, _request, _response);
 
         // ASSERT
         Assert.assertSame(Status.CREATED, _response.getStatus());
@@ -1381,8 +1364,6 @@ public class EngineTest {
 
         // ARRANGE
         final Resource resource = new TestResource(
-            null,
-            _response,
             new HashMap<String, Object>()) {
 
                 @Override public boolean isServiceAvailable() {
@@ -1391,7 +1372,7 @@ public class EngineTest {
         };
 
         // ACT
-        _engine.process(resource, _response);
+        _engine.process(resource, _request, _response);
 
         // ASSERT
         Assert.assertSame(Status.SERVICE_UNAVAILABLE, _response.getStatus());
@@ -1429,18 +1410,16 @@ public class EngineTest {
         // ARRANGE
         _request.setHeader(Header.ACCEPT_CHARSET, "UTF-8");
         final Resource resource = new TestResource(
-            _request,
-            _response,
             new HashMap<String, Object>()) {
             /** {@inheritDoc} */
             @Override
-            public Set<Charset> charsets_provided() {
+            public Set<Charset> getCharsetsProvided() {
                 return Collections.singleton(Charset.forName("UTF-16"));
             }
         };
 
         // ACT
-        _engine.process(resource, _response);
+        _engine.process(resource, _request, _response);
 
         // ASSERT
         Assert.assertSame(Status.NOT_ACCEPTABLE, _response.getStatus());
@@ -1454,12 +1433,10 @@ public class EngineTest {
             Header.ACCEPT_ENCODING,
             ContentEncoding.IDENTITY+";q=0,"+ContentEncoding.GZIP);
         final Resource resource = new TestResource(
-            _request,
-            _response,
             new HashMap<String, Object>());
 
         // ACT
-        _engine.process(resource, _response);
+        _engine.process(resource, _request, _response);
 
         // ASSERT
         Assert.assertSame(Status.NOT_ACCEPTABLE, _response.getStatus());
@@ -1472,17 +1449,15 @@ public class EngineTest {
         // ARRANGE
         _request.setHeader(Header.ACCEPT_LANGUAGE, Locale.UK.toString());
         final Resource resource = new TestResource(
-            _request,
-            _response,
             new HashMap<String, Object>()) {
 
-                @Override public Set<LanguageTag> languages_provided() {
+                @Override public Set<LanguageTag> getLanguages() {
                     return Collections.singleton(new LanguageTag("fr"));
                 }
         };
 
         // ACT
-        _engine.process(resource, _response);
+        _engine.process(resource, _request, _response);
 
         // ASSERT
         Assert.assertSame(Status.NOT_ACCEPTABLE, _response.getStatus());
@@ -1493,14 +1468,19 @@ public class EngineTest {
     public void unacceptableRequestMediaTypeGivesNotAcceptable() {
 
         // ARRANGE
-        _request.setHeader(Header.ACCEPT, "text/html"); // TODO: Add MediaType class.
+        _request.setHeader(Header.ACCEPT, "text/html");
         final Resource resource = new TestResource(
-            _request,
-            _response,
-            new HashMap<String, Object>());
+            new HashMap<String, Object>()) {
+
+            /** {@inheritDoc} */
+            @Override
+            public Set<MediaType> getContentTypesProvided() {
+                return Collections.singleton(MediaType.XML);
+            }
+        };
 
         // ACT
-        _engine.process(resource, _response);
+        _engine.process(resource, _request, _response);
 
         // ASSERT
         Assert.assertSame(Status.NOT_ACCEPTABLE, _response.getStatus());
@@ -1512,17 +1492,12 @@ public class EngineTest {
 
         // ARRANGE
         final Resource resource = new TestResource(
-            null,
-            _response,
             new HashMap<String, Object>()) {
-
-                @Override public boolean is_authorized() {
-                    return false;
-                }
+                @Override public String authorize() { return "foo"; }
         };
 
         // ACT
-        _engine.process(resource, _response);
+        _engine.process(resource, _request, _response);
 
         // ASSERT
         Assert.assertSame(Status.UNAUTHORIZED, _response.getStatus());
@@ -1534,8 +1509,6 @@ public class EngineTest {
 
         // ARRANGE
         final Resource resource = new TestResource(
-            null,
-            _response,
             new HashMap<String, Object>()) {
 
             @Override public boolean hasValidContentHeaders() {
@@ -1544,7 +1517,7 @@ public class EngineTest {
         };
 
         // ACT
-        _engine.process(resource, _response);
+        _engine.process(resource, _request, _response);
 
         // ASSERT
         Assert.assertSame(Status.NOT_IMPLEMENTED, _response.getStatus());
@@ -1555,18 +1528,17 @@ public class EngineTest {
     public void unknownContentType() {
 
         // ARRANGE
+        _request.setHeader(Header.CONTENT_TYPE, "text/html");
         final Resource resource = new TestResource(
-            null,
-            _response,
             new HashMap<String, Object>()) {
 
-            @Override public boolean known_content_type() {
+            @Override public boolean isContentTypeKnown(final MediaType mediaType) {
                 return false;
             }
         };
 
         // ACT
-        _engine.process(resource, _response);
+        _engine.process(resource, _request, _response);
 
         // ASSERT
         Assert.assertSame(Status.UNSUPPORTED_MEDIA_TYPE, _response.getStatus());
@@ -1579,12 +1551,10 @@ public class EngineTest {
         // ARRANGE
         _request.setMethod("FOO");                                 //$NON-NLS-1$
         final Resource resource = new TestResource(
-            _request,
-            _response,
             new HashMap<String, Object>());
 
         // ACT
-        _engine.process(resource, _response);
+        _engine.process(resource, _request, _response);
 
         // ASSERT
         Assert.assertSame(Status.NOT_IMPLEMENTED, _response.getStatus());
@@ -1596,8 +1566,6 @@ public class EngineTest {
 
         // ARRANGE
         final Resource resource = new TestResource(
-            null,
-            _response,
             new HashMap<String, Object>()) {
 
                 @Override public boolean isUriTooLong() {
@@ -1606,7 +1574,7 @@ public class EngineTest {
         };
 
         // ACT
-        _engine.process(resource, _response);
+        _engine.process(resource, _request, _response);
 
         // ASSERT
         Assert.assertSame(Status.REQUEST_URI_TOO_LONG, _response.getStatus());

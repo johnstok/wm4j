@@ -68,6 +68,7 @@ public class MediaType {
      * @param mediaType
      * @param subtype
      */
+    // FIXME: Replace with a parse() method to allow NULL to be returned.
     public MediaType(final String mediaType) {
         final Matcher m =
             Pattern.compile("("+Syntax.TOKEN+"+)/("+Syntax.TOKEN+"+)")
@@ -76,7 +77,7 @@ public class MediaType {
             _type = m.group(1);
             _subtype = m.group(2);
         } else {
-            throw new IllegalArgumentException();
+            throw new ClientHttpException(Status.BAD_REQUEST);
         }
     }
 

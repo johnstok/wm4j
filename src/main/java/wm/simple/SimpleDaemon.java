@@ -51,10 +51,11 @@ public class SimpleDaemon
     public void handle(final Request request, final Response response) {
         try {
             final wm.Response resp = new SimpleResponse(response);
-            final Resource r =
-                _dispatcher.dispatch(
-                    new SimpleRequest(request, _port, _host), resp);
-            new Engine().process(r, resp);
+            final wm.Request  req  = new SimpleRequest(request, _port, _host);
+            final Resource r = _dispatcher.dispatch(req, resp);
+
+            new Engine().process(r, req, resp);
+
         } catch (final HttpException e) {
             // TODO Auto-generated catch block.
             e.printStackTrace();

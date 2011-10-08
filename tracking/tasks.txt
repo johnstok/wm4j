@@ -11,6 +11,8 @@
  * [ ] Responses with no entity O20
  * [ ] Redirect N11
  * [ ] Call finish_request
+ * [ ] Authorization
+ * [ ] Add vary header, including resource.getVariances()
 
 ## Conneg
  * [x] header specified; resource specified -> Conneg, header
@@ -34,6 +36,8 @@
  * [ ] Max worker threads.
    
 !!! Who closes IO streams?
+
+ [ ] Media type parameters.
 
  [x] Host name determination: Manually specified.
    
@@ -64,9 +68,17 @@
  [x] Rename engine methods to include test.
  
  [x] Parse request URI on request create and validate.
+ 
+ [ ] Use the term 'body' or 'entity' but not both.
+ 
+ [ ] Use the term 'domain' or 'host' but not both.
+ 
+ [ ] Use the term 'content type' or 'media type' but not both.
 
 
 # Enhancement
+ [ ] Create a table of each response code & whether it is cacheable.
+
  [ ] Confirm we respect rfc-2616:19.6.1.1 for domain names.
 
  [ ] Tests for large requests & responses.

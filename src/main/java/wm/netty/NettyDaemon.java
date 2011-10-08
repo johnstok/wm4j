@@ -70,13 +70,12 @@ public class NettyDaemon
             final Channel channel = me.getChannel();
 
             final NettyResponse resp = new NettyResponse(response, channel);
-            final Resource r =
-                _dispatcher.dispatch(
-                    new NettyRequest(request, channel), resp);
-            new Engine().process(r, resp);
-            if (!resp.isCommitted()) {
-                resp.commit();
-            }
+            final NettyRequest req = new NettyRequest(request, channel);
+            final Resource r = _dispatcher.dispatch(req, resp);
+
+            new Engine().process(r, req, resp);
+
+            if (!resp.isCommitted()) { resp.commit(); }
 
         } catch (final HttpException e) {
             // TODO Auto-generated catch block.

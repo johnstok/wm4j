@@ -8,11 +8,14 @@ package wm;
 
 
 /**
- * TODO: Add a description for this type.
+ * An entity tag - used for comparing multiple entities from the same resource.
  *
  * @author Keith Webster Johnston.
  */
+@Specification(name="rfc-2616", section="3.11")
 public class ETag {
+
+    // FIXME: Added boolean `_weak` field.
 
     private final String _value;
 

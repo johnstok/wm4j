@@ -199,7 +199,7 @@ public class MediaTypeNegotiator
         if (0==weightedMediaTypes.size()) { return null; }
 
         // Select best quality media type.
-        return
+        final Map.Entry<MediaType, Float> max =
             Collections.max(
                 weightedMediaTypes.entrySet(),
                 new Comparator<Map.Entry<MediaType, Float>>() {
@@ -208,7 +208,9 @@ public class MediaTypeNegotiator
                                        final Entry<MediaType, Float> o2) {
                         return Float.compare(o1.getValue(), o2.getValue());
                     }
-            }).getKey();
+            });
+
+        return (max.getValue()>0f) ? max.getKey() : null;
     }
 
 

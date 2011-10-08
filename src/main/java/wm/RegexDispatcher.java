@@ -43,9 +43,9 @@ public class RegexDispatcher<T>
     public Resource dispatch(final Request request,
                              final Response response) throws HttpException {
 
-            String encodedPath = request.getRequestUri().getRawPath();
+            final String encodedPath = request.getRequestUri().getRawPath();
 
-            Class<? extends Resource> clazz = selectResourceBinding(encodedPath);
+            final Class<? extends Resource> clazz = selectResourceBinding(encodedPath);
             if (null==clazz) {
                 throw new ClientHttpException(Status.NOT_FOUND);
             }
@@ -71,13 +71,7 @@ public class RegexDispatcher<T>
                                        final Class<? extends Resource> clazz) {
         try {
             final Map<String, Object> context = new HashMap<String, Object>();
-            return
-            clazz.getConstructor(
-                _configuration.getClass(),
-                Request.class,
-                Response.class,
-                Map.class)
-                .newInstance(_configuration, request, response, context);
+            return clazz.getConstructor(Map.class).newInstance(context);
         } catch (final InstantiationException e) {
             throw new ServerHttpException(Status.INTERNAL_SERVER_ERROR, e);
         } catch (final IllegalAccessException e) {
@@ -93,8 +87,8 @@ public class RegexDispatcher<T>
 
 
     private Class<? extends Resource> selectResourceBinding(final String encodedPath) {
-        for (Map.Entry<Pattern, Class<? extends Resource>> binding : _bindings.entrySet()) {
-            Matcher m = binding.getKey().matcher(encodedPath);
+        for (final Map.Entry<Pattern, Class<? extends Resource>> binding : _bindings.entrySet()) {
+            final Matcher m = binding.getKey().matcher(encodedPath);
             if (m.matches()) { return binding.getValue(); }
         }
         return null;

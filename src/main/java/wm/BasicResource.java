@@ -13,211 +13,191 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 
 /**
- * TODO: Add a description for this type.
+ * Implements defaults for many of the {@link Resource} API methods.
  *
  * @author Keith Webster Johnston.
  */
-public abstract class BasicResource
-    extends
+public abstract class BasicResource<T>
+    implements
         Resource {
+
+    protected final T _context;
+
 
     /**
      * Constructor.
      *
-     * @param request
-     * @param response
-     * @param context
+     * @param context The server context.
      */
-    public BasicResource(final Request request,
-                         final Response response,
-                         final Map<String, Object> context) {
-        super(request, response, context);
+    public BasicResource(final T context) {
+        _context = context;
     }
+
 
     /** {@inheritDoc} */
     @Override
-    public boolean allow_missing_post() throws HttpException {
-        return false;
-    }
+    public boolean allowsPostToMissing() { return false; }
+
 
     /** {@inheritDoc} */
     @Override
-    public Set<String> allowed_methods() {
+    public Set<String> getAllowedMethods() {
         return
             new HashSet<String>(
                 Arrays.asList(new String[] {Method.GET, Method.HEAD}));
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public Set<Charset> charsets_provided() {
-        return new HashSet<Charset>();
-    }
 
     /** {@inheritDoc} */
     @Override
-    public URI createPath() {
-        return null;
-    }
+    public Set<Charset> getCharsetsProvided() { return null; }
+
 
     /** {@inheritDoc} */
     @Override
-    public boolean delete_completed() throws HttpException {
-        return true;
-    }
+    public URI getCreatePath() { return null; }
+
 
     /** {@inheritDoc} */
     @Override
-    public boolean delete_resource() throws HttpException {
-        return false;
-    }
+    public boolean isDeleted() { return true; }
+
 
     /** {@inheritDoc} */
     @Override
-    public Set<String> encodings_provided() {
+    public boolean delete() { return false; }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public Set<String> getEncodings() {
         return Collections.singleton(ContentEncoding.IDENTITY);
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public Date expires() {
-        return null;
-    }
 
     /** {@inheritDoc} */
     @Override
-    public void finish_request() {
-        // No Op.
-    }
+    public Date getExpiryDate() { return null; }
+
 
     /** {@inheritDoc} */
     @Override
-    public boolean forbidden() throws HttpException {
-        return false;
-    }
+    public void finishRequest() { /* No Op */ }
+
 
     /** {@inheritDoc} */
     @Override
-    public ETag generate_etag() {
-        return null;
-    }
+    public boolean isForbidden() { return false; }
+
 
     /** {@inheritDoc} */
     @Override
-    public boolean is_authorized() throws HttpException {
+    public ETag generateEtag(final String base) { return null; }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public String authorize() { return null; }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean isInConflict() { return false; }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean isContentTypeKnown(final MediaType mediaType) {
         return true;
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public boolean is_conflict() {
-        return false;
-    }
 
     /** {@inheritDoc} */
     @Override
-    public boolean known_content_type() throws HttpException {
-        return true;
-    }
+    public Set<LanguageTag> getLanguages() { return null; }
+
 
     /** {@inheritDoc} */
     @Override
-    public Set<LanguageTag> languages_provided() {
-        return null;
-    }
+    public Date getLastModifiedDate() { return null; }
+
 
     /** {@inheritDoc} */
     @Override
-    public Date last_modified() {
-        return null;
-    }
+    public boolean isMalformed() { return false; }
+
 
     /** {@inheritDoc} */
     @Override
-    public boolean malformed_request() throws HttpException {
-        return false;
-    }
+    public URI movedPermanentlyTo() { return null; }
+
 
     /** {@inheritDoc} */
     @Override
-    public URI moved_permanently() throws HttpException {
-        return null;
-    }
+    public URI movedTemporarilyTo() { return null; }
+
 
     /** {@inheritDoc} */
     @Override
-    public URI moved_temporarily() throws HttpException {
-        return null;
-    }
+    public boolean hasMultipleChoices() { return false; }
+
 
     /** {@inheritDoc} */
     @Override
-    public boolean multiple_choices() throws HttpException {
-        return false;
+    public Map<String, List<String>> getOptionsResponseHeaders() {
+        return new HashMap<String, List<String>>();
     }
+
 
     /** {@inheritDoc} */
     @Override
-    public Map<String, Object> getOptionsResponseHeaders() {
-        return new HashMap<String, Object>();
-    }
+    public boolean isPostCreate() { return false; }
+
 
     /** {@inheritDoc} */
     @Override
-    public boolean isPostCreate() {
-        return false;
-    }
+    public boolean existedPreviously() { return false; }
+
 
     /** {@inheritDoc} */
     @Override
-    public boolean existedPreviously() throws HttpException {
-        return false;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void processPost() throws HttpException {
+    public void processPost() {
         throw new ServerHttpException(Status.NOT_IMPLEMENTED);
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public boolean exists() throws HttpException {
-        return true;
-    }
 
     /** {@inheritDoc} */
     @Override
-    public boolean isServiceAvailable() throws HttpException {
-        return true;
-    }
+    public boolean exists() { return true; }
+
 
     /** {@inheritDoc} */
     @Override
-    public boolean isUriTooLong() throws HttpException {
-        return false;
-    }
+    public boolean isServiceAvailable() { return true; }
+
 
     /** {@inheritDoc} */
     @Override
-    public boolean hasValidContentHeaders() throws HttpException {
-        return true;
-    }
+    public boolean isUriTooLong() { return false; }
+
 
     /** {@inheritDoc} */
     @Override
-    public boolean isEntityLengthValid() throws HttpException {
-        return true;
-    }
+    public boolean hasValidContentHeaders() { return true; }
+
 
     /** {@inheritDoc} */
     @Override
-    public Header[] getVariances() {
-        return new Header[] {};
-    }
+    public boolean isEntityLengthValid() { return true; }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public Header[] getVariances() { return new Header[] {}; }
 }

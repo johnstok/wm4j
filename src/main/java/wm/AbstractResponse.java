@@ -21,7 +21,9 @@ package wm;
 
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.TimeZone;
 
 
@@ -36,10 +38,11 @@ public abstract class AbstractResponse
 
     protected final SimpleDateFormat _dateFormatter;
 
-    private final Date _originationTime = new Date();
-    private Charset    _charset;
-    private MediaType  _mediaType;
-    private String     _contentEncoding;
+    private final Date         _originationTime = new Date();
+    private final List<String> _variances = new ArrayList<String>();
+    private Charset            _charset;
+    private MediaType          _mediaType;
+    private String             _contentEncoding;
 
 
     /**
@@ -100,5 +103,19 @@ public abstract class AbstractResponse
             _contentEncoding = encoding;
             setHeader(Header.CONTENT_ENCODING, encoding);
         }
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public String[] getVariances() {
+        return _variances.toArray(new String[_variances.size()]);
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void addVariance(final String headerName) {
+        _variances.add(headerName);
     }
 }

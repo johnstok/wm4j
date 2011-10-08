@@ -36,13 +36,26 @@ import wm.WeightedValue;
 public class MediaTypeNegotiatorTest {
 
     @Test
+    public void noSelection() {
+
+        // ARRANGE
+        final MediaTypeNegotiator n = new MediaTypeNegotiator(MediaType.HTML);
+
+        // ACT
+        final MediaType mt = n.select(new WeightedValue("application/xml", 1f));
+
+        // ASSERT
+        assertNull(mt);
+    }
+
+    @Test
     public void simpleSelection() {
 
         // ARRANGE
-        MediaTypeNegotiator n = new MediaTypeNegotiator(MediaType.HTML);
+        final MediaTypeNegotiator n = new MediaTypeNegotiator(MediaType.HTML);
 
         // ACT
-        MediaType mt = n.select(new WeightedValue("text/html", 1f));
+        final MediaType mt = n.select(new WeightedValue("text/html", 1f));
 
         // ASSERT
         assertEquals(MediaType.HTML, mt);
@@ -52,11 +65,11 @@ public class MediaTypeNegotiatorTest {
     public void selectionOnWeight() {
 
         // ARRANGE
-        MediaTypeNegotiator n =
+        final MediaTypeNegotiator n =
             new MediaTypeNegotiator(MediaType.HTML, MediaType.XML);
 
         // ACT
-        MediaType mt =
+        final MediaType mt =
             n.select(
                 new WeightedValue("text/html", .5f),
                 new WeightedValue("application/xml", .6f));
@@ -69,11 +82,11 @@ public class MediaTypeNegotiatorTest {
     public void selectionWithWildcard() {
 
         // ARRANGE
-        MediaTypeNegotiator n =
+        final MediaTypeNegotiator n =
             new MediaTypeNegotiator(MediaType.HTML, MediaType.JPEG);
 
         // ACT
-        MediaType mt =
+        final MediaType mt =
             n.select(
                 new WeightedValue("text/html", .5f),
                 new WeightedValue("image/*", .6f));
@@ -86,11 +99,11 @@ public class MediaTypeNegotiatorTest {
     public void selectionWithAny() {
 
         // ARRANGE
-        MediaTypeNegotiator n =
+        final MediaTypeNegotiator n =
             new MediaTypeNegotiator(MediaType.HTML);
 
         // ACT
-        MediaType mt =
+        final MediaType mt =
             n.select(
                 new WeightedValue("application/xml", .5f),
                 new WeightedValue("*/*", .6f));
@@ -103,12 +116,12 @@ public class MediaTypeNegotiatorTest {
     public void qualityRespectsPrecedence() {
 
         // ARRANGE
-        MediaTypeNegotiator n =
+        final MediaTypeNegotiator n =
             new MediaTypeNegotiator(
                 MediaType.XML, MediaType.JSON, MediaType.JPEG);
 
         // ACT
-        Map<MediaType, Float> weights =
+        final Map<MediaType, Float> weights =
             n.weights(
                 new WeightedValue("application/xml", .6f),
                 new WeightedValue("application/*",   .5f),
@@ -125,12 +138,12 @@ public class MediaTypeNegotiatorTest {
     public void selectionRespectsPrecedence() {
 
         // ARRANGE
-        MediaTypeNegotiator n =
+        final MediaTypeNegotiator n =
             new MediaTypeNegotiator(
                 MediaType.XML, MediaType.JSON, MediaType.JPEG);
 
         // ACT
-        MediaType mt =
+        final MediaType mt =
             n.select(
                 new WeightedValue("application/xml", .4f),
                 new WeightedValue("application/*",   .5f),

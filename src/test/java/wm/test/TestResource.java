@@ -8,48 +8,50 @@ package wm.test;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import wm.BasicResource;
 import wm.BodyReader;
 import wm.BodyWriter;
 import wm.MediaType;
-import wm.Request;
-import wm.Response;
+import wm.Resource;
 
 
 /**
- * TODO: Add a description for this type.
+ * Test implementation of the {@link Resource} interface.
  *
  * @author Keith Webster Johnston.
  */
 public class TestResource
     extends
-        BasicResource {
+        BasicResource<Map<String, Object>> {
 
     /**
      * Constructor.
      *
-     * @param request
-     * @param response
-     * @param context
+     * @param context The server context.
      */
-    public TestResource(final Request request,
-                        final Response response,
-                        final Map<String, Object> context) {
-        super(request, response, context);
+    public TestResource(final Map<String, Object> context) {
+        super(context);
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public Map<MediaType, ? extends BodyWriter> content_types_provided() {
-        return new HashMap<MediaType, BodyWriter>();
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public Map<MediaType, ? extends BodyReader> content_types_accepted() {
+    public Map<MediaType, ? extends BodyReader> getContentTypesAccepted() {
         return new HashMap<MediaType, BodyReader>();
     }
 
+
+    /** {@inheritDoc} */
+    @Override
+    public BodyWriter getWriter(final MediaType mediaType) {
+        return null;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public Set<MediaType> getContentTypesProvided() {
+        return null;
+    }
 }
