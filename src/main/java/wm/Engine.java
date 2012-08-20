@@ -6,7 +6,7 @@
  *---------------------------------------------------------------------------*/
 package wm;
 
-import static wm.Header.*;
+import static com.johnstok.http.Header.*;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.charset.Charset;
@@ -14,11 +14,22 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
-import wm.headers.DateHeader;
-import wm.negotiation.CharsetNegotiator;
-import wm.negotiation.ContentNegotiator;
-import wm.negotiation.LanguageNegotiator;
-import wm.negotiation.MediaTypeNegotiator;
+import com.johnstok.http.ETag;
+import com.johnstok.http.Header;
+import com.johnstok.http.HttpException;
+import com.johnstok.http.LanguageTag;
+import com.johnstok.http.MediaType;
+import com.johnstok.http.Method;
+import com.johnstok.http.Status;
+import com.johnstok.http.WeightedValue;
+import com.johnstok.http.headers.DateHeader;
+import com.johnstok.http.negotiation.CharsetNegotiator;
+import com.johnstok.http.negotiation.ContentNegotiator;
+import com.johnstok.http.negotiation.LanguageNegotiator;
+import com.johnstok.http.negotiation.MediaTypeNegotiator;
+import com.johnstok.http.sync.BodyReader;
+import com.johnstok.http.sync.Request;
+import com.johnstok.http.sync.Response;
 
 
 /**
@@ -768,7 +779,7 @@ public class Engine {
                         final Response response) throws HttpException {
         final String reqContentType = request.getHeader(CONTENT_TYPE);
         if (null!=reqContentType // TODO: Should we reject if missing or only check for PUT & POST.
-            && !resource.isContentTypeKnown(new MediaType(reqContentType))) {
+            && !resource.isContentTypeKnown(MediaType.parse(reqContentType))) {
             response.setStatus(Status.UNSUPPORTED_MEDIA_TYPE);
         } else {
             B05_request_entity_too_large(resource, request, response);

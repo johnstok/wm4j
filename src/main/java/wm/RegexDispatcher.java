@@ -6,6 +6,12 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import com.johnstok.http.ClientHttpException;
+import com.johnstok.http.HttpException;
+import com.johnstok.http.ServerHttpException;
+import com.johnstok.http.Status;
+import com.johnstok.http.sync.Request;
+import com.johnstok.http.sync.Response;
 
 
 /**

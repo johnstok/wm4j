@@ -1,0 +1,5 @@
+Design decision: should the response class include methods that manipulate headers in a type-safe way? E.g. addVariance; getCharset; etc.
+
+Idiom for parsing:
+public static T parse(String value)
+> Allows NULL to be returned.

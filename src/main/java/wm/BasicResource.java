@@ -16,6 +16,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import com.johnstok.http.ContentEncoding;
+import com.johnstok.http.ETag;
+import com.johnstok.http.Header;
+import com.johnstok.http.LanguageTag;
+import com.johnstok.http.MediaType;
+import com.johnstok.http.Method;
+import com.johnstok.http.ServerHttpException;
+import com.johnstok.http.Status;
 
 
 /**
@@ -77,7 +85,7 @@ public abstract class BasicResource<T>
     /** {@inheritDoc} */
     @Override
     public Set<String> getEncodings() {
-        return Collections.singleton(ContentEncoding.IDENTITY);
+        return Collections.singleton(ContentEncoding.IDENTITY.toString());
     }
 
 

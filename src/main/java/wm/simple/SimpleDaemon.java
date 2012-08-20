@@ -17,8 +17,8 @@ import org.simpleframework.transport.connect.SocketConnection;
 import wm.Daemon;
 import wm.Dispatcher;
 import wm.Engine;
-import wm.HttpException;
 import wm.Resource;
+import com.johnstok.http.HttpException;
 
 
 /**
@@ -50,8 +50,8 @@ public class SimpleDaemon
     @Override
     public void handle(final Request request, final Response response) {
         try {
-            final wm.Response resp = new SimpleResponse(response);
-            final wm.Request  req  = new SimpleRequest(request, _port, _host);
+            final com.johnstok.http.sync.Response resp = new SimpleResponse(response);
+            final com.johnstok.http.sync.Request  req  = new SimpleRequest(request, _port, _host);
             final Resource r = _dispatcher.dispatch(req, resp);
 
             new Engine().process(r, req, resp);

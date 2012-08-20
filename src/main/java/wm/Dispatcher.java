@@ -1,5 +1,9 @@
 package wm;
 
+import com.johnstok.http.HttpException;
+import com.johnstok.http.sync.Request;
+import com.johnstok.http.sync.Response;
+
 
 /**
  * TODO: Add a description for this type.

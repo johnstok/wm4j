@@ -15,9 +15,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.TimeZone;
-import wm.AbstractResponse;
-import wm.BodyWriter;
-import wm.Status;
+import com.johnstok.http.Status;
+import com.johnstok.http.sync.AbstractResponse;
+import com.johnstok.http.sync.BodyWriter;
 
 
 /**

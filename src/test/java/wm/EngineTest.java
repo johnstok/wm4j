@@ -24,10 +24,22 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import wm.headers.DateHeader;
 import wm.test.TestRequest;
 import wm.test.TestResource;
 import wm.test.TestResponse;
+import com.johnstok.http.ContentEncoding;
+import com.johnstok.http.ETag;
+import com.johnstok.http.Header;
+import com.johnstok.http.HttpException;
+import com.johnstok.http.LanguageTag;
+import com.johnstok.http.MediaType;
+import com.johnstok.http.Method;
+import com.johnstok.http.ServerHttpException;
+import com.johnstok.http.Status;
+import com.johnstok.http.headers.DateHeader;
+import com.johnstok.http.sync.BodyReader;
+import com.johnstok.http.sync.BodyWriter;
+import com.johnstok.http.sync.Response;
 
 
 /**
@@ -292,7 +304,7 @@ public class EngineTest {
 
             /** {@inheritDoc} */
             @Override
-            public ETag generateEtag(final String base) { return new ETag("foo"); }
+            public ETag generateEtag(final String base) { return ETag.parse("foo"); }
         };
 
         // ACT
@@ -314,7 +326,7 @@ public class EngineTest {
 
             /** {@inheritDoc} */
             @Override
-            public ETag generateEtag(final String base) { return new ETag("foo"); }
+            public ETag generateEtag(final String base) { return ETag.parse("foo"); }
         };
 
         // ACT
@@ -356,7 +368,7 @@ public class EngineTest {
 
             /** {@inheritDoc} */
             @Override
-            public ETag generateEtag(final String base) { return new ETag("bar"); }
+            public ETag generateEtag(final String base) { return ETag.parse("bar"); }
         };
 
         // ACT
@@ -634,7 +646,7 @@ public class EngineTest {
 
             /** {@inheritDoc} */
             @Override
-            public ETag generateEtag(final String base) { return new ETag("foo"); }
+            public ETag generateEtag(final String base) { return ETag.parse("foo"); }
 
             /** {@inheritDoc} */
             @Override
@@ -670,7 +682,7 @@ public class EngineTest {
 
             /** {@inheritDoc} */
             @Override
-            public ETag generateEtag(final String base) { return new ETag("bar"); }
+            public ETag generateEtag(final String base) { return ETag.parse("bar"); }
 
             /** {@inheritDoc} */
             @Override
@@ -878,7 +890,7 @@ public class EngineTest {
 
                 @Override
                 public Set<String> getEncodings() {
-                    return Collections.singleton(ContentEncoding.GZIP);
+                    return Collections.singleton(ContentEncoding.GZIP.toString());
                 }
 
                 @Override
@@ -978,7 +990,8 @@ public class EngineTest {
     public void okWithConnegReturnsEncoding() {
 
         // ACT
-        _request.setHeader(Header.ACCEPT_ENCODING, ContentEncoding.GZIP);
+        _request.setHeader(
+            Header.ACCEPT_ENCODING, ContentEncoding.GZIP.toString());
         final Resource resource =
             new TestResource(
                 new HashMap<String, Object>()) {
@@ -995,7 +1008,7 @@ public class EngineTest {
 
                 @Override
                 public Set<String> getEncodings() {
-                    return Collections.singleton(ContentEncoding.GZIP);
+                    return Collections.singleton(ContentEncoding.GZIP.toString());
                 }
         };
 
@@ -1004,7 +1017,8 @@ public class EngineTest {
 
         // ASSERT
         Assert.assertSame(Status.OK, _response.getStatus());
-        Assert.assertEquals(ContentEncoding.GZIP, _response.getHeader(Header.CONTENT_ENCODING));
+        Assert.assertEquals(
+            ContentEncoding.GZIP, _response.getHeader(Header.CONTENT_ENCODING));
         Assert.assertEquals(
             "Hello, world!",
             _response.getBodyAsString(UTF_8));
@@ -1015,7 +1029,7 @@ public class EngineTest {
     public void acceptWithUnknownEncodingGivesNoHeader() {
 
         // ACT
-        _request.setHeader(Header.ACCEPT_ENCODING, ContentEncoding.GZIP);
+        _request.setHeader(Header.ACCEPT_ENCODING, ContentEncoding.GZIP.toString());
         final Resource resource =
             new TestResource(
                 new HashMap<String, Object>()) {

@@ -8,9 +8,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import wm.AbstractRequest;
-import wm.Request;
-import wm.Version;
+import com.johnstok.http.Version;
+import com.johnstok.http.sync.AbstractRequest;
 
 
 /**

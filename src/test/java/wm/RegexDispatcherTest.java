@@ -10,6 +10,11 @@ import static org.junit.Assert.*;
 import java.util.Map;
 import java.util.Set;
 import org.junit.Test;
+import com.johnstok.http.ClientHttpException;
+import com.johnstok.http.MediaType;
+import com.johnstok.http.Status;
+import com.johnstok.http.sync.BodyReader;
+import com.johnstok.http.sync.BodyWriter;
 import wm.test.TestRequest;
 import wm.test.TestResource;
 

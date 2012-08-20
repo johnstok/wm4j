@@ -28,10 +28,10 @@ import org.jboss.netty.handler.codec.http.HttpResponse;
 import org.jboss.netty.handler.codec.http.HttpResponseEncoder;
 import org.jboss.netty.handler.stream.ChunkedWriteHandler;
 import org.simpleframework.http.core.Container;
+import com.johnstok.http.HttpException;
 import wm.Daemon;
 import wm.Dispatcher;
 import wm.Engine;
-import wm.HttpException;
 import wm.Resource;
 
 

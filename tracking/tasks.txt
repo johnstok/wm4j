@@ -35,7 +35,7 @@
  * [x] Charset for parsing request path.
  * [ ] Max worker threads.
    
-!!! Who closes IO streams?
+ [ ] Review closing of streams, ensure it is implemented consistently.
 
  [ ] Media type parameters.
 
@@ -47,9 +47,9 @@
 
  [x] Improve Request API.
  
- [.] Improve Response API.
+ [ ] Improve Response API.
  
- [ ] Improve Resource API.
+ [x] Improve Resource API.
 
  [x] Add a `Path getPath(Charset cs)` method? Path class can split then decode each path element.
  

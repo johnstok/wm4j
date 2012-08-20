@@ -9,10 +9,10 @@ package wm.test;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import com.johnstok.http.MediaType;
+import com.johnstok.http.sync.BodyReader;
+import com.johnstok.http.sync.BodyWriter;
 import wm.BasicResource;
-import wm.BodyReader;
-import wm.BodyWriter;
-import wm.MediaType;
 import wm.Resource;
 
 

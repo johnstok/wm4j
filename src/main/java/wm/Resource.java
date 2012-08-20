@@ -12,6 +12,14 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import com.johnstok.http.ETag;
+import com.johnstok.http.Header;
+import com.johnstok.http.LanguageTag;
+import com.johnstok.http.MediaType;
+import com.johnstok.http.Specification;
+import com.johnstok.http.Specifications;
+import com.johnstok.http.sync.BodyReader;
+import com.johnstok.http.sync.BodyWriter;
 
 
 /**
