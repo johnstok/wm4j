@@ -14,7 +14,6 @@ import org.jboss.netty.channel.Channel;
 import org.jboss.netty.handler.codec.http.HttpResponse;
 import org.jboss.netty.handler.codec.http.HttpResponseStatus;
 import com.johnstok.http.Status;
-import com.johnstok.http.async.Response;
 import com.johnstok.http.sync.AbstractResponse;
 import com.johnstok.http.sync.BodyWriter;
 

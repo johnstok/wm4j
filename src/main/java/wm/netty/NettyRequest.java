@@ -18,7 +18,6 @@ import org.jboss.netty.handler.codec.http.HttpRequest;
 import org.jboss.netty.handler.codec.http.QueryStringDecoder;
 import org.jboss.netty.handler.ssl.SslHandler;
 import com.johnstok.http.Version;
-import com.johnstok.http.async.Request;
 import com.johnstok.http.sync.AbstractRequest;
 
 
