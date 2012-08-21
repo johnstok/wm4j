@@ -33,11 +33,6 @@
         </dependency>
         <dependency>
         	<groupId>com.johnstok</groupId>
-        	<artifactId>async-http</artifactId>
-        	<version>0.0.1-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-        	<groupId>com.johnstok</groupId>
         	<artifactId>async-http-netty</artifactId>
         	<version>0.0.1-SNAPSHOT</version>
         </dependency>
