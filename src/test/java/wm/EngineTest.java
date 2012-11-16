@@ -293,7 +293,7 @@ public class EngineTest {
     public void deleteWithMatchedIfnonematchGivesPreconditionFailed() { // K13, J18
 
         // ARRANGE
-        _request.setHeader(Header.IF_NONE_MATCH, "foo");
+        _request.setHeader(Header.IF_NONE_MATCH, "foo"); // FIXME: This value should be quoted - engine needs to parse as an entity-tag.
         _request.setMethod(Method.DELETE);
         final Resource resource = new TestResource(
             new HashMap<String, Object>()) {
@@ -304,7 +304,7 @@ public class EngineTest {
 
             /** {@inheritDoc} */
             @Override
-            public ETag generateEtag(final String base) { return ETag.parse("foo"); }
+            public ETag generateEtag(final String base) { return ETag.parse("\"foo\""); }
         };
 
         // ACT
@@ -326,7 +326,7 @@ public class EngineTest {
 
             /** {@inheritDoc} */
             @Override
-            public ETag generateEtag(final String base) { return ETag.parse("foo"); }
+            public ETag generateEtag(final String base) { return ETag.parse("\"foo\""); }
         };
 
         // ACT
@@ -368,7 +368,7 @@ public class EngineTest {
 
             /** {@inheritDoc} */
             @Override
-            public ETag generateEtag(final String base) { return ETag.parse("bar"); }
+            public ETag generateEtag(final String base) { return ETag.parse("\"bar\""); }
         };
 
         // ACT
@@ -646,7 +646,7 @@ public class EngineTest {
 
             /** {@inheritDoc} */
             @Override
-            public ETag generateEtag(final String base) { return ETag.parse("foo"); }
+            public ETag generateEtag(final String base) { return ETag.parse("\"foo\""); }
 
             /** {@inheritDoc} */
             @Override
@@ -682,7 +682,7 @@ public class EngineTest {
 
             /** {@inheritDoc} */
             @Override
-            public ETag generateEtag(final String base) { return ETag.parse("bar"); }
+            public ETag generateEtag(final String base) { return ETag.parse("\"bar\""); }
 
             /** {@inheritDoc} */
             @Override
