@@ -58,10 +58,10 @@ public final class Utils {
      *
      * @return The joined value, in a string buffer.
      */
-    public static StringBuffer join(final Collection<String> values,
+    public static StringBuffer join(final Collection<? extends Object> values,
                                     final char delimiter) {
         final StringBuffer buffer = new StringBuffer();
-        for (final String value : values) {
+        for (final Object value : values) {
             buffer.append(value);
             buffer.append(delimiter);
         }
