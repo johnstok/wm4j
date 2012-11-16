@@ -14,6 +14,7 @@ import org.jboss.netty.handler.codec.http.HttpVersion;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import com.johnstok.http.Method;
 import com.johnstok.http.Path;
 import com.johnstok.http.Scheme;
 import com.johnstok.http.Version;
@@ -65,10 +66,10 @@ public class NettyRequestTest {
                 new FakeChannel());
 
         // ACT
-        final String m = r.getMethod();
+        final Method m = r.getMethod();
 
         // ASSERT
-        assertEquals("GET", m);
+        assertEquals(Method.GET, m);
     }
 
 

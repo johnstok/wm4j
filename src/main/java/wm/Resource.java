@@ -16,6 +16,7 @@ import com.johnstok.http.ETag;
 import com.johnstok.http.Header;
 import com.johnstok.http.LanguageTag;
 import com.johnstok.http.MediaType;
+import com.johnstok.http.Method;
 import com.johnstok.http.Specification;
 import com.johnstok.http.Specifications;
 import com.johnstok.http.sync.BodyReader;
@@ -46,9 +47,8 @@ public interface Resource {
      *
      * @return
      */
-    // FIXME: Should be strongly typed.
     @Specification(name="rfc-2616", section="10.4.6")
-    Set<String> getAllowedMethods();
+    Set<Method> getAllowedMethods();
 
 
     /**

@@ -55,10 +55,10 @@ public abstract class BasicResource<T>
 
     /** {@inheritDoc} */
     @Override
-    public Set<String> getAllowedMethods() {
+    public Set<Method> getAllowedMethods() {
         return
-            new HashSet<String>(
-                Arrays.asList(new String[] {Method.GET, Method.HEAD}));
+            new HashSet<Method>(
+                Arrays.asList(new Method[] {Method.GET, Method.HEAD}));
     }
 
 

@@ -17,6 +17,7 @@ import org.jboss.netty.channel.Channel;
 import org.jboss.netty.handler.codec.http.HttpRequest;
 import org.jboss.netty.handler.codec.http.QueryStringDecoder;
 import org.jboss.netty.handler.ssl.SslHandler;
+import com.johnstok.http.Method;
 import com.johnstok.http.Version;
 import com.johnstok.http.sync.AbstractRequest;
 
@@ -65,7 +66,9 @@ public class NettyRequest
 
     /** {@inheritDoc} */
     @Override
-    public String getMethod() { return _request.getMethod().getName(); }
+    public Method getMethod() {
+        return Method.parse(_request.getMethod().getName());
+    }
 
 
     /** {@inheritDoc} */
@@ -107,7 +110,7 @@ public class NettyRequest
     @Override
     public String getQueryValue(final String paramName, final String defaultValue) {
         final List<String> p = _qParams.get(paramName);
-        if (null==p || 0==p.size()) { return defaultValue; }
+        if ((null==p) || (0==p.size())) { return defaultValue; }
         return p.get(0);
     }
 

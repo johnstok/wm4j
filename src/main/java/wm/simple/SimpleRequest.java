@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import com.johnstok.http.Method;
 import com.johnstok.http.Version;
 import com.johnstok.http.sync.AbstractRequest;
 
@@ -73,7 +74,7 @@ public class SimpleRequest
 
     /** {@inheritDoc} */
     @Override
-    public String getMethod() { return _request.getMethod(); }
+    public Method getMethod() { return Method.parse(_request.getMethod()); }
 
 
     /** {@inheritDoc} */

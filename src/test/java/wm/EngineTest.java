@@ -164,7 +164,7 @@ public class EngineTest {
         final Resource resource = new TestResource(
             new HashMap<String, Object>()) {
 
-            @Override public Set<String> getAllowedMethods() {
+            @Override public Set<Method> getAllowedMethods() {
                 return Collections.singleton(Method.DELETE);
             }
 
@@ -189,7 +189,7 @@ public class EngineTest {
         final Resource resource = new TestResource(
             new HashMap<String, Object>()) {
 
-            @Override public Set<String> getAllowedMethods() {
+            @Override public Set<Method> getAllowedMethods() {
                 return Collections.singleton(Method.DELETE);
             }
 
@@ -275,7 +275,7 @@ public class EngineTest {
         final Resource resource = new TestResource(
             new HashMap<String, Object>()) {
 
-            @Override public Set<String> getAllowedMethods() {
+            @Override public Set<Method> getAllowedMethods() {
                 return Collections.singleton(Method.DELETE);
             }
         };
@@ -298,7 +298,7 @@ public class EngineTest {
         final Resource resource = new TestResource(
             new HashMap<String, Object>()) {
 
-            @Override public Set<String> getAllowedMethods() {
+            @Override public Set<Method> getAllowedMethods() {
                 return Collections.singleton(Method.DELETE);
             }
 
@@ -1207,7 +1207,7 @@ public class EngineTest {
         final Resource resource = new TestResource(
             new HashMap<String, Object>()) {
 
-                @Override public Set<String> getAllowedMethods() {
+                @Override public Set<Method> getAllowedMethods() {
                     return Collections.singleton(Method.POST);
                 }
 
@@ -1245,7 +1245,7 @@ public class EngineTest {
         final Resource resource = new TestResource(
             new HashMap<String, Object>()) {
 
-            @Override public Set<String> getAllowedMethods() {
+            @Override public Set<Method> getAllowedMethods() {
                 return Collections.singleton(Method.PUT);
             }
 
@@ -1278,7 +1278,7 @@ public class EngineTest {
         final Resource resource = new TestResource(
             new HashMap<String, Object>()) {
 
-            @Override public Set<String> getAllowedMethods() {
+            @Override public Set<Method> getAllowedMethods() {
                 return Collections.singleton(Method.PUT);
             }
 
@@ -1313,7 +1313,7 @@ public class EngineTest {
         final Resource resource = new TestResource(
             new HashMap<String, Object>()) {
 
-                @Override public Set<String> getAllowedMethods() {
+                @Override public Set<Method> getAllowedMethods() {
                     return Collections.singleton(Method.PUT);
                 }
 
@@ -1347,7 +1347,7 @@ public class EngineTest {
         final Resource resource = new TestResource(
             new HashMap<String, Object>()) {
 
-            @Override public Set<String> getAllowedMethods() {
+            @Override public Set<Method> getAllowedMethods() {
                 return Collections.singleton(Method.PUT);
             }
 
@@ -1563,7 +1563,7 @@ public class EngineTest {
     public void unknownMethodGivesNotImplemented() {
 
         // ARRANGE
-        _request.setMethod("FOO");                                 //$NON-NLS-1$
+        _request.setMethod(Method.parse("FOO"));                   //$NON-NLS-1$
         final Resource resource = new TestResource(
             new HashMap<String, Object>());
 

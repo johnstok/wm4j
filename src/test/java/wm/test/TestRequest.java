@@ -29,7 +29,7 @@ public class TestRequest
     extends
         AbstractRequest {
 
-    private       String                        _method = Method.GET;
+    private       Method                        _method = Method.GET;
     private final HashMap<String, List<String>> _headers;
     private       byte[]                        _body;
     private       boolean                       _confidential;
@@ -62,7 +62,7 @@ public class TestRequest
     public String getHeader(final String headerName,
                             final String defaultValue) {
         final List<String> values = _headers.get(headerName);
-        if (null==values || 0==values.size()) {
+        if ((null==values) || (0==values.size())) {
             return defaultValue;
         }
         return values.get(0);
@@ -76,7 +76,7 @@ public class TestRequest
 
     /** {@inheritDoc} */
     @Override
-    public String getMethod() { return _method; }
+    public Method getMethod() { return _method; }
 
 
     /** {@inheritDoc} */
@@ -138,7 +138,7 @@ public class TestRequest
      *
      * @param method The new HTTP method to set.
      */
-    public void setMethod(final String method) { _method = method; }
+    public void setMethod(final Method method) { _method = method; }
 
 
     /** {@inheritDoc} */
