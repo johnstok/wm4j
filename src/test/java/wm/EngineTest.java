@@ -910,7 +910,7 @@ public class EngineTest {
         // ASSERT
         Assert.assertSame(Status.OK, _response.getStatus());
         Assert.assertEquals("da", _response.getHeader(Header.CONTENT_LANGUAGE));
-        Assert.assertEquals(ContentEncoding.GZIP, _response.getHeader(Header.CONTENT_ENCODING));
+        Assert.assertEquals(ContentEncoding.GZIP.toString(), _response.getHeader(Header.CONTENT_ENCODING));
         Assert.assertEquals(MediaType.JSON.toString()+"; charset="+UTF_16, _response.getHeader(Header.CONTENT_TYPE));
         Assert.assertEquals(
             "Hello, world!",
@@ -1018,7 +1018,7 @@ public class EngineTest {
         // ASSERT
         Assert.assertSame(Status.OK, _response.getStatus());
         Assert.assertEquals(
-            ContentEncoding.GZIP, _response.getHeader(Header.CONTENT_ENCODING));
+            ContentEncoding.GZIP.toString(), _response.getHeader(Header.CONTENT_ENCODING));
         Assert.assertEquals(
             "Hello, world!",
             _response.getBodyAsString(UTF_8));

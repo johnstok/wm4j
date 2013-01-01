@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import com.johnstok.http.ContentEncoding;
 import com.johnstok.http.ETag;
 import com.johnstok.http.Header;
 import com.johnstok.http.HttpException;
@@ -62,7 +63,8 @@ public class Engine {
             Header.parseAcceptEncoding(
                 request.getHeader(Header.ACCEPT_ENCODING));
         final ContentNegotiator negotiator = new ContentNegotiator(encodings_provided);
-        return negotiator.select(clientEncodings);
+        ContentEncoding selected = negotiator.select(clientEncodings);
+        return (null==selected) ? null : selected.toString(); // FIXME: Should return ContentEncoding.
     }
 
 
@@ -488,7 +490,7 @@ public class Engine {
     private void L07_is_POST_method(final Resource resource,
                      final Request request,
                      final Response response) throws HttpException {
-        if (Method.POST==request.getMethod() && resource.allowsPostToMissing()) { // L7, M7
+        if ((Method.POST==request.getMethod()) && resource.allowsPostToMissing()) { // L7, M7
             N11_redirect(resource, request, response);
         } else {
             response.setStatus(Status.NOT_FOUND);
@@ -512,7 +514,7 @@ public class Engine {
     private void M05_is_POST_method(final Resource resource,
                      final Request request,
                      final Response response) throws HttpException {
-        if (Method.POST==request.getMethod() && resource.allowsPostToMissing()) { // M5, N5
+        if ((Method.POST==request.getMethod()) && resource.allowsPostToMissing()) { // M5, N5
             N11_redirect(resource, request, response);
         } else {
             response.setStatus(Status.GONE);
@@ -578,8 +580,10 @@ public class Engine {
 
         } else {                                          // Choose an encoding.
             final String encoding = first(availableEncodings);
-            if (null!=encoding) {
-                response.setContentEncoding(encoding);
+            if (null!=encoding) { // TODO: Can't we assume encoding is never NULL?
+                if (!ContentEncoding.IDENTITY.toString().equals(encoding)) {
+                    response.setContentEncoding(encoding);
+                }
                 response.addVariance(Header.CONTENT_ENCODING);
             }
             G07_resource_exists(resource, request, response);
@@ -596,7 +600,9 @@ public class Engine {
         if (null==encoding) {
             response.setStatus(Status.NOT_ACCEPTABLE);
         } else {
-            response.setContentEncoding(encoding);
+            if (!ContentEncoding.IDENTITY.toString().equals(encoding)) {
+                response.setContentEncoding(encoding);
+            }
             response.addVariance(Header.CONTENT_ENCODING);
             G07_resource_exists(resource, request, response);
         }
@@ -778,7 +784,8 @@ public class Engine {
                      final Request request,
                         final Response response) throws HttpException {
         final String reqContentType = request.getHeader(CONTENT_TYPE);
-        if (null!=reqContentType // TODO: Should we reject if missing or only check for PUT & POST.
+        if ((null!=reqContentType // TODO: Should we reject if missing or only check for PUT & POST.
+)
             && !resource.isContentTypeKnown(MediaType.parse(reqContentType))) {
             response.setStatus(Status.UNSUPPORTED_MEDIA_TYPE);
         } else {
