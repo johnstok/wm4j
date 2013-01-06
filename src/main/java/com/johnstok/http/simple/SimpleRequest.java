@@ -1,4 +1,4 @@
-package wm.simple;
+package com.johnstok.http.simple;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -34,7 +34,7 @@ public class SimpleRequest
      * @param host    The hostname upon which the request was received.
      */
     public SimpleRequest(final org.simpleframework.http.Request request,
-                         final int port,
+                         final int port, // FIXME: Why can't we use request.getAddress().getPort()?
                          final String host) {
         super(port, host, request.getTarget(), Charset.forName("UTF-8"));               //$NON-NLS-1$
         _request = request;     // FIXME: Check for NULL.

@@ -4,7 +4,7 @@
  *
  * Revision      $Rev$
  *---------------------------------------------------------------------------*/
-package wm.simple;
+package com.johnstok.http.simple;
 
 import java.io.IOException;
 import java.util.Date;

@@ -4,7 +4,7 @@
  *
  * Revision      $Rev$
  *---------------------------------------------------------------------------*/
-package wm.netty;
+package com.johnstok.http.netty;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;

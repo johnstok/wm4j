@@ -4,7 +4,7 @@
  *
  * Revision      $Rev$
  *---------------------------------------------------------------------------*/
-package wm.netty;
+package com.johnstok.http.netty;
 
 import static org.junit.Assert.*;
 import java.nio.charset.Charset;
@@ -18,6 +18,7 @@ import com.johnstok.http.Method;
 import com.johnstok.http.Path;
 import com.johnstok.http.Scheme;
 import com.johnstok.http.Version;
+import com.johnstok.http.netty.NettyRequest;
 import com.johnstok.http.netty.test.FakeChannel;
 import com.johnstok.http.sync.Request;
 

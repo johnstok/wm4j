@@ -4,7 +4,7 @@
  *
  * Revision      $Rev$
  *---------------------------------------------------------------------------*/
-package wm.simple;
+package com.johnstok.http.simple;
 
 
 import java.io.IOException;
@@ -14,11 +14,10 @@ import org.simpleframework.http.Response;
 import org.simpleframework.http.core.Container;
 import org.simpleframework.transport.connect.Connection;
 import org.simpleframework.transport.connect.SocketConnection;
-import wm.Daemon;
-import wm.Dispatcher;
-import wm.Engine;
-import wm.Resource;
 import com.johnstok.http.HttpException;
+import com.johnstok.http.engine.Daemon;
+import com.johnstok.http.engine.Dispatcher;
+import com.johnstok.http.engine.RESTfulHandler;
 
 
 /**
@@ -30,19 +29,19 @@ public class SimpleDaemon
     implements
         Container, Daemon {
 
-    private       Connection _connection;
-    private final Dispatcher _dispatcher;
-    private       int        _port;
-    private       String     _host;
+    private       Connection     _connection;
+    private final RESTfulHandler _handler;
+    private       int            _port;
+    private       String         _host;
 
 
     /**
      * Constructor.
      *
-     * @param dispatcher
+     * @param handler
      */
-    public SimpleDaemon(final Dispatcher dispatcher) {
-        _dispatcher = dispatcher;
+    public SimpleDaemon(final RESTfulHandler handler) {
+        _handler = handler;
     }
 
 
@@ -50,19 +49,18 @@ public class SimpleDaemon
     @Override
     public void handle(final Request request, final Response response) {
         try {
-            final com.johnstok.http.sync.Response resp = new SimpleResponse(response);
-            final com.johnstok.http.sync.Request  req  = new SimpleRequest(request, _port, _host);
-            final Resource r = _dispatcher.dispatch(req, resp);
+            final com.johnstok.http.sync.Response resp =
+                new SimpleResponse(response);
+            final com.johnstok.http.sync.Request req  =
+                new SimpleRequest(request, _port, _host);
 
-            new Engine().process(r, req, resp);
+            _handler.handle(req, resp);
 
         } catch (final HttpException e) {
-            // TODO Auto-generated catch block.
-            e.printStackTrace();
+            e.printStackTrace(); // FIXME: WTF.
             throw new RuntimeException(e);
         } catch (final RuntimeException e) {
-            // TODO Auto-generated catch block.
-            e.printStackTrace();
+            e.printStackTrace(); // FIXME: WTF.
             throw e;
         } finally {
             try {
@@ -78,7 +76,7 @@ public class SimpleDaemon
     @Override
     public void startup(final InetSocketAddress address) throws IOException {
         _port = address.getPort();
-        _host = address.getHostName();
+        _host = address.getHostName(); // What if we bound to the wildcard IP?
         if (null==_connection) {
             _connection = new SocketConnection(this);
             _connection.connect(address);

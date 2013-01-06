@@ -4,7 +4,7 @@
  *
  * Revision      $Rev$
  *---------------------------------------------------------------------------*/
-package wm.netty;
+package com.johnstok.http.netty;
 
 
 import static org.jboss.netty.handler.codec.http.HttpResponseStatus.*;
@@ -29,10 +29,9 @@ import org.jboss.netty.handler.codec.http.HttpResponseEncoder;
 import org.jboss.netty.handler.stream.ChunkedWriteHandler;
 import org.simpleframework.http.core.Container;
 import com.johnstok.http.HttpException;
-import wm.Daemon;
-import wm.Dispatcher;
-import wm.Engine;
-import wm.Resource;
+import com.johnstok.http.engine.Daemon;
+import com.johnstok.http.engine.Dispatcher;
+import com.johnstok.http.engine.RESTfulHandler;
 
 
 /**
@@ -46,17 +45,17 @@ public class NettyDaemon
     implements
         Daemon {
 
-    private final Dispatcher _dispatcher;
-    private Channel _c;
+    private final RESTfulHandler _handler;
+    private Channel              _c;
 
 
     /**
      * Constructor.
      *
-     * @param dispatcher
+     * @param handler
      */
-    public NettyDaemon(final Dispatcher dispatcher) {
-        _dispatcher = dispatcher;
+    public NettyDaemon(final RESTfulHandler handler) {
+        _handler = handler;
     }
 
 
@@ -67,23 +66,20 @@ public class NettyDaemon
         try {
             final HttpRequest request = (HttpRequest) me.getMessage();
             final HttpResponse response = new DefaultHttpResponse(HTTP_1_1, OK);
-            final Channel channel = me.getChannel();
+            final Channel channel = me.getChannel(); // FIXME: This can't be thread safe?
 
             final NettyResponse resp = new NettyResponse(response, channel);
             final NettyRequest req = new NettyRequest(request, channel);
-            final Resource r = _dispatcher.dispatch(req, resp);
 
-            new Engine().process(r, req, resp);
+            _handler.handle(req, resp);
 
             if (!resp.isCommitted()) { resp.commit(); }
 
         } catch (final HttpException e) {
-            // TODO Auto-generated catch block.
-            e.printStackTrace();
+            e.printStackTrace(); // FIXME: WTF.
             throw new RuntimeException(e);
         } catch (final RuntimeException e) {
-            // TODO Auto-generated catch block.
-            e.printStackTrace();
+            e.printStackTrace(); // FIXME: WTF.
             throw e;
         } finally {
             ctx.getChannel().close();
