@@ -36,8 +36,10 @@ public class SimpleRequest
                          final InetSocketAddress serverAddress) {
         super(
             serverAddress,
-            request.getTarget(),
-            Charset.forName("UTF-8")); //$NON-NLS-1$ // SimpleWeb always uses UTF-8 – see org.simpleframework.http.parse.AddressParser#escape().
+            // SimpleWeb always uses UTF-8 – see org.simpleframework.http.parse.AddressParser#escape().
+            // However, we can call org.simpleframework.http.Request#getTarget and decode the URI ourselves in the AbstractRequest constructor.
+            // This would also allow us to remove the query param decoding in the constructor of NettyRequest
+            Charset.forName("UTF-8")); //$NON-NLS-1$
         _request = request;     // FIXME: Check for NULL.
         _version = new Version(_request.getMajor(), _request.getMinor());
     }
@@ -115,4 +117,11 @@ public class SimpleRequest
     /** {@inheritDoc} */
     @Override
     public boolean isConfidential() { return _request.isSecure(); }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public String getRequestUri() {
+        return _request.getTarget();
+    }
 }

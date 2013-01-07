@@ -49,7 +49,6 @@ public class NettyRequest
                         final Channel channel,
                         final Charset charset) {
         super((InetSocketAddress) channel.getLocalAddress(),
-              request.getUri(),
               charset); // FIXME: Check for NULL.
         _request = request; // FIXME: Check for NULL.
         _channel = channel; // FIXME: Check for NULL.
@@ -135,5 +134,12 @@ public class NettyRequest
     @Override
     public boolean isConfidential() {
         return null!=_channel.getPipeline().get(SslHandler.class);
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public String getRequestUri() {
+        return _request.getUri();
     }
 }
