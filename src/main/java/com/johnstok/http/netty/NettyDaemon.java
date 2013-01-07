@@ -10,6 +10,7 @@ package com.johnstok.http.netty;
 import static org.jboss.netty.handler.codec.http.HttpResponseStatus.*;
 import static org.jboss.netty.handler.codec.http.HttpVersion.*;
 import java.net.InetSocketAddress;
+import java.nio.charset.Charset;
 import java.util.concurrent.Executors;
 import org.jboss.netty.bootstrap.ServerBootstrap;
 import org.jboss.netty.channel.Channel;
@@ -46,7 +47,8 @@ public class NettyDaemon
         Daemon {
 
     private final RESTfulHandler _handler;
-    private Channel              _c;
+    private final Charset        _charset;
+    private       Channel        _c;
 
 
     /**
@@ -54,8 +56,9 @@ public class NettyDaemon
      *
      * @param handler
      */
-    public NettyDaemon(final RESTfulHandler handler) {
+    public NettyDaemon(final RESTfulHandler handler, final Charset charset) {
         _handler = handler;
+        _charset = charset;
     }
 
 
@@ -68,8 +71,10 @@ public class NettyDaemon
             final HttpResponse response = new DefaultHttpResponse(HTTP_1_1, OK);
             final Channel channel = me.getChannel(); // FIXME: This can't be thread safe?
 
-            final NettyResponse resp = new NettyResponse(response, channel);
-            final NettyRequest req = new NettyRequest(request, channel);
+            final NettyResponse resp =
+                new NettyResponse(response, channel);
+            final NettyRequest req =
+                new NettyRequest(request, channel, _charset);
 
             _handler.handle(req, resp);
 

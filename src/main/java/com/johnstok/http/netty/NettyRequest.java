@@ -43,17 +43,19 @@ public class NettyRequest
      *
      * @param request The Netty HTTP request delegated to.
      * @param channel The Netty channel used for IO.
+     * @param charset The charset used to interpret the request URI.
      */
     public NettyRequest(final HttpRequest request,
-                        final Channel channel) {
+                        final Channel channel,
+                        final Charset charset) {
         super((InetSocketAddress) channel.getLocalAddress(),
               request.getUri(),
-              Charset.forName("UTF-8"));                           //$NON-NLS-1$
+              charset); // FIXME: Check for NULL.
         _request = request; // FIXME: Check for NULL.
         _channel = channel; // FIXME: Check for NULL.
 
         final QueryStringDecoder decoder =
-            new QueryStringDecoder(request.getUri(), _requestUriCharset);
+            new QueryStringDecoder(request.getUri(), _uriCharset);
         _qParams = decoder.getParameters();
         _version =
             new Version(

@@ -43,7 +43,8 @@ public class NettyRequestTest {
                     HttpVersion.HTTP_1_1,
                     HttpMethod.GET,
                     "/"),
-                new FakeChannel());
+                new FakeChannel(),
+                Charset.forName("UTF-8"));
 
         // ACT
         final Scheme s = r.getScheme();
@@ -63,7 +64,8 @@ public class NettyRequestTest {
                     HttpVersion.HTTP_1_1,
                     HttpMethod.GET,
                 "/"),
-                new FakeChannel());
+                new FakeChannel(),
+                Charset.forName("UTF-8"));
 
         // ACT
         final Method m = r.getMethod();
@@ -83,7 +85,8 @@ public class NettyRequestTest {
                     HttpVersion.HTTP_1_1,
                     HttpMethod.GET,
                 "/"),
-                new FakeChannel());
+                new FakeChannel(),
+                Charset.forName("UTF-8"));
 
         // ACT
         final int port = r.getPort();
@@ -103,7 +106,8 @@ public class NettyRequestTest {
                     HttpVersion.HTTP_1_1,
                     HttpMethod.GET,
                 "/"),
-                new FakeChannel());
+                new FakeChannel(),
+                Charset.forName("UTF-8"));
 
         // ACT
         final String domain = r.getServerAddress().getHostName();
@@ -123,7 +127,8 @@ public class NettyRequestTest {
                     HttpVersion.HTTP_1_1,
                     HttpMethod.GET,
                 "/"),
-                new FakeChannel());
+                new FakeChannel(),
+                Charset.forName("UTF-8"));
 
         // ACT
         final Version v = r.getVersion();
@@ -144,7 +149,8 @@ public class NettyRequestTest {
                     HttpVersion.HTTP_1_1,
                     HttpMethod.GET,
                 "/"),
-                new FakeChannel());
+                new FakeChannel(),
+                Charset.forName("UTF-8"));
 
         // ACT
         final Path p = r.getPath(Charset.forName("UTF-8"));
@@ -164,7 +170,8 @@ public class NettyRequestTest {
                     HttpVersion.HTTP_1_1,
                     HttpMethod.GET,
                 "/?foo=bar"),
-                new FakeChannel());
+                new FakeChannel(),
+                Charset.forName("UTF-8"));
 
         // ACT
         final String qpValue = r.getQueryValue("foo");
@@ -184,7 +191,8 @@ public class NettyRequestTest {
                     HttpVersion.HTTP_1_1,
                     HttpMethod.GET,
                 "/?foo=bar"),
-                new FakeChannel());
+                new FakeChannel(),
+                Charset.forName("UTF-8"));
 
         // ACT
         final String qpValue = r.getQueryValue("baz", "meh");
@@ -204,7 +212,8 @@ public class NettyRequestTest {
                     HttpVersion.HTTP_1_1,
                     HttpMethod.GET,
                     "/?"+ENC_PUNCT+"=bar"),
-                    new FakeChannel());
+                    new FakeChannel(),
+                    Charset.forName("UTF-8"));
 
         // ACT
         final String qpValue = r.getQueryValue(PUNCT);
@@ -224,7 +233,8 @@ public class NettyRequestTest {
                     HttpVersion.HTTP_1_1,
                     HttpMethod.GET,
                 "/?foo="+ENC_PUNCT),
-                new FakeChannel());
+                new FakeChannel(),
+                Charset.forName("UTF-8"));
 
         // ACT
         final String qpValue = r.getQueryValue("foo");
@@ -244,7 +254,8 @@ public class NettyRequestTest {
                     HttpVersion.HTTP_1_1,
                     HttpMethod.GET,
                 "/?foo=bar"),
-                new FakeChannel());
+                new FakeChannel(),
+                Charset.forName("UTF-8"));
 
         // ACT
         final String qpValue = r.getQueryValue("baz", ENC_PUNCT);
@@ -264,7 +275,8 @@ public class NettyRequestTest {
                     HttpVersion.HTTP_1_1,
                     HttpMethod.GET,
                 "/?foo=bar"),
-                new FakeChannel());
+                new FakeChannel(),
+                Charset.forName("UTF-8"));
 
         // ACT
         final String qpValue = r.getQueryValue("baz");
