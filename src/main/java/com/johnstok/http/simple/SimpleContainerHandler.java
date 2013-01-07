@@ -19,6 +19,7 @@
  *---------------------------------------------------------------------------*/
 package com.johnstok.http.simple;
 
+import java.net.InetSocketAddress;
 import org.simpleframework.http.Request;
 import org.simpleframework.http.Response;
 import org.simpleframework.http.core.Container;
@@ -26,7 +27,7 @@ import com.johnstok.http.sync.Handler;
 
 
 /**
- * A Simple Web container that adapts to a standard handler.
+ * A SimpleWeb container that adapts to a standard handler.
  *
  * @author Keith Webster Johnston.
  */
@@ -34,15 +35,20 @@ public class SimpleContainerHandler
     implements
         Container {
 
-    private final Handler _handler;
+    private final Handler           _handler;
+    private final InetSocketAddress _address;
 
 
     /**
      * Constructor.
      *
+     * @param handler
+     * @param address
      */
-    public SimpleContainerHandler(final Handler handler) {
+    public SimpleContainerHandler(final Handler handler,
+                                  final InetSocketAddress address) {
         _handler = handler; // TODO: Check for null.
+        _address = address; // TODO: Check for null.
     }
 
 
@@ -50,11 +56,7 @@ public class SimpleContainerHandler
     @Override
     public void handle(final Request request, final Response response) {
         _handler.handle(
-            new SimpleRequest(
-                request,
-                request.getAddress().getPort(),
-                request.getAddress().getDomain()), // FIXME: This can be NULL!
+            new SimpleRequest(request, _address),
             new SimpleResponse(response));
     }
-
 }

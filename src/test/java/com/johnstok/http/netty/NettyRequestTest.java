@@ -18,7 +18,6 @@ import com.johnstok.http.Method;
 import com.johnstok.http.Path;
 import com.johnstok.http.Scheme;
 import com.johnstok.http.Version;
-import com.johnstok.http.netty.NettyRequest;
 import com.johnstok.http.netty.test.FakeChannel;
 import com.johnstok.http.sync.Request;
 
@@ -107,7 +106,7 @@ public class NettyRequestTest {
                 new FakeChannel());
 
         // ACT
-        final String domain = r.getDomain();
+        final String domain = r.getServerAddress().getHostName();
 
         // ASSERT
         assertEquals("localhost", domain);

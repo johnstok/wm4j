@@ -34,9 +34,11 @@ public class SimpleRequest
      * @param host    The hostname upon which the request was received.
      */
     public SimpleRequest(final org.simpleframework.http.Request request,
-                         final int port, // FIXME: Why can't we use request.getAddress().getPort()?
-                         final String host) {
-        super(port, host, request.getTarget(), Charset.forName("UTF-8"));               //$NON-NLS-1$
+                         final InetSocketAddress serverAddress) {
+        super(
+            serverAddress,
+            request.getTarget(),
+            Charset.forName("UTF-8")); //$NON-NLS-1$ // FIXME: Charset shouldn't be hard-coded.
         _request = request;     // FIXME: Check for NULL.
         _version = new Version(_request.getMajor(), _request.getMinor());
     }

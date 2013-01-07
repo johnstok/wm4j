@@ -29,10 +29,9 @@ public class SimpleDaemon
     implements
         Container, Daemon {
 
-    private       Connection     _connection;
-    private final RESTfulHandler _handler;
-    private       int            _port;
-    private       String         _host;
+    private       Connection        _connection;
+    private final RESTfulHandler    _handler;
+    private       InetSocketAddress _address;
 
 
     /**
@@ -52,7 +51,7 @@ public class SimpleDaemon
             final com.johnstok.http.sync.Response resp =
                 new SimpleResponse(response);
             final com.johnstok.http.sync.Request req  =
-                new SimpleRequest(request, _port, _host);
+                new SimpleRequest(request, _address);
 
             _handler.handle(req, resp);
 
@@ -75,9 +74,9 @@ public class SimpleDaemon
     /** {@inheritDoc} */
     @Override
     public void startup(final InetSocketAddress address) throws IOException {
-        _port = address.getPort();
-        _host = address.getHostName(); // What if we bound to the wildcard IP?
+        // FIXME: Check address is not null.
         if (null==_connection) {
+            _address = address;
             _connection = new SocketConnection(this);
             _connection.connect(address);
         }
@@ -89,6 +88,8 @@ public class SimpleDaemon
     public void shutdown() throws IOException {
         if (null!=_connection) {
             _connection.close();
+            _connection = null;
+            _address = null;
         }
     }
 }

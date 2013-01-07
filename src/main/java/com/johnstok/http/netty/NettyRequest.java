@@ -46,11 +46,9 @@ public class NettyRequest
      */
     public NettyRequest(final HttpRequest request,
                         final Channel channel) {
-        super(
-            ((InetSocketAddress) channel.getLocalAddress()).getPort(),
-            ((InetSocketAddress) channel.getLocalAddress()).getHostName(),
-            request.getUri(),
-            Charset.forName("UTF-8"));                             //$NON-NLS-1$
+        super((InetSocketAddress) channel.getLocalAddress(),
+              request.getUri(),
+              Charset.forName("UTF-8"));                           //$NON-NLS-1$
         _request = request; // FIXME: Check for NULL.
         _channel = channel; // FIXME: Check for NULL.
 
