@@ -16,7 +16,6 @@ import org.junit.Before;
 import org.junit.Test;
 import com.johnstok.http.Method;
 import com.johnstok.http.Path;
-import com.johnstok.http.Scheme;
 import com.johnstok.http.Version;
 import com.johnstok.http.netty.test.FakeChannel;
 import com.johnstok.http.sync.Request;
@@ -31,27 +30,6 @@ public class NettyRequestTest {
 
     private static final String ENC_PUNCT = "%2C%3B%3A%24%26%2B%3D";
     private static final String PUNCT = ",;:$&+=";
-
-
-    @Test
-    public void schemeIsHttpForNonConfidentialRequest() {
-
-        // ARRANGE
-        final Request r =
-            new NettyRequest(
-                new DefaultHttpRequest(
-                    HttpVersion.HTTP_1_1,
-                    HttpMethod.GET,
-                    "/"),
-                new FakeChannel(),
-                Charset.forName("UTF-8"));
-
-        // ACT
-        final Scheme s = r.getScheme();
-
-        // ASSERT
-        assertEquals(Scheme.http, s);
-    }
 
 
     @Test
@@ -89,7 +67,7 @@ public class NettyRequestTest {
                 Charset.forName("UTF-8"));
 
         // ACT
-        final int port = r.getPort();
+        final int port = r.getServerAddress().getPort();
 
         // ASSERT
         assertEquals(80, port);
