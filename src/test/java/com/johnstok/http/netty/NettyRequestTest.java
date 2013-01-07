@@ -153,7 +153,7 @@ public class NettyRequestTest {
                 Charset.forName("UTF-8"));
 
         // ACT
-        final Path p = r.getPath(Charset.forName("UTF-8"));
+        final Path p = r.getPath();
 
         // ASSERT
         assertEquals(0, p.getSize());
