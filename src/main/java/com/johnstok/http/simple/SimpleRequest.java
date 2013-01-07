@@ -30,15 +30,14 @@ public class SimpleRequest
      * Constructor.
      *
      * @param request The Simple HTTP request delegated to.
-     * @param port    The port upon which the request was received.
-     * @param host    The hostname upon which the request was received.
+     * @param address The server address at which the request was received.
      */
     public SimpleRequest(final org.simpleframework.http.Request request,
                          final InetSocketAddress serverAddress) {
         super(
             serverAddress,
             request.getTarget(),
-            Charset.forName("UTF-8")); //$NON-NLS-1$ // FIXME: Charset shouldn't be hard-coded.
+            Charset.forName("UTF-8")); //$NON-NLS-1$ // SimpleWeb always uses UTF-8 – see org.simpleframework.http.parse.AddressParser#escape().
         _request = request;     // FIXME: Check for NULL.
         _version = new Version(_request.getMajor(), _request.getMinor());
     }
