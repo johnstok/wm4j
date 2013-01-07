@@ -95,12 +95,6 @@ public class NettyResponse
     }
 
 
-    /** {@inheritDoc} */
-    @Override
-    public void setHeader(final String name, final Date value) {
-        setHeader(name, _dateFormatter.format(value));
-    }
-
     /**
      * TODO: Add a description for this method.
      */
