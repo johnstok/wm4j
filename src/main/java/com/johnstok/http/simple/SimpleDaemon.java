@@ -17,7 +17,7 @@ import org.simpleframework.transport.connect.SocketConnection;
 import com.johnstok.http.HttpException;
 import com.johnstok.http.engine.Daemon;
 import com.johnstok.http.engine.Dispatcher;
-import com.johnstok.http.engine.RESTfulHandler;
+import com.johnstok.http.sync.Handler;
 
 
 /**
@@ -30,7 +30,7 @@ public class SimpleDaemon
         Container, Daemon {
 
     private       Connection        _connection;
-    private final RESTfulHandler    _handler;
+    private final Handler           _handler;
     private       InetSocketAddress _address;
 
 
@@ -39,7 +39,7 @@ public class SimpleDaemon
      *
      * @param handler
      */
-    public SimpleDaemon(final RESTfulHandler handler) {
+    public SimpleDaemon(final Handler handler) {
         _handler = handler;
     }
 
