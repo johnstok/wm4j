@@ -84,13 +84,6 @@ public class JEEResponse
 
     /** {@inheritDoc} */
     @Override
-    public boolean hasBody() {
-        throw new UnsupportedOperationException("Method not implemented.");
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
     protected void commit() throws IOException {
         super.commit();
         _response.flushBuffer();

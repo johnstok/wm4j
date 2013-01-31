@@ -78,13 +78,6 @@ public class NettyResponse
 
     /** {@inheritDoc} */
     @Override
-    public boolean hasBody() {
-        throw new UnsupportedOperationException("Method not implemented.");
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
     protected void commit() throws IOException {
         super.commit();
         ChannelFuture f = _channel.write(_response);

@@ -66,13 +66,6 @@ public class SimpleResponse
 
     /** {@inheritDoc} */
     @Override
-    public boolean hasBody() {
-        throw new UnsupportedOperationException("Method not implemented.");
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
     public void setHeader(final String name, final Date value) {
         _response.setDate(name, value.getTime());
     }
