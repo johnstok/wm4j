@@ -26,7 +26,7 @@ import java.util.HashMap;
 import java.util.regex.Pattern;
 import com.johnstok.http.ext.DispatchingHandler;
 import com.johnstok.http.ext.EchoHandler;
-import com.johnstok.http.ext.FileHandler;
+import com.johnstok.http.ext.ClasspathHandler;
 import com.johnstok.http.sync.Handler;
 
 
@@ -48,7 +48,7 @@ public class FileServer {
     public static void main(final String[] args) throws IOException {
 
         HashMap<Pattern, Handler> handlers = new HashMap<Pattern, Handler>();
-        handlers.put(Pattern.compile("/static/.*"), new FileHandler());
+        handlers.put(Pattern.compile("/static/.*"), new ClasspathHandler());
         handlers.put(Pattern.compile("/echo/.*"), new EchoHandler());
 
         Handler dispatcher = new DispatchingHandler(handlers);
