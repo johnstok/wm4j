@@ -46,7 +46,7 @@ public class SimpleResponse
     /** {@inheritDoc} */
     @Override
     public Status getStatus() {
-        throw new UnsupportedOperationException("Method not implemented.");
+        return map(_response.getCode());
     }
 
 
