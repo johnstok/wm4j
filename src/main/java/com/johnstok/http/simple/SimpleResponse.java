@@ -7,10 +7,10 @@
 package com.johnstok.http.simple;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Date;
 import com.johnstok.http.Status;
 import com.johnstok.http.sync.AbstractResponse;
-import com.johnstok.http.sync.BodyWriter;
 
 
 /**
@@ -66,13 +66,6 @@ public class SimpleResponse
 
     /** {@inheritDoc} */
     @Override
-    public void write(final BodyWriter value) throws IOException {
-        value.write(_response.getOutputStream());
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
     public boolean hasBody() {
         throw new UnsupportedOperationException("Method not implemented.");
     }
@@ -82,6 +75,28 @@ public class SimpleResponse
     @Override
     public void setHeader(final String name, final Date value) {
         _response.setDate(name, value.getTime());
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    protected void commit() throws IOException {
+        super.commit();
+        _response.commit();
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    protected void close() throws IOException {
+        _response.close();
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    protected OutputStream getOutputStream() throws IOException {
+        return _response.getOutputStream();
     }
 
 

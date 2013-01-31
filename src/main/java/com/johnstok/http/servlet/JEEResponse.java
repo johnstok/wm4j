@@ -20,11 +20,11 @@
 package com.johnstok.http.servlet;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
 import com.johnstok.http.Status;
 import com.johnstok.http.sync.AbstractResponse;
-import com.johnstok.http.sync.BodyWriter;
 
 
 /**
@@ -84,14 +84,29 @@ public class JEEResponse
 
     /** {@inheritDoc} */
     @Override
-    public void write(final BodyWriter value) throws IOException {
-        value.write(_response.getOutputStream());
+    public boolean hasBody() {
+        throw new UnsupportedOperationException("Method not implemented.");
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public boolean hasBody() {
-        throw new UnsupportedOperationException("Method not implemented.");
+    protected void commit() throws IOException {
+        super.commit();
+        _response.flushBuffer();
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    protected OutputStream getOutputStream() throws IOException {
+        return _response.getOutputStream();
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    protected void close() throws IOException {
+        _response.getOutputStream().close();
     }
 }

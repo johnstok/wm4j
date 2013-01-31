@@ -6,16 +6,14 @@
  *---------------------------------------------------------------------------*/
 package com.johnstok.http.netty;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.Date;
-import org.jboss.netty.buffer.ChannelBuffers;
+import java.io.OutputStream;
 import org.jboss.netty.channel.Channel;
+import org.jboss.netty.channel.ChannelFuture;
 import org.jboss.netty.handler.codec.http.HttpResponse;
 import org.jboss.netty.handler.codec.http.HttpResponseStatus;
 import com.johnstok.http.Status;
 import com.johnstok.http.sync.AbstractResponse;
-import com.johnstok.http.sync.BodyWriter;
 
 
 /**
@@ -29,7 +27,7 @@ public class NettyResponse
 
     private final HttpResponse _response;
     private final Channel      _channel;
-    private       boolean      _committed;
+    private final OutputStream _outputStream;
 
 
     /**
@@ -42,6 +40,7 @@ public class NettyResponse
                          final Channel channel) {
         _response = response; // FIXME: Check for NULL.
         _channel  = channel;  // FIXME: Check for NULL.
+        _outputStream = new ChannelOutputStream(channel);
     }
 
 
@@ -79,38 +78,20 @@ public class NettyResponse
 
     /** {@inheritDoc} */
     @Override
-    public void write(final BodyWriter value) throws IOException {
-        // FIXME: The whole body is read into memory.
-        commit();
-        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        value.write(baos);
-        _channel.write(ChannelBuffers.copiedBuffer(baos.toByteArray()));
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
     public boolean hasBody() {
         throw new UnsupportedOperationException("Method not implemented.");
     }
 
 
-    /**
-     * TODO: Add a description for this method.
-     */
-    void commit() {
-        _committed = true;
-        _channel.write(_response);
-    }
-
-
-    /**
-     * TODO: Add a description for this method.
-     *
-     * @return
-     */
-    boolean isCommitted() {
-        return _committed;
+    /** {@inheritDoc} */
+    @Override
+    protected void commit() throws IOException {
+        super.commit();
+        ChannelFuture f = _channel.write(_response);
+        f.awaitUninterruptibly();
+        if (!f.isSuccess()) {
+            throw new IOException("Error committing response.", f.getCause());
+        }
     }
 
 
@@ -277,5 +258,19 @@ public class NettyResponse
                 // FIXME: Use a subclass of RuntimeException.
                 throw new RuntimeException("Unsupported Status.");
         }
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    protected OutputStream getOutputStream() throws IOException {
+        return _outputStream;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    protected void close() {
+        _channel.close().awaitUninterruptibly();
     }
 }
