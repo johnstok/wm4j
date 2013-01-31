@@ -54,7 +54,7 @@ public class NettyResponse
     /** {@inheritDoc} */
     @Override
     public Status getStatus() {
-        return map(_response.getStatus());
+        return map(_response.getStatus().getCode());
     }
 
 
@@ -164,89 +164,6 @@ public class NettyResponse
                 return HttpResponseStatus.USE_PROXY;
             case VERSION_NOT_SUPPORTED:
                 return new HttpResponseStatus(code.getCode(), code.getDescription());
-            default:
-                // FIXME: Use a subclass of RuntimeException.
-                throw new RuntimeException("Unsupported Status.");
-        }
-    }
-
-
-    private Status map(final HttpResponseStatus status) {
-        switch (status.getCode()) {
-            case 202:
-                return Status.ACCEPTED;
-            case 502:
-                return Status.BAD_GATEWAY;
-            case 400:
-                return Status.BAD_REQUEST;
-            case 409:
-                return Status.CONFLICT;
-            case 201:
-                return Status.CREATED;
-            case 417:
-                return Status.EXPECTATION_FAILED;
-            case 403:
-                return Status.FORBIDDEN;
-            case 302:
-                return Status.FOUND;
-            case 504:
-                return Status.GATEWAY_TIMEOUT;
-            case 410:
-                return Status.GONE;
-            case 500:
-                return Status.INTERNAL_SERVER_ERROR;
-            case 411:
-                return Status.LENGTH_REQUIRED;
-            case 405:
-                return Status.METHOD_NOT_ALLOWED;
-            case 301:
-                return Status.MOVED_PERMANENTLY;
-            case 300:
-                return Status.MULTIPLE_CHOICES;
-            case 406:
-                return Status.NOT_ACCEPTABLE;
-            case 404:
-                return Status.NOT_FOUND;
-            case 501:
-                return Status.NOT_IMPLEMENTED;
-            case 304:
-                return Status.NOT_MODIFIED;
-            case 204:
-                return Status.NO_CONTENT;
-            case 200:
-                return Status.OK;
-            case 206:
-                return Status.PARTIAL_CONTENT;
-            case 402:
-                return Status.PAYMENT_REQUIRED;
-            case 412:
-                return Status.PRECONDITION_FAILED;
-            case 407:
-                return Status.PROXY_AUTHENTICATION_REQUIRED;
-            case 416:
-                return Status.REQUESTED_RANGE_NOT_SATISFIABLE;
-            case 413:
-                return Status.REQUEST_ENTITY_TOO_LARGE;
-            case 408:
-                return Status.REQUEST_TIMEOUT;
-            case 414:
-                return Status.REQUEST_URI_TOO_LONG;
-            case 205:
-                return Status.RESET_CONTENT;
-            case 303:
-                return Status.SEE_OTHER;
-            case 503:
-                return Status.SERVICE_UNAVAILABLE;
-            case 307:
-                return Status.TEMPORARY_REDIRECT;
-            case 401:
-                return Status.UNAUTHORIZED;
-            case 415:
-                return Status.UNSUPPORTED_MEDIA_TYPE;
-            case 305:
-                return Status.USE_PROXY;
-            case 505:
-                return Status.VERSION_NOT_SUPPORTED;
             default:
                 // FIXME: Use a subclass of RuntimeException.
                 throw new RuntimeException("Unsupported Status.");
