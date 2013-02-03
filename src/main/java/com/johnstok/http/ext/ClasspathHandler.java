@@ -60,9 +60,9 @@ public class ClasspathHandler
     public void handle(final Request request, final Response response) {
 
         // TODO: Ideally we would call URI#resolve() rather than string manip.
-        final String path = request.getPath().toString();
+        final String path = request.getRequestUri().toUri().getRawPath();
         final String resourcePath = "/META-INF/resources"+path;
-        URL resource = Utils.getResource(resourcePath);
+        URL resource = Utils.getResource(resourcePath); // FIXME: Use version that requests all path matches and warn of duplicates.
 
         if (null==resource) {
             response.setStatus(Status.NOT_FOUND);

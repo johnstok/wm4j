@@ -18,6 +18,7 @@ import org.jboss.netty.handler.codec.http.HttpRequest;
 import org.jboss.netty.handler.codec.http.QueryStringDecoder;
 import org.jboss.netty.handler.ssl.SslHandler;
 import com.johnstok.http.Method;
+import com.johnstok.http.RequestURI;
 import com.johnstok.http.Version;
 import com.johnstok.http.sync.AbstractRequest;
 
@@ -33,7 +34,6 @@ public class NettyRequest
 
     private final HttpRequest              _request;
     private final Channel                  _channel;
-    private final Map<String,List<String>> _qParams;
     private final Version                  _version;
 
 
@@ -55,7 +55,6 @@ public class NettyRequest
 
         final QueryStringDecoder decoder =
             new QueryStringDecoder(request.getUri(), _uriCharset);
-        _qParams = decoder.getParameters();
         _version =
             new Version(
                 _request.getProtocolVersion().getMajorVersion(),
@@ -107,23 +106,6 @@ public class NettyRequest
 
     /** {@inheritDoc} */
     @Override
-    public String getQueryValue(final String paramName, final String defaultValue) {
-        final List<String> p = _qParams.get(paramName);
-        if ((null==p) || (0==p.size())) { return defaultValue; }
-        return p.get(0);
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public Map<String, List<String>> getQueryValues() { return _qParams; }
-
-    /*
-     * BODY.
-     */
-
-    /** {@inheritDoc} */
-    @Override
     public InputStream getBody() {
         // FIXME: This reads the whole request body into memory - BAD.
         return new ByteArrayInputStream(_request.getContent().copy().array());
@@ -139,7 +121,7 @@ public class NettyRequest
 
     /** {@inheritDoc} */
     @Override
-    public String getRequestUri() {
-        return _request.getUri();
+    public RequestURI getRequestUri() {
+        return RequestURI.parse(_request.getUri());
     }
 }

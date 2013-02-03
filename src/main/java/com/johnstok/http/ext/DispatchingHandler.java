@@ -48,7 +48,7 @@ public class DispatchingHandler
     @Override
     public void handle(final Request request, final Response response) {
 
-        final String path = request.getPath().toString();
+        final String path = request.getRequestUri().toUri().getRawPath(); // FIXME: What if the request URI is an authority?!
 
         for (Pattern p : _handlers.keySet()) {
             if (p.matcher(path).matches()) {

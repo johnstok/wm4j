@@ -24,13 +24,13 @@ import java.io.InputStream;
 import java.net.InetSocketAddress;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import com.johnstok.http.Method;
+import com.johnstok.http.RequestURI;
 import com.johnstok.http.Version;
 import com.johnstok.http.sync.AbstractRequest;
 
@@ -69,8 +69,8 @@ public class JEERequest
 
     /** {@inheritDoc} */
     @Override
-    public String getRequestUri() {
-        return _request.getRequestURI();
+    public RequestURI getRequestUri() {
+        return RequestURI.parse(_request.getRequestURI());
     }
 
 
@@ -142,27 +142,4 @@ public class JEERequest
     public InputStream getBody() throws IOException {
         return _request.getInputStream();
     }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public String getQueryValue(final String paramName,
-                                final String defaultValue) {
-        String paramValue = _request.getParameter(paramName);
-        return (null==paramValue) ? defaultValue : paramValue;
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public Map<String, List<String>> getQueryValues() {
-        // TODO: Move to constructor for efficiency?
-        Map<String, List<String>> params = new HashMap<String, List<String>>();
-        Map<String, String[]> servletParams = new HashMap<String, String[]>();
-        for (Map.Entry<String, String[]> param : servletParams.entrySet()) {
-            params.put(param.getKey(), Arrays.asList(param.getValue()));
-        }
-        return params;
-    }
-
 }

@@ -4,11 +4,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetSocketAddress;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import com.johnstok.http.Method;
+import com.johnstok.http.RequestURI;
 import com.johnstok.http.Version;
 import com.johnstok.http.sync.AbstractRequest;
 
@@ -89,28 +89,6 @@ public class SimpleRequest
 
     /** {@inheritDoc} */
     @Override
-    public Map<String, List<String>> getQueryValues() {
-        final Map<String, List<String>> params =
-            new HashMap<String, List<String>>();
-        for (final String key : _request.getQuery().keySet()) {
-            params.put(
-                key, new ArrayList<String>(_request.getQuery().getAll(key)));
-        }
-        return params;
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public String getQueryValue(final String paramName,
-                                final String defaultValue) {
-        final String value = _request.getQuery().get(paramName);
-        return (null==value) ? defaultValue : value;
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
     public Version getVersion() { return _version; }
 
 
@@ -121,7 +99,7 @@ public class SimpleRequest
 
     /** {@inheritDoc} */
     @Override
-    public String getRequestUri() {
-        return _request.getTarget();
+    public RequestURI getRequestUri() {
+        return RequestURI.parse(_request.getTarget());
     }
 }
