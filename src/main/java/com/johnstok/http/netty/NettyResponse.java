@@ -173,14 +173,14 @@ public class NettyResponse
 
     /** {@inheritDoc} */
     @Override
-    protected OutputStream getOutputStream() throws IOException {
+    public OutputStream getBody() throws IOException {
         return _outputStream;
     }
 
 
     /** {@inheritDoc} */
     @Override
-    protected void close() {
+    public void close() {
         _channel.close().awaitUninterruptibly();
     }
 }

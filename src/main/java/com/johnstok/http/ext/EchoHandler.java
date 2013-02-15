@@ -22,7 +22,10 @@ package com.johnstok.http.ext;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import com.johnstok.http.sync.BodyWriter;
+import java.util.List;
+import java.util.Map;
+import com.johnstok.http.engine.BodyWriter;
+import com.johnstok.http.engine.Utils;
 import com.johnstok.http.sync.Handler;
 import com.johnstok.http.sync.Request;
 import com.johnstok.http.sync.Response;
@@ -41,17 +44,29 @@ public class EchoHandler
     @Override
     public void handle(final Request request, final Response response) {
         try {
-            response.write(new BodyWriter() {
+            new BodyWriter() {
                 @Override
                 public void write(final OutputStream outputStream) throws IOException {
                     OutputStreamWriter w =
                         new OutputStreamWriter(outputStream, "UTF-8");
                     w.write(request.getVersion()+" "+request.getMethod()+" "+request.getRequestUri());
+                    w.write('\n');
+                    w.write('\n');
+                    for (Map.Entry<String, List<String>> h : request.getHeaders().entrySet()) {
+                        w.write(h.getKey());
+                        w.write(": ");
+                        w.write(Utils.join(h.getValue(), ',').toString());
+                        w.write('\n');
+                    }
                     w.flush();
                 }
-            });
+            }.write(response.getBody());
         } catch (IOException e) {
-            e.printStackTrace(); // FIXME: Bad!
+            try {
+                response.close();
+            } catch (IOException ce) {
+                // Ignore.
+            }
         }
     }
 }

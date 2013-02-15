@@ -19,6 +19,7 @@
  *---------------------------------------------------------------------------*/
 package com.johnstok.http.ext;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.HashSet;
 import java.util.Set;
@@ -67,7 +68,15 @@ public class ClasspathHandler
         if (null==resource) {
             response.setStatus(Status.NOT_FOUND);
         } else {
-            response.write(new ResourceBodyWriter(resource));
+            try {
+                new ResourceBodyWriter(resource).write(response.getBody());
+            } catch (IOException e) {
+                try {
+                    response.close();
+                } catch (IOException ce) {
+                    // Ignore.
+                }
+            }
         }
     }
 }

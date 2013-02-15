@@ -92,14 +92,14 @@ public class JEEResponse
 
     /** {@inheritDoc} */
     @Override
-    protected OutputStream getOutputStream() throws IOException {
+    public OutputStream getBody() throws IOException {
         return _response.getOutputStream();
     }
 
 
     /** {@inheritDoc} */
     @Override
-    protected void close() throws IOException {
+    public void close() throws IOException {
         _response.getOutputStream().close();
     }
 }

@@ -81,14 +81,14 @@ public class SimpleResponse
 
     /** {@inheritDoc} */
     @Override
-    protected void close() throws IOException {
+    public void close() throws IOException {
         _response.close();
     }
 
 
     /** {@inheritDoc} */
     @Override
-    protected OutputStream getOutputStream() throws IOException {
+    public OutputStream getBody() throws IOException {
         return _response.getOutputStream();
     }
 }
