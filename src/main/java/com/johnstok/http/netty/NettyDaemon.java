@@ -55,10 +55,11 @@ public class NettyDaemon
      * Constructor.
      *
      * @param handler
+     * @param charset
      */
     public NettyDaemon(final RESTfulHandler handler, final Charset charset) {
-        _handler = handler;
-        _charset = charset;
+        _handler = handler; // FIXME: Check not null.
+        _charset = charset; // FIXME: Check not null.
     }
 
 
