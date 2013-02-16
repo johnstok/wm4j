@@ -93,14 +93,6 @@ public class SunHttpRequest
 
     /** {@inheritDoc} */
     @Override
-    public String getHeader(final String headerName, final String defaultValue) {
-        String value = _exchange.getRequestHeaders().getFirst(headerName);
-        return (null==value) ? defaultValue : value;
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
     public Map<String, List<String>> getHeaders() {
         return _exchange.getRequestHeaders();
     }

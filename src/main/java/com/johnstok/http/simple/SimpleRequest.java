@@ -52,20 +52,9 @@ public class SimpleRequest
 
     /** {@inheritDoc} */
     @Override
-    public String getHeader(final String headerName,
-                            final String defaultValue) {
-        final String value = _request.getValue(headerName);
-        if (null==value) {
-            return defaultValue;
-        }
-        return value;
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
     public Map<String, List<String>> getHeaders() {
-        final Map<String, List<String>> headers = new HashMap<String, List<String>>();
+        final Map<String, List<String>> headers =
+            new HashMap<String, List<String>>();
         for (final String name : _request.getNames()) {
             headers.put(name, _request.getValues(name));
         }

@@ -114,18 +114,9 @@ public class JEERequest
 
     /** {@inheritDoc} */
     @Override
-    public String getHeader(final String headerName,
-                            final String defaultValue) {
-        String headerValue = _request.getHeader(headerName);
-        return (null==headerValue) ? defaultValue : headerValue;
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
     @SuppressWarnings("unchecked")
     public Map<String, List<String>> getHeaders() {
-        // TODO: Move to constructor for efficiency?
+        // TODO: Move to constructor for efficiency.
         HashMap<String, List<String>> headers =
             new HashMap<String, List<String>>();
         Enumeration<String> headerNames = _request.getHeaderNames();

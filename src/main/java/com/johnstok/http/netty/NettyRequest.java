@@ -78,18 +78,6 @@ public class NettyRequest
 
     /** {@inheritDoc} */
     @Override
-    public String getHeader(final String headerName,
-                            final String defaultValue) {
-        final String value = _request.getHeader(headerName);
-        if (null==value) {
-            return defaultValue;
-        }
-        return value;
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
     public Map<String, List<String>> getHeaders() {
         final Map<String, List<String>> headers = new HashMap<String, List<String>>();
         for (final String name : _request.getHeaderNames()) {
@@ -103,6 +91,7 @@ public class NettyRequest
     @Override
     public InputStream getBody() {
         // FIXME: This reads the whole request body into memory - BAD.
+        // Implement a ChannelInputStream.
         return new ByteArrayInputStream(_request.getContent().copy().array());
     }
 
