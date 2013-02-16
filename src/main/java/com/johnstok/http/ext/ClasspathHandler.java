@@ -66,7 +66,7 @@ public class ClasspathHandler
         URL resource = Utils.getResource(resourcePath); // FIXME: Use version that requests all path matches and warn of duplicates.
 
         if (null==resource) {
-            response.setStatus(Status.NOT_FOUND);
+            response.setStatus(Status.NOT_FOUND.getCode(), Status.NOT_FOUND.getReasonPhrase());
         } else {
             try {
                 new ResourceBodyWriter(resource).write(response.getBody());

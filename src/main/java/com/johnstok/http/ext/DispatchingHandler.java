@@ -57,6 +57,6 @@ public class DispatchingHandler
             }
         }
 
-        response.setStatus(Status.NOT_FOUND);
+        response.setStatus(Status.NOT_FOUND.getCode(), Status.NOT_FOUND.getReasonPhrase());
     }
 }
