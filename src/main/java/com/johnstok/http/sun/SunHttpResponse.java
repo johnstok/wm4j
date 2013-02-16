@@ -21,7 +21,6 @@ package com.johnstok.http.sun;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import com.johnstok.http.Status;
 import com.johnstok.http.sync.AbstractResponse;
 import com.johnstok.http.sync.Response;
 import com.sun.net.httpserver.HttpExchange;
@@ -39,8 +38,9 @@ public class SunHttpResponse
         AbstractResponse {
 
     private final HttpExchange _exchange;
-    private Status _status = Status.OK;
     private final int _contentLength = 0; // Implies chunked encoding.
+    private int    _statusCode   = 200;
+    private String _reasonPhrase = "OK";
 
 
     /**
@@ -50,20 +50,6 @@ public class SunHttpResponse
      */
     public SunHttpResponse(final HttpExchange exchange) {
         _exchange = exchange; // FIXME: Check not null.
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void setStatus(final Status code) {
-        _status = code;
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public Status getStatus() {
-        return map(_exchange.getResponseCode());
     }
 
 
@@ -85,7 +71,7 @@ public class SunHttpResponse
     @Override
     protected void commit() throws IOException {
         super.commit();
-        _exchange.sendResponseHeaders(_status.getCode(), _contentLength);
+        _exchange.sendResponseHeaders(_statusCode, _contentLength);
     }
 
 
@@ -101,5 +87,27 @@ public class SunHttpResponse
     @Override
     public void close() {
         _exchange.close();
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void setStatus(final int statusCode, final String reasonPhrase) {
+        _statusCode = statusCode;
+        _reasonPhrase = reasonPhrase;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public int getStatusCode() {
+        return _statusCode;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public String getReasonPhrase() {
+        return _reasonPhrase;
     }
 }

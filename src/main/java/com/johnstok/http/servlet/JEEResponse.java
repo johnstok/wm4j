@@ -21,9 +21,9 @@ package com.johnstok.http.servlet;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.HashMap;
 import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
-import com.johnstok.http.Status;
 import com.johnstok.http.sync.AbstractResponse;
 
 
@@ -37,9 +37,10 @@ public class JEEResponse
         AbstractResponse {
 
     private final HttpServletResponse _response;
+    private final Map<String, String> _headers;
 
-    private Status              _status;
-    private Map<String, String> _headers;
+    private int    _statusCode   = 200;
+    private String _reasonPhrase = "OK";
 
 
     /**
@@ -49,21 +50,7 @@ public class JEEResponse
      */
     public JEEResponse(final HttpServletResponse response) {
         _response = response; // FIXME: Check for null.
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void setStatus(final Status status) {
-        _status = status;
-        _response.setStatus(status.getCode());
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public Status getStatus() {
-        return _status;
+        _headers = new HashMap<String, String>();
     }
 
 
@@ -101,5 +88,28 @@ public class JEEResponse
     @Override
     public void close() throws IOException {
         _response.getOutputStream().close();
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void setStatus(final int statusCode, final String reasonPhrase) {
+        _statusCode = statusCode;
+        _reasonPhrase = reasonPhrase;
+        _response.setStatus(statusCode, reasonPhrase);
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public int getStatusCode() {
+        return _statusCode;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public String getReasonPhrase() {
+        return _reasonPhrase;
     }
 }
