@@ -14,8 +14,6 @@ import org.jboss.netty.handler.codec.http.HttpVersion;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import com.johnstok.http.Method;
-import com.johnstok.http.Version;
 import com.johnstok.http.netty.test.FakeChannel;
 import com.johnstok.http.sync.Request;
 
@@ -42,10 +40,10 @@ public class NettyRequestTest {
                 Charset.forName("UTF-8"));
 
         // ACT
-        final Method m = r.getMethod();
+        final String m = r.getMethod();
 
         // ASSERT
-        assertEquals(Method.GET, m);
+        assertEquals("GET", m);
     }
 
 
@@ -105,11 +103,10 @@ public class NettyRequestTest {
                 Charset.forName("UTF-8"));
 
         // ACT
-        final Version v = r.getVersion();
+        final String v = r.getVersion();
 
         // ASSERT
-        assertEquals(1, v.getMajor());
-        assertEquals(1, v.getMinor());
+        assertEquals("HTTP/1.1", v);
     }
 
 

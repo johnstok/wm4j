@@ -7,7 +7,6 @@ import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import com.johnstok.http.Method;
 import com.johnstok.http.Version;
 import com.johnstok.http.sync.AbstractRequest;
 
@@ -76,7 +75,7 @@ public class SimpleRequest
 
     /** {@inheritDoc} */
     @Override
-    public Method getMethod() { return Method.parse(_request.getMethod()); }
+    public String getMethod() { return _request.getMethod(); }
 
 
     /** {@inheritDoc} */
@@ -88,7 +87,7 @@ public class SimpleRequest
 
     /** {@inheritDoc} */
     @Override
-    public Version getVersion() { return _version; }
+    public String getVersion() { return _version.toString(); }
 
 
     /** {@inheritDoc} */

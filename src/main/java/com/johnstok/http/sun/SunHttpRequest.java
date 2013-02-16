@@ -24,8 +24,6 @@ import java.net.InetSocketAddress;
 import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Map;
-import com.johnstok.http.Method;
-import com.johnstok.http.Version;
 import com.johnstok.http.sync.AbstractRequest;
 import com.johnstok.http.sync.Request;
 import com.sun.net.httpserver.HttpExchange;
@@ -74,15 +72,15 @@ public class SunHttpRequest
 
     /** {@inheritDoc} */
     @Override
-    public Method getMethod() {
-        return Method.parse(_exchange.getRequestMethod());
+    public String getMethod() {
+        return _exchange.getRequestMethod();
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public Version getVersion() {
-        return Version.parse(_exchange.getProtocol());
+    public String getVersion() {
+        return _exchange.getProtocol();
     }
 
 

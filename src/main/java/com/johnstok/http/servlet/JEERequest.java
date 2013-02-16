@@ -29,8 +29,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
-import com.johnstok.http.Method;
-import com.johnstok.http.Version;
 import com.johnstok.http.sync.AbstractRequest;
 
 
@@ -90,14 +88,14 @@ public class JEERequest
 
     /** {@inheritDoc} */
     @Override
-    public Method getMethod() {
-        return Method.parse(_request.getMethod());
+    public String getMethod() {
+        return _request.getMethod();
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public Version getVersion() {
+    public String getVersion() {
         throw
             new UnsupportedOperationException(
                 "Not supported by Servlet specification.");

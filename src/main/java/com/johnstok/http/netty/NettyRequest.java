@@ -15,9 +15,7 @@ import java.util.List;
 import java.util.Map;
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.handler.codec.http.HttpRequest;
-import org.jboss.netty.handler.codec.http.QueryStringDecoder;
 import org.jboss.netty.handler.ssl.SslHandler;
-import com.johnstok.http.Method;
 import com.johnstok.http.Version;
 import com.johnstok.http.sync.AbstractRequest;
 
@@ -52,8 +50,6 @@ public class NettyRequest
         _request = request; // FIXME: Check for NULL.
         _channel = channel; // FIXME: Check for NULL.
 
-        final QueryStringDecoder decoder =
-            new QueryStringDecoder(request.getUri(), _uriCharset);
         _version =
             new Version(
                 _request.getProtocolVersion().getMajorVersion(),
@@ -63,14 +59,14 @@ public class NettyRequest
 
     /** {@inheritDoc} */
     @Override
-    public Method getMethod() {
-        return Method.parse(_request.getMethod().getName());
+    public String getMethod() {
+        return _request.getMethod().getName();
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public Version getVersion() { return _version; }
+    public String getVersion() { return _version.toString(); }
 
 
     /** {@inheritDoc} */
