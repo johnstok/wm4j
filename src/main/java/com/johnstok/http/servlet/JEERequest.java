@@ -30,7 +30,6 @@ import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import com.johnstok.http.Method;
-import com.johnstok.http.RequestURI;
 import com.johnstok.http.Version;
 import com.johnstok.http.sync.AbstractRequest;
 
@@ -69,8 +68,16 @@ public class JEERequest
 
     /** {@inheritDoc} */
     @Override
-    public RequestURI getRequestUri() {
-        return RequestURI.parse(_request.getRequestURI());
+    public String getRequestUri() {
+        /*
+         * There is no way to retrieve the original URI in the request line via
+         * the Servlet API - we need to reconstitute it. At present the host &
+         * protocol are not included.
+         */
+        String queryString = _request.getQueryString();
+        return
+            _request.getRequestURI() // TODO: Is this path decoded?
+            + (null==queryString ? "" : "?"+queryString);
     }
 
 

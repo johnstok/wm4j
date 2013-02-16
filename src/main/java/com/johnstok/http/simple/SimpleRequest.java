@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import com.johnstok.http.Method;
-import com.johnstok.http.RequestURI;
 import com.johnstok.http.Version;
 import com.johnstok.http.sync.AbstractRequest;
 
@@ -99,7 +98,7 @@ public class SimpleRequest
 
     /** {@inheritDoc} */
     @Override
-    public RequestURI getRequestUri() {
-        return RequestURI.parse(_request.getTarget());
+    public String getRequestUri() {
+        return _request.getTarget();
     }
 }

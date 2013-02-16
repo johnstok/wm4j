@@ -21,6 +21,7 @@ package com.johnstok.http.ext;
 
 import java.util.Map;
 import java.util.regex.Pattern;
+import com.johnstok.http.RequestURI;
 import com.johnstok.http.Status;
 import com.johnstok.http.sync.Handler;
 import com.johnstok.http.sync.Request;
@@ -48,7 +49,8 @@ public class DispatchingHandler
     @Override
     public void handle(final Request request, final Response response) {
 
-        final String path = request.getRequestUri().toUri().getRawPath(); // FIXME: What if the request URI is an authority?!
+        final String path =
+            RequestURI.parse(request.getRequestUri()).toUri().getRawPath(); // FIXME: What if the request URI is an authority?!
 
         for (Pattern p : _handlers.keySet()) {
             if (p.matcher(path).matches()) {

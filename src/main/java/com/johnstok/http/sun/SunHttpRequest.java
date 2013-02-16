@@ -25,7 +25,6 @@ import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Map;
 import com.johnstok.http.Method;
-import com.johnstok.http.RequestURI;
 import com.johnstok.http.Version;
 import com.johnstok.http.sync.AbstractRequest;
 import com.johnstok.http.sync.Request;
@@ -60,8 +59,9 @@ public class SunHttpRequest
 
     /** {@inheritDoc} */
     @Override
-    public RequestURI getRequestUri() {
-        return RequestURI.parse(_exchange.getRequestURI().toString()); // TODO: Confirm this correctly handles encoded URLs.
+    public String getRequestUri() {
+        // FIXME: URI#toASCIIString() always uses UTF-8.
+        return _exchange.getRequestURI().toASCIIString(); // TODO: Confirm this correctly handles encoded URLs.
     }
 
 

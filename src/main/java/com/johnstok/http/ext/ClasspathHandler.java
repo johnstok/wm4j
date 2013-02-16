@@ -24,6 +24,7 @@ import java.net.URL;
 import java.util.HashSet;
 import java.util.Set;
 import com.johnstok.http.ContentCoding;
+import com.johnstok.http.RequestURI;
 import com.johnstok.http.Status;
 import com.johnstok.http.engine.Utils;
 import com.johnstok.http.sync.Handler;
@@ -61,7 +62,8 @@ public class ClasspathHandler
     public void handle(final Request request, final Response response) {
 
         // TODO: Ideally we would call URI#resolve() rather than string manip.
-        final String path = request.getRequestUri().toUri().getRawPath();
+        final String path =
+            RequestURI.parse(request.getRequestUri()).toUri().getRawPath();
         final String resourcePath = "/META-INF/resources"+path;
         URL resource = Utils.getResource(resourcePath); // FIXME: Use version that requests all path matches and warn of duplicates.
 

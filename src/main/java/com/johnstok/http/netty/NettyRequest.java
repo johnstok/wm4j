@@ -18,7 +18,6 @@ import org.jboss.netty.handler.codec.http.HttpRequest;
 import org.jboss.netty.handler.codec.http.QueryStringDecoder;
 import org.jboss.netty.handler.ssl.SslHandler;
 import com.johnstok.http.Method;
-import com.johnstok.http.RequestURI;
 import com.johnstok.http.Version;
 import com.johnstok.http.sync.AbstractRequest;
 
@@ -121,7 +120,7 @@ public class NettyRequest
 
     /** {@inheritDoc} */
     @Override
-    public RequestURI getRequestUri() {
-        return RequestURI.parse(_request.getUri());
+    public String getRequestUri() {
+        return _request.getUri();
     }
 }
