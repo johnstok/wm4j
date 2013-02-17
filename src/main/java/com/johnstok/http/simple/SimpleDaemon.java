@@ -15,8 +15,8 @@ import org.simpleframework.http.core.Container;
 import org.simpleframework.transport.connect.Connection;
 import org.simpleframework.transport.connect.SocketConnection;
 import com.johnstok.http.HttpException;
-import com.johnstok.http.engine.Daemon;
 import com.johnstok.http.engine.Dispatcher;
+import com.johnstok.http.sync.Server;
 import com.johnstok.http.sync.Handler;
 
 
@@ -27,7 +27,7 @@ import com.johnstok.http.sync.Handler;
  */
 public class SimpleDaemon
     implements
-        Container, Daemon {
+        Container, Server {
 
     private       Connection        _connection;
     private final Handler           _handler;

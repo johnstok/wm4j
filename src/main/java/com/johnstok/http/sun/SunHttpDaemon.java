@@ -23,9 +23,9 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.charset.Charset;
 import com.johnstok.http.HttpException;
-import com.johnstok.http.engine.Daemon;
 import com.johnstok.http.sync.AbstractRequest;
 import com.johnstok.http.sync.AbstractResponse;
+import com.johnstok.http.sync.Server;
 import com.johnstok.http.sync.Handler;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
@@ -40,7 +40,7 @@ import com.sun.net.httpserver.HttpServer;
 @SuppressWarnings("restriction")
 public class SunHttpDaemon
     implements
-        Daemon, HttpHandler {
+        Server, HttpHandler {
 
     private HttpServer _hs;
     private final Handler _handler;
