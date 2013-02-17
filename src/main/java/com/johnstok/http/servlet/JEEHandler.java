@@ -22,7 +22,6 @@ package com.johnstok.http.servlet;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.charset.Charset;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -36,27 +35,45 @@ import com.johnstok.http.sync.Handler;
  */
 public abstract class JEEHandler
     extends
-        HttpServlet
-    implements
-        Handler {
+        HttpServlet {
+
+    private final Handler _handler;
+
+
+    /**
+     * Constructor.
+     */
+    public JEEHandler(final Handler handler) {
+        _handler = handler; // FIXME: Check not null.
+    }
 
 
     /** {@inheritDoc} */
     @Override
     protected void service(final HttpServletRequest request,
-                           final HttpServletResponse resp)
-        throws ServletException,
-            IOException {
+                           final HttpServletResponse resp) {
         InetSocketAddress isa =
             new InetSocketAddress(
                 request.getLocalName(),  // TODO: What about the IP address?!
                 request.getLocalPort());
-        handle(
-            new JEERequest(
-                isa,
-                Charset.forName("UTF-8"), // TODO: This should be configurable.
-                request),
-            new JEEResponse(resp));
-    }
 
+        try {
+            _handler.handle(
+                new JEERequest(
+                    isa,
+                    Charset.forName("UTF-8"), // TODO: This should be configurable.
+                    request),
+                new JEEResponse(resp));
+
+        } catch (final IOException e) {
+            e.printStackTrace(); // FIXME: WTF.
+
+        } finally {
+            try {
+                resp.getOutputStream().close();
+            } catch (IOException e) {
+                e.printStackTrace(); // FIXME: WTF.
+            }
+        }
+    }
 }

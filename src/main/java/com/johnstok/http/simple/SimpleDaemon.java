@@ -14,10 +14,9 @@ import org.simpleframework.http.Response;
 import org.simpleframework.http.core.Container;
 import org.simpleframework.transport.connect.Connection;
 import org.simpleframework.transport.connect.SocketConnection;
-import com.johnstok.http.HttpException;
 import com.johnstok.http.engine.Dispatcher;
-import com.johnstok.http.sync.Server;
 import com.johnstok.http.sync.Handler;
+import com.johnstok.http.sync.Server;
 
 
 /**
@@ -48,24 +47,18 @@ public class SimpleDaemon
     @Override
     public void handle(final Request request, final Response response) {
         try {
-            final com.johnstok.http.sync.Response resp =
-                new SimpleResponse(response);
-            final com.johnstok.http.sync.Request req  =
-                new SimpleRequest(request, _address);
+            _handler.handle(
+                new SimpleRequest(request, _address),
+                new SimpleResponse(response));
 
-            _handler.handle(req, resp);
+        } catch (final IOException e) {
+            e.printStackTrace(); // FIXME: WTF.
 
-        } catch (final HttpException e) {
-            e.printStackTrace(); // FIXME: WTF.
-            throw new RuntimeException(e);
-        } catch (final RuntimeException e) {
-            e.printStackTrace(); // FIXME: WTF.
-            throw e;
         } finally {
             try {
                 response.close();
             } catch (final IOException e) {
-                System.err.print("Error closing response:"+e);
+                e.printStackTrace(); // FIXME: WTF.
             }
         }
     }

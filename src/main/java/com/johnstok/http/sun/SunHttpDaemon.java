@@ -22,11 +22,8 @@ package com.johnstok.http.sun;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.charset.Charset;
-import com.johnstok.http.HttpException;
-import com.johnstok.http.sync.AbstractRequest;
-import com.johnstok.http.sync.AbstractResponse;
-import com.johnstok.http.sync.Server;
 import com.johnstok.http.sync.Handler;
+import com.johnstok.http.sync.Server;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
@@ -79,18 +76,15 @@ public class SunHttpDaemon
 
     /** {@inheritDoc} */
     @Override
-    public void handle(final HttpExchange exchange) throws IOException {
+    public void handle(final HttpExchange exchange) {
         try {
-            AbstractRequest req = new SunHttpRequest(exchange, _charset);
-            AbstractResponse resp = new SunHttpResponse(exchange);
-            _handler.handle(req, resp);
+            _handler.handle(
+                new SunHttpRequest(exchange, _charset),
+                new SunHttpResponse(exchange));
 
-        } catch (final HttpException e) {
+        } catch (final IOException e) {
             e.printStackTrace(); // FIXME: WTF.
-            throw new RuntimeException(e);
-        } catch (final RuntimeException e) {
-            e.printStackTrace(); // FIXME: WTF.
-            throw e;
+
         } finally {
             exchange.close();
         }

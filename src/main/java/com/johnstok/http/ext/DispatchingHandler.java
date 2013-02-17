@@ -19,6 +19,7 @@
  *---------------------------------------------------------------------------*/
 package com.johnstok.http.ext;
 
+import java.io.IOException;
 import java.util.Map;
 import java.util.regex.Pattern;
 import com.johnstok.http.RequestURI;
@@ -47,7 +48,8 @@ public class DispatchingHandler
 
     /** {@inheritDoc} */
     @Override
-    public void handle(final Request request, final Response response) {
+    public void handle(final Request request,
+                       final Response response) throws IOException {
 
         final String path =
             RequestURI.parse(request.getRequestUri()).toUri().getRawPath(); // FIXME: What if the request URI is an authority?!
