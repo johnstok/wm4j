@@ -8,7 +8,6 @@ package com.johnstok.http.simple;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Date;
 import com.johnstok.http.sync.AbstractResponse;
 
 
@@ -45,13 +44,6 @@ public class SimpleResponse
     @Override
     public String getHeader(final String name) {
         return _response.getValue(name);
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void setHeader(final String name, final Date value) {
-        _response.setDate(name, value.getTime());
     }
 
 
