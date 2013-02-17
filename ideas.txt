@@ -1,7 +1,0 @@
-# Ideas
-
-
-## Implementations
-
- * Finagle
- * Webbit
