@@ -24,10 +24,10 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.regex.Pattern;
-import com.johnstok.http.engine.Daemon;
 import com.johnstok.http.ext.ClasspathHandler;
 import com.johnstok.http.ext.DispatchingHandler;
 import com.johnstok.http.ext.EchoHandler;
+import com.johnstok.http.sync.Server;
 import com.johnstok.http.sync.Handler;
 
 
@@ -54,12 +54,12 @@ public class FileServer {
 
         Handler dispatcher = new DispatchingHandler(handlers);
 
-        Daemon webserver = createDaemon(dispatcher);
+        Server webserver = createDaemon(dispatcher);
         webserver.startup(new InetSocketAddress(8080));
     }
 
 
-    private static Daemon createDaemon(final Handler dispatcher) {
+    private static Server createDaemon(final Handler dispatcher) {
         return new SimpleDaemon(dispatcher);
     }
 }
