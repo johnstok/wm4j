@@ -42,31 +42,24 @@ public class EchoHandler
 
     /** {@inheritDoc} */
     @Override
-    public void handle(final Request request, final Response response) {
-        try {
-            new BodyWriter() {
-                @Override
-                public void write(final OutputStream outputStream) throws IOException {
-                    OutputStreamWriter w =
-                        new OutputStreamWriter(outputStream, "UTF-8");
-                    w.write(request.getVersion()+" "+request.getMethod()+" "+request.getRequestUri());
+    public void handle(final Request request,
+                       final Response response) throws IOException {
+        new BodyWriter() {
+            @Override
+            public void write(final OutputStream outputStream) throws IOException {
+                OutputStreamWriter w =
+                    new OutputStreamWriter(outputStream, "UTF-8");
+                w.write(request.getVersion()+" "+request.getMethod()+" "+request.getRequestUri());
+                w.write('\n');
+                w.write('\n');
+                for (Map.Entry<String, List<String>> h : request.getHeaders().entrySet()) {
+                    w.write(h.getKey());
+                    w.write(": ");
+                    w.write(Utils.join(h.getValue(), ',').toString());
                     w.write('\n');
-                    w.write('\n');
-                    for (Map.Entry<String, List<String>> h : request.getHeaders().entrySet()) {
-                        w.write(h.getKey());
-                        w.write(": ");
-                        w.write(Utils.join(h.getValue(), ',').toString());
-                        w.write('\n');
-                    }
-                    w.flush();
                 }
-            }.write(response.getBody());
-        } catch (IOException e) {
-            try {
-                response.close();
-            } catch (IOException ce) {
-                // Ignore.
+                w.flush();
             }
-        }
+        }.write(response.getBody());
     }
 }

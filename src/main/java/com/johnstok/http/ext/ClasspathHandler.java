@@ -59,7 +59,8 @@ public class ClasspathHandler
 
     /** {@inheritDoc} */
     @Override
-    public void handle(final Request request, final Response response) {
+    public void handle(final Request request,
+                       final Response response) throws IOException {
 
         // TODO: Ideally we would call URI#resolve() rather than string manip.
         final String path =
@@ -70,15 +71,7 @@ public class ClasspathHandler
         if (null==resource) {
             response.setStatus(Status.NOT_FOUND.getCode(), Status.NOT_FOUND.getReasonPhrase());
         } else {
-            try {
-                new ResourceBodyWriter(resource).write(response.getBody());
-            } catch (IOException e) {
-                try {
-                    response.close();
-                } catch (IOException ce) {
-                    // Ignore.
-                }
-            }
+            new ResourceBodyWriter(resource).write(response.getBody());
         }
     }
 }

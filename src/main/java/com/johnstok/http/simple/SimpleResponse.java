@@ -57,13 +57,6 @@ public class SimpleResponse
 
     /** {@inheritDoc} */
     @Override
-    public void close() throws IOException {
-        _response.close();
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
     public OutputStream getBody() throws IOException {
         return _response.getOutputStream();
     }

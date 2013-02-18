@@ -85,13 +85,6 @@ public class SunHttpResponse
 
     /** {@inheritDoc} */
     @Override
-    public void close() {
-        _exchange.close();
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
     public void setStatus(final int statusCode, final String reasonPhrase) {
         _statusCode = statusCode;
         _reasonPhrase = reasonPhrase;

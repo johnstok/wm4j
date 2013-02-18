@@ -86,13 +86,6 @@ public class JEEResponse
 
     /** {@inheritDoc} */
     @Override
-    public void close() throws IOException {
-        _response.getOutputStream().close();
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
     public void setStatus(final int statusCode, final String reasonPhrase) {
         _statusCode = statusCode;
         _reasonPhrase = reasonPhrase;
