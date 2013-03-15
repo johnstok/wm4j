@@ -54,8 +54,8 @@ public final class ResourceBodyWriter
         try {
             Utils.copy(is, os);
         } finally {
-            os.close(); // TODO: Surround with try / catch.
-            is.close(); // TODO: Surround with try / catch.
+            Utils.close(os);
+            Utils.close(is);
         }
     }
 }
