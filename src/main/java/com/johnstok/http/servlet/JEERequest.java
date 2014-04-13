@@ -5,16 +5,16 @@
  * This file is part of wm4j.
  *
  * wm4j is free software: you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General Public License as published by the Free
+ * the terms of the GNU General Public License as published by the Free
  * Software Foundation, either version 3 of the License, or (at your option) any
  * later version.
  *
  * wm4j is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
  *
- * You should have received a copy of the GNU Lesser General Public License
+ * You should have received a copy of the GNU General Public License
  * along with wm4j. If not, see <http://www.gnu.org/licenses/>.
  *---------------------------------------------------------------------------*/
 package com.johnstok.http.servlet;
@@ -72,7 +72,7 @@ public class JEERequest
          * the Servlet API - we need to reconstitute it. At present the host &
          * protocol are not included.
          */
-        String queryString = _request.getQueryString();
+        final String queryString = _request.getQueryString();
         return
             _request.getRequestURI() // TODO: Is this path decoded?
             + (null==queryString ? "" : "?"+queryString);
@@ -117,13 +117,13 @@ public class JEERequest
     @SuppressWarnings("unchecked")
     public Map<String, List<String>> getHeaders() {
         // TODO: Move to constructor for efficiency.
-        HashMap<String, List<String>> headers =
+        final HashMap<String, List<String>> headers =
             new HashMap<String, List<String>>();
-        Enumeration<String> headerNames = _request.getHeaderNames();
+        final Enumeration<String> headerNames = _request.getHeaderNames();
         while (headerNames.hasMoreElements()) {
-            String headerName = headerNames.nextElement();
-            ArrayList<String> values = new ArrayList<String>();
-            Enumeration<String> headerValues = _request.getHeaders(headerName);
+            final String headerName = headerNames.nextElement();
+            final ArrayList<String> values = new ArrayList<String>();
+            final Enumeration<String> headerValues = _request.getHeaders(headerName);
             while (headerValues.hasMoreElements()) {
                 values.add(headerValues.nextElement());
             }
