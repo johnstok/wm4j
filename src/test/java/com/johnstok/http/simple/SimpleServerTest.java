@@ -20,7 +20,6 @@
 package com.johnstok.http.simple;
 
 import com.johnstok.http.sync.Handler;
-import com.johnstok.http.sync.ServerTest;
 
 
 /**
